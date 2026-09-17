@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIKUAD — Desain Probis Sistem Informasi MKB V15</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --navy:#0D2B5E; --navy2:#1A3F80; --npale:#E8EFF9;
+  --amber:#C47A0A; --abg:#FFF4DC;
+  --red:#B83228; --rbg:#FDECEA;
+  --green:#1B7A4A; --gbg:#E8F5EE;
+  --purple:#6B3FA0; --pbg:#F2ECF9;
+  --teal:#0E7490; --tbg:#E0F5FA;
+  --rose:#9D2257; --rosebg:#FBEAF0;
+  --indigo:#534AB7; --indigobg:#EEEDFE;
+  --gray:#F4F5F7; --gray2:#E8E9EC; --gray3:#9FA3AD;
+  --text:#1A1D23; --t2:#5A5F6B; --t3:#9FA3AD;
+  --white:#fff; --r:8px; --rl:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.07), 0 1px 8px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:var(--text);background:var(--gray);line-height:1.5}
+
+/* HEADER */
+.header{background:var(--navy);padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:22px;font-weight:600;color:#fff;letter-spacing:0.3px}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500}
+.header-meta{text-align:right}
+.header-meta-date{font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px}
+
+/* CONTAINER */
+.container{max-width:1100px;margin:0 auto;padding:24px 24px 48px}
+
+/* INTRO */
+.intro{background:var(--white);border-radius:var(--rl);padding:20px 24px;margin-bottom:20px;border:0.5px solid var(--gray2);box-shadow:var(--shadow)}
+.intro-title{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.intro-sub{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:14px}
+.intro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.intro-stat{background:var(--gray);border-radius:var(--r);padding:10px 14px}
+.intro-stat-val{font-size:20px;font-weight:600;color:var(--navy)}
+.intro-stat-lbl{font-size:11px;color:var(--t2);margin-top:1px}
+
+/* TABS */
+.tabs-wrap{background:var(--white);border-radius:var(--rl);border:0.5px solid var(--gray2);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.tabs{display:flex;border-bottom:1px solid var(--gray2);background:var(--gray);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 16px;font-size:11px;font-weight:500;cursor:pointer;color:var(--t2);border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all 0.12s;border-right:0.5px solid var(--gray2);background:var(--gray)}
+.tab:hover{background:#ecedf0;color:var(--text)}
+.tab.act{background:var(--white);color:var(--navy);border-bottom-color:var(--navy);font-weight:600}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.panel{display:none;padding:20px 24px 24px}
+.panel.show{display:block}
+
+/* ROLE HEADER */
+.role-hd{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--gray);border-radius:var(--rl);margin-bottom:14px;border:0.5px solid var(--gray2)}
+.ricon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rtitle{font-size:14px;font-weight:600;color:var(--text)}
+.rsub{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.4}
+.rtags{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0}
+
+/* SECTIONS */
+.sec{margin-bottom:18px}
+.seclbl{font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px;padding-bottom:6px;border-bottom:1px solid var(--gray2)}
+.seclbl i{font-size:13px}
+
+/* FEATURE GRID */
+.fg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.fc{border:0.5px solid var(--gray2);border-radius:var(--r);padding:11px 13px;border-left:3px solid transparent;background:var(--white);transition:box-shadow 0.12s}
+.fc:hover{box-shadow:var(--shadow)}
+.fct{font-size:12px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fct i{font-size:14px}
+.fcs{font-size:11px;color:var(--t2);line-height:1.5}
+.fctags{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
+
+/* DATA TABLE */
+.dt-wrap{overflow-x:auto;border-radius:var(--r);border:0.5px solid var(--gray2)}
+.dt{width:100%;border-collapse:collapse;font-size:11px;min-width:500px}
+.dt th{background:var(--gray);padding:8px 10px;text-align:left;font-weight:600;color:var(--t2);border-bottom:1px solid var(--gray2)}
+.dt td{padding:8px 10px;border-bottom:0.5px solid var(--gray2);vertical-align:top;background:var(--white)}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:#fafafa}
+
+/* UI GRID */
+.ug{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.uc{border:0.5px solid var(--gray2);border-radius:var(--r);padding:10px 12px;background:var(--white)}
+.un{font-size:11px;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:5px;color:var(--text)}
+.un i{font-size:13px}
+.ue{font-size:10px;color:var(--t2);display:flex;align-items:flex-start;gap:4px;margin-top:3px;line-height:1.4}
+.ue::before{content:"·";flex-shrink:0;color:var(--gray3);margin-top:1px}
+
+/* ALERTS */
+.alert{padding:10px 13px;border-radius:var(--r);font-size:11px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start;border:0.5px solid transparent}
+.alert i{font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.tb{background:var(--npale);color:#0C447C}
+.tr{background:var(--rbg);color:#791F1F}
+.tg{background:var(--gbg);color:#085041}
+.ta{background:var(--abg);color:#412402}
+.tp{background:var(--pbg);color:#3C3489}
+.tt{background:var(--tbg);color:#042C53}
+.tgr{background:var(--gray2);color:var(--t2)}
+.tro{background:var(--rosebg);color:#4B1528}
+.tpu{background:var(--indigobg);color:#26215C}
+.pb{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;margin-right:2px}
+.nbadge{background:var(--gbg);color:#085041;font-size:9px;font-weight:600;padding:1px 7px;border-radius:10px}
+.cbadge{background:var(--abg);color:#412402;font-size:9px;font-weight:600;padding:1px 7px;border-radius:10px}
+
+/* FLOW */
+.flow-wrap{background:var(--gray);border-radius:var(--rl);padding:14px 16px;margin-top:10px;border:0.5px solid var(--gray2)}
+.flow-title{font-size:11px;font-weight:600;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.flow{display:flex;align-items:flex-start;gap:0;flex-wrap:wrap;row-gap:8px}
+.fstep{display:flex;flex-direction:column;align-items:center;min-width:110px;max-width:130px}
+.fbox{padding:8px 10px;border-radius:var(--r);border:1px solid var(--gray2);font-size:10px;font-weight:600;text-align:center;line-height:1.4;width:100%;background:var(--white)}
+.fsub{font-size:9px;color:var(--t3);text-align:center;margin-top:4px;line-height:1.3;padding:0 4px}
+.farr{display:flex;align-items:center;padding:0 6px;color:var(--gray3);font-size:16px;margin-top:16px;flex-shrink:0}
+.flow-note{font-size:10px;color:var(--t2);background:var(--white);border-radius:var(--r);padding:8px 11px;margin-top:10px;line-height:1.5;border:0.5px solid var(--gray2)}
+
+/* DASHBOARD MOCK */
+.db-mock{background:var(--gray);border-radius:var(--rl);padding:14px;margin-top:8px;border:0.5px solid var(--gray2)}
+.db-mock-title{font-size:11px;font-weight:600;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.db-row{display:grid;gap:8px;margin-bottom:8px}
+.db-met{background:var(--white);border:0.5px solid var(--gray2);border-radius:var(--r);padding:11px 13px}
+.db-met-lbl{font-size:10px;color:var(--t2);margin-bottom:3px}
+.db-met-val{font-size:20px;font-weight:600}
+.db-met-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.db-card{background:var(--white);border:0.5px solid var(--gray2);border-radius:var(--r);padding:11px 13px}
+.db-card-title{font-size:11px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:4px;color:var(--text)}
+.db-card-title i{font-size:13px}
+.db-row-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--gray2);font-size:11px}
+.db-row-item:last-child{border-bottom:none}
+.db-pbar{height:4px;background:var(--gray2);border-radius:2px;overflow:hidden;margin-top:3px;width:80px}
+.db-pfill{height:100%;border-radius:2px}
+.db-alert{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:var(--r);font-size:11px;margin-bottom:8px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--gray2);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;background:var(--white);margin-top:0}
+.footer-text{font-size:11px;color:var(--t3)}
+
+@media(max-width:768px){
+  .fg,.ug{grid-template-columns:1fr}
+  .intro-grid{grid-template-columns:1fr 1fr}
+  .container{padding:16px 12px 32px}
+  .header{padding:16px 20px}
+  .panel{padding:16px}
+}
+@media print{
+  .tabs{display:none}
+  .panel{display:block!important;page-break-after:always}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">SIKUAD</div>
+    <div class="header-sub">Sistem Informasi Kemenkeu Tanggap Darurat</div>
+  </div>
+  <div class="header-meta">
+    <div class="header-badge">Desain Probis Sistem Informasi MKB — V15</div>
+    <div class="header-meta-date">Terakhir diperbarui: Agustus 2026 (sinkron Mock Up V15)</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="intro">
+    <div class="intro-title">Desain Proses Bisnis Sistem Informasi MKB — Versi 15</div>
+    <div class="intro-sub">Dokumen ini memetakan seluruh role pengguna, fitur per role, data yang digunakan, tampilan yang muncul, dan alur proses bisnis sistem SIKUAD, disinkronkan dengan Mock Up V15. Versi 15 menambahkan Damage Assessment 5 aspek (SDM, Aset, TIK, Arsip, Layanan Terdampak) di Tim Satgas, 3 dashboard nasional baru di Koordinator (Jadwal Simulasi, Monitor SC, Monitoring Status Layanan — dengan filter Provinsi &amp; Eselon I), 2 dashboard wilayah baru di Kepala Perwakilan, serta mekanisme trigger lintas role: asesmen bencana dari Satgas otomatis memicu notifikasi deklarasi ke Pimpinan dan tampil di dashboard Perwakilan/Subkoordinator/Koordinator lengkap dengan status "sudah/belum dideklarasikan".</div>
+    <div class="intro-grid">
+      <div class="intro-stat"><div class="intro-stat-val">8</div><div class="intro-stat-lbl">Role pengguna</div></div>
+      <div class="intro-stat"><div class="intro-stat-val">62</div><div class="intro-stat-lbl">Halaman/menu tersimulasi</div></div>
+      <div class="intro-stat"><div class="intro-stat-val">7</div><div class="intro-stat-lbl">Dokumen MKB dasar sistem</div></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabs">
+      <div class="tab act" onclick="sw(0)"><span class="tdot" style="background:#3B8BD4"></span>Pegawai Umum</div>
+      <div class="tab" onclick="sw(1)"><span class="tdot" style="background:#BA7517"></span>Pimpinan Satker</div>
+      <div class="tab" onclick="sw(2)"><span class="tdot" style="background:#E24B4A"></span>Tim Satgas</div>
+      <div class="tab" onclick="sw(3)"><span class="tdot" style="background:#9D2257"></span>Tim Pengembang</div>
+      <div class="tab" onclick="sw(4)"><span class="tdot" style="background:#7F77DD"></span>Tim Impl. RKB</div>
+      <div class="tab" onclick="sw(5)"><span class="tdot" style="background:#6B3FA0"></span>Subkoordinator</div>
+      <div class="tab" onclick="sw(6)"><span class="tdot" style="background:#0E7490"></span>Koordinator MKB</div>
+      <div class="tab" onclick="sw(7)"><span class="tdot" style="background:#1D9E75"></span>Kepala Perwakilan</div>
+      <div class="tab" onclick="sw(8)"><span class="tdot" style="background:#444441"></span>Alur Probis</div>
+    </div>
+
+    <!-- ===== 0: PEGAWAI UMUM ===== -->
+    <div class="panel show" id="p0">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--npale);color:#0C447C"><i class="ti ti-user"></i></div>
+        <div><div class="rtitle">Pegawai Umum</div><div class="rsub">Non tim MKB · Seluruh pegawai Kemenkeu · Akses terbatas namun kritis saat bencana</div></div>
+        <div class="rtags"><span class="tag tb">Pra</span><span class="tag tr">Saat</span></div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#E24B4A">
+            <div class="fct"><i class="ti ti-heart" style="color:#E24B4A"></i> Safety Check — Respons Broadcast</div>
+            <div class="fcs">Terima notif broadcast → tombol "Aman" / "Butuh Bantuan" → status terkirim ke satgas &amp; pimpinan. Tersimpan offline otomatis.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.1</span><span class="tag tr">Saat bencana</span><span class="tag tgr">Offline</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#3B8BD4">
+            <div class="fct"><i class="ti ti-folder" style="color:#3B8BD4"></i> Panduan &amp; Dokumen Offline</div>
+            <div class="fcs">Akses prosedur evakuasi, titik kumpul, nomor darurat, grab list (RTDB). Auto-download saat online. Termasuk standar sistem pengendalian aktif dari Subkoordinator.</div>
+            <div class="fctags"><span class="pb" style="background:var(--npale);color:#0C447C">2.1</span><span class="tag tb">Pra</span><span class="tag tgr">Offline</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#E24B4A">
+            <div class="fct"><i class="ti ti-alert-triangle" style="color:#E24B4A"></i> Laporkan Potensi Bencana</div>
+            <div class="fcs">Form bottom-up: jenis bencana, level, lokasi, deskripsi + lampiran Foto/Video/Pesan Suara → dikirim ke satgas untuk verifikasi (field sama persis dengan form verifikasi Tim Satgas). Tersimpan offline jika koneksi terputus.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.1</span><span class="tag tr">Saat bencana</span><span class="tag tgr">Offline</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#3B8BD4">
+            <div class="fct"><i class="ti ti-info-circle" style="color:#3B8BD4"></i> Profil MKB Unit</div>
+            <div class="fcs">Info: kontak satgas, subkoordinator, titik kumpul A/B, nomor darurat, standar sistem pengendalian aktif, status 7 dokumen MKB. Read-only.</div>
+            <div class="fctags"><span class="tag tb">Pra</span><span class="tag tgr">Read-only</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#3B8BD4">
+            <div class="fct"><i class="ti ti-route" style="color:#3B8BD4"></i> Call Tree Unit</div>
+            <div class="fcs">Lihat pohon jaringan komunikasi unit (nama, jabatan, kontak eskalasi) dari RTDB IV.d. Read-only, referensi cepat siapa harus dihubungi.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB IV.d</span><span class="tag tb">Pra</span><span class="tag tgr">Read-only</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-database"></i> Data yang Digunakan</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Data</th><th>Sumber Dokumen MKB</th><th>Aksi</th></tr></thead>
+          <tbody>
+            <tr><td>Prosedur evakuasi per jenis bencana</td><td><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB IV.a</span></td><td>Baca, simpan offline</td></tr>
+            <tr><td>Nomor telepon darurat (BNPB, 113, 110, 115)</td><td><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB IV.b</span></td><td>Baca, simpan offline</td></tr>
+            <tr><td>Grab list dokumen &amp; barang penting</td><td><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB IV.c</span></td><td>Baca, simpan offline</td></tr>
+            <tr><td>Standar sistem pengendalian aktif</td><td><span class="pb" style="background:var(--pbg);color:#3C3489">RKBU V.a</span> dari Subkoord.</td><td>Baca, tampil di profil unit</td></tr>
+            <tr><td>Status kondisi diri (aman/butuh bantuan)</td><td>Input mandiri</td><td>Input → kirim ke satgas</td></tr>
+            <tr><td>Laporan potensi bencana (foto, GPS)</td><td>Input mandiri</td><td>Input → kirim ke satgas</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-layout-dashboard"></i> Beranda</div>
+            <div class="ue">Status unit (normal/siaga/darurat)</div>
+            <div class="ue">Banner SC jika broadcast aktif</div>
+            <div class="ue">Shortcut panduan offline</div>
+            <div class="ue">Riwayat SC saya</div>
+          </div>
+          <div class="uc"><div class="un"><i class="ti ti-heart"></i> Safety Check</div>
+            <div class="ue">Card broadcast: jenis, pengirim, waktu</div>
+            <div class="ue">2 tombol besar: Aman / Butuh Bantuan</div>
+            <div class="ue">Konfirmasi terkirim + riwayat</div>
+          </div>
+          <div class="uc"><div class="un"><i class="ti ti-info-circle"></i> Profil MKB &amp; Panduan</div>
+            <div class="ue">Standar sistem pengendalian aktif</div>
+            <div class="ue">Prosedur evakuasi, titik kumpul</div>
+            <div class="ue">Nomor darurat, kontak satgas</div>
+            <div class="ue">Status 7 dokumen MKB (badge)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 1: PIMPINAN SATKER ===== -->
+    <div class="panel" id="p1">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--abg);color:#412402"><i class="ti ti-building"></i></div>
+        <div><div class="rtitle">Pimpinan Satker / Kepala Kantor</div><div class="rsub">Pengambil keputusan unit · Approve &amp; aktifkan dokumen MKB (final) · Deklarasi darurat · Monitor SDM &amp; layanan kritis · Approve rilis komunikasi</div></div>
+        <div class="rtags"><span class="tag tb">Pra</span><span class="tag tr">Saat</span><span class="tag tg">Pasca</span></div>
+      </div>
+      <div class="alert" style="background:var(--abg);border-color:#EF9F27">
+        <i class="ti ti-star" style="color:#BA7517"></i>
+        <div><strong>Approval Pimpinan = dokumen aktif di sistem.</strong> Setelah approve, dokumen langsung berstatus aktif dan notifikasi dikirim otomatis ke Subkoordinator untuk ditindaklanjuti secara analisis terpisah. Tidak ada alur reviu ke Subkoordinator.</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#BA7517">
+            <div class="fct"><i class="ti ti-check-circle" style="color:#BA7517"></i> Approval &amp; Aktivasi Dokumen MKB <span class="cbadge">Diperbarui</span></div>
+            <div class="fcs">Terima notif kompilasi 7 dokumen dari Tim Pengembang → review per tab → Setujui (dokumen langsung aktif + notif otomatis ke Subkoordinator) / Kembalikan dengan catatan.</div>
+            <div class="fctags"><span class="tag ta">Pra-bencana</span><span class="tag tgr">Final approval</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#E24B4A">
+            <div class="fct"><i class="ti ti-siren" style="color:#E24B4A"></i> Deklarasi Status Bencana <span class="nbadge">Diperbarui V15</span></div>
+            <div class="fcs">Trigger: asesmen 5 aspek (SDM, Aset, TIK, Arsip, Layanan Terdampak) dari Tim Satgas ditampilkan ringkas di halaman ini dengan tombol "Lihat Detail Lengkap 5 Aspek" → Deklarasi Keadaan Bencana → trigger notif ke Satgas, Subkoordinator, Kepala Perwakilan → sistem masuk fase "Saat Bencana". Deklarasi bencana selesai juga dari sini.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.4</span><span class="tag tr">Saat bencana</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#E24B4A">
+            <div class="fct"><i class="ti ti-users" style="color:#E24B4A"></i> Monitor Safety Check Pegawai</div>
+            <div class="fcs">Real-time: aman/butuh bantuan/belum respons per pegawai. Progress bar, tabel detail, filter per seksi.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.1</span><span class="tag tr">Saat bencana</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#BA7517">
+            <div class="fct"><i class="ti ti-database" style="color:#BA7517"></i> Rekap Sumber Daya (SDM &amp; Aset)</div>
+            <div class="fcs">Status SDM: hadir/WFH/cuti/tidak diketahui. Status aset: gedung, genset, kendaraan, P3K, HT. Data diupdate Tim Satgas.</div>
+            <div class="fctags"><span class="tag tr">Saat bencana</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#BA7517">
+            <div class="fct"><i class="ti ti-activity" style="color:#BA7517"></i> Status Layanan Kritis</div>
+            <div class="fcs">Monitor layanan kritis: normal/terganggu/terhenti. Sistem pengendalian alternatif aktif. PIC per layanan dari RKBU.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">5.1</span><span class="pb" style="background:var(--rbg);color:#791F1F">5.2</span></div>
+          </div>
+          <div class="fc" style="border-left-color:#BA7517">
+            <div class="fct"><i class="ti ti-message-dots" style="color:#BA7517"></i> Approval Rilis Komunikasi</div>
+            <div class="fcs">Review draft pesan kunci dari satgas → Setujui → distribusi internal/eksternal. Tolak → satgas revisi. Probis 4.2.</div>
+            <div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">4.2</span><span class="tag tr">Saat bencana</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-layout-dashboard"></i> Dashboard Kantor</div>
+            <div class="ue">Status unit besar di atas</div>
+            <div class="ue">Badge dokumen menunggu approval</div>
+            <div class="ue">Snapshot SC pegawai</div>
+            <div class="ue">Shortcut: deklarasi, RTDB, layanan kritis</div>
+          </div>
+          <div class="uc"><div class="un"><i class="ti ti-check-circle"></i> Approval Dokumen MKB</div>
+            <div class="ue">Tab per dokumen (ADB, AR, SKB, RTDB, RKBU, RPKK)</div>
+            <div class="ue">Setujui (→ aktif + notif Subkoord) / Kembalikan + catatan</div>
+            <div class="ue">Riwayat approval + timestamp</div>
+          </div>
+          <div class="uc"><div class="un"><i class="ti ti-users"></i> Monitor SC &amp; Sumber Daya</div>
+            <div class="ue">Metric: aman/bantuan/belum</div>
+            <div class="ue">Tabel SDM + aset (badge kondisi)</div>
+            <div class="ue">Tabel layanan kritis + status</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 2: TIM SATGAS ===== -->
+    <div class="panel" id="p2">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--rbg);color:#791F1F"><i class="ti ti-shield-bolt"></i></div>
+        <div><div class="rtitle">Tim Satgas / Rencana Tanggap Darurat Bencana</div><div class="rsub">Simulasi &amp; drill pra-bencana · Bergerak saat bencana: verifikasi laporan, damage assessment, update sumber daya, eksekusi call tree, draft komunikasi · Log &amp; monitoring pemulihan pasca-bencana</div></div>
+        <div class="rtags"><span class="tag tb">Pra</span><span class="tag tr">Saat</span><span class="tag tg">Pasca</span></div>
+      </div>
+      <div class="alert" style="background:var(--rbg);border-color:#E24B4A">
+        <i class="ti ti-info-circle" style="color:#791F1F"></i>
+        <div><strong>Diperbarui V15:</strong> Damage Assessment kini terbagi 5 tab aspek (SDM, Aset, TIK, Arsip, Layanan Terdampak) dengan form terperinci per aspek. Hasilnya otomatis memicu notifikasi deklarasi ke Pimpinan dan tampil di dashboard Perwakilan/Subkoordinator/Koordinator lengkap dengan status "sudah/belum dideklarasikan" — meski bencana belum resmi dideklarasikan Pimpinan.</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#3B8BD4"><div class="fct"><i class="ti ti-run" style="color:#3B8BD4"></i> Jadwal Simulasi &amp; Drill <span class="nbadge">Diperbarui</span></div><div class="fcs">Tabel jadwal (Terjadwal/Direncanakan/Selesai) dengan aksi Lihat &amp; Input Hasil per baris. Card "Laporan Simulasi" berisi breakdown laporan per jadwal Selesai + tombol "+ Tambah Laporan Simulasi". Catatan evaluasi generik yang tidak terpakai sudah dihapus.</div><div class="fctags"><span class="pb" style="background:var(--npale);color:#0C447C">2.2</span><span class="tag tb">Pra-bencana</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-check" style="color:#E24B4A"></i> Verifikasi Alert Bencana <span class="nbadge">Diperbarui</span></div><div class="fcs">Field identik dengan form pelaporan pegawai — Pelapor, Waktu, Jenis Bencana, Level Keparahan, Lokasi, Deskripsi Singkat, Lihat Lampiran (Foto/Video/Pesan Suara) — lalu Verifikasi (eskalasi ke Pimpinan) atau Tolak (false alarm).</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.1</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-clipboard-check" style="color:#E24B4A"></i> Damage Assessment — 5 Aspek <span class="nbadge">Dirombak V15</span></div><div class="fcs">Form dipecah jadi 5 tab: <strong>SDM</strong> (rekap kondisi pegawai 4-metrik + jumlah SDM lengkap/tidak, korban jiwa, kondisi fisik &amp; psikis), <strong>Aset</strong> (kondisi bangunan, kendaraan operasional termasuk kapal patroli, perangkat TIK &amp; non-TIK), <strong>TIK</strong> (kondisi jaringan/internet/power, aplikasi utama &amp; pendukung, akses &amp; backup data), <strong>Arsip</strong> (identifikasi arsip vital/penting, evakuasi fisik arsip), dan <strong>Layanan Terdampak</strong> (16 layanan ADB dengan flag Kritis/Tidak Kritis + status Normal/Terganggu/Berhenti Total). Kirim Asesmen memicu notifikasi ke menu Asesmen Pimpinan.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.4</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-database" style="color:#E24B4A"></i> Update Status Sumber Daya (SDM &amp; Aset) <span class="nbadge">Diperbarui</span></div><div class="fcs">Status SDM 5 kategori (WFO/WFH/Dinas Luar Kantor/Cuti/Tanpa Keterangan) masing-masing dengan tombol Lihat Daftar. Dropdown Aset kini sinkron dengan Aset Kritis hasil input ARKB Tim Pengembang — bukan daftar terpisah.</div><div class="fctags"><span class="tag tr">Saat bencana</span><span class="tag tgr">Offline</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-route" style="color:#E24B4A"></i> Eksekusi Call Tree Eskalasi <span class="nbadge">Diperbarui</span></div><div class="fcs">Konfirmasi eskalasi level 1 tetap ada, ditambah toggle "Lihat Susunan Call Tree Unit" — repository pohon jaringan komunikasi (nama, jabatan, kontak) dari RTDB IV.d, bukan cuma tombol aksi.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB IV.d</span></div></div>
+          <div class="fc" style="border-left-color:#BA7517"><div class="fct"><i class="ti ti-pencil" style="color:#BA7517"></i> Susun Draft Pesan Kunci</div><div class="fcs">Buat draft narasi komunikasi berdasarkan template RPKK (4 fase) → submit ke Pimpinan untuk di-approve sebelum dirilis.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">4.1</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-checklist" style="color:#1D9E75"></i> Log Pemulihan (Eksekusi RKB)</div><div class="fcs">Checklist pemulihan layanan kritis (WFH, tethering, alternate site) + log tindakan bertimestamp per petugas, sebagai bahan penyusunan LPKB oleh Tim Impl. RKB.</div><div class="fctags"><span class="pb" style="background:var(--gbg);color:#085041">5.1</span><span class="tag tg">Pasca-bencana</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-chart-line" style="color:#1D9E75"></i> Monitoring Pemulihan Layanan</div><div class="fcs">Dashboard: layanan pulih/dalam pemulihan, waktu berlalu, RTO terlewat, status per layanan kritis vs target RTO. Deklarasi seluruh layanan pulih ke Pimpinan.</div><div class="fctags"><span class="pb" style="background:var(--gbg);color:#085041">5.2</span><span class="tag tg">Pasca-bencana</span></div></div>
+          <div class="fc" style="border-left-color:#3B8BD4"><div class="fct"><i class="ti ti-folder" style="color:#3B8BD4"></i> Akses SOP &amp; Panduan Offline</div><div class="fcs">Buka RTDB, prosedur evakuasi, grab list, nomor darurat, standar sistem pengendalian langsung dari app. Prioritas offline storage.</div><div class="fctags"><span class="tag tgr">Offline</span></div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-database"></i> Data yang Digunakan</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Data</th><th>Sumber</th><th>Catatan</th></tr></thead>
+          <tbody>
+            <tr><td>Asesmen 5 aspek (SDM, Aset, TIK, Arsip, Layanan)</td><td>Input Tim Satgas</td><td>Trigger notifikasi deklarasi ke Pimpinan</td></tr>
+            <tr><td>16 Layanan (8 kritis + 8 tidak kritis) &amp; flag</td><td><span class="pb" style="background:var(--npale);color:#0C447C">ADB</span> Tim Pengembang</td><td>Sama persis dgn tabel kerja ADB — bukan daftar terpisah</td></tr>
+            <tr><td>Daftar Aset Kritis untuk dropdown Update Aset</td><td><span class="pb" style="background:var(--npale);color:#0C447C">ARKB</span> Tim Pengembang</td><td>8 aset kritis, sinkron otomatis</td></tr>
+            <tr><td>Prosedur evakuasi, nomor darurat, grab list</td><td><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB</span></td><td>Real: Kebakaran, Kerusuhan, Pandemi, Kabut Asap</td></tr>
+            <tr><td>Susunan Call Tree (nama, jabatan, kontak)</td><td><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB IV.d</span></td><td>Repository, bukan sekadar tombol eksekusi</td></tr>
+            <tr><td>Template pesan kunci 7 elemen</td><td><span class="pb" style="background:var(--rbg);color:#791F1F">RPKK</span></td><td>Pre-filled per fase</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-layout-dashboard"></i> Dashboard Satgas</div><div class="ue">Badge alert masuk (angka merah)</div><div class="ue">Kondisi Pegawai: 4 metrik + klik detail</div><div class="ue">Status bencana aktif</div><div class="ue">Shortcut: verifikasi, damage asmt, SOP</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-clipboard-check"></i> Damage Assessment</div><div class="ue">5 tab: SDM, Aset, TIK, Arsip, Layanan Terdampak</div><div class="ue">Tiap field: tombol status + jumlah/keterangan</div><div class="ue">Kirim → trigger notifikasi ke Pimpinan</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-route"></i> Call Tree</div><div class="ue">Tombol konfirmasi eskalasi level 1</div><div class="ue">Toggle "Lihat Susunan Call Tree Unit"</div><div class="ue">Kartu bertingkat: nama, jabatan, kontak</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-checklist"></i> Log &amp; Monitoring Pemulihan</div><div class="ue">Checklist pemulihan + log tindakan</div><div class="ue">4 metrik: pulih/dalam pemulihan/waktu/RTO terlewat</div><div class="ue">Tombol deklarasi pulih ke Pimpinan</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 3: TIM PENGEMBANG ===== -->
+    <div class="panel" id="p3">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--rosebg);color:#4B1528"><i class="ti ti-edit"></i></div>
+        <div><div class="rtitle">Tim Pengembang Dokumen MKB</div><div class="rsub">Menyusun 6 dari 7 dokumen MKB unit · Kompilasi → submit ke Pimpinan Satker · Koordinasi dengan Subkoordinator</div></div>
+        <div class="rtags"><span class="tag tb">Pra-bencana</span></div>
+      </div>
+      <div class="alert" style="background:var(--rosebg);border-color:#D4537E">
+        <i class="ti ti-info-circle" style="color:#9D2257"></i>
+        <div><strong>Diperbarui v4 — perombakan alur ARKB→ADB→SKB:</strong> ARKB kini <em>risk-first</em> (kategori &amp; jenis ancaman, kemungkinan, dampak dipetakan dulu, baru aset kritis yang terdampak — bisa multiple). Level Risiko dihitung otomatis dari Matriks Asesmen Risiko rujukan Kemenkeu. ADB punya kalkulator interaktif 6-periode yang otomatis menghasilkan RTO/MTPD/flag kritis. SKB hanya menampilkan layanan yang di-flag kritis di ADB, dengan Bentuk Strategi dari 5 pilihan diskrit. Menu "Input Hasil Evaluasi" sudah dihapus. Seluruh contoh data bersumber dari Dokumen MKB asli KPP Madya Pekanbaru.</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-alert-triangle" style="color:#9D2257"></i> ARKB — Profil Risiko (Risk-First) <span class="nbadge">Dirombak</span></div><div class="fcs">Langkah 1: Kategori Ancaman (Bencana Alam/Non Alam/Sosial) → Jenis Ancaman (cascading dropdown) → Kemungkinan → Dampak → Uraian. Langkah 2: tambah Aset Kritis &amp; Jenis Aset yang terdampak (nama bebas + dropdown TIK/Infrastruktur Fisik/Dokumen), bisa multiple per risiko via tombol tambah-ke-daftar. Hasil: Matriks Hasil Asesmen Risiko Bencana — Level Risiko, Prioritas, dan selector Mitigasi (Ya/Tidak, auto-Ya untuk Tinggi/Sangat Tinggi) yang memunculkan link Prosedur Evakuasi RTDB. Toggle tabel rujukan Kemenkeu (Level Dampak + Matriks Asesmen) tersedia di halaman.</div><div class="fctags"><span class="tag tro">Probis 1.1</span></div></div>
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-chart-bar" style="color:#9D2257"></i> ADB — Kalkulator RTO/MTPD/Flag Kritis <span class="nbadge">Dirombak</span></div><div class="fcs">Input Unit Pelaksana + Nama Layanan, lalu matrix 6 periode (1 Jam s.d. &gt;8 Hari) × (skor dampak 1–5 + jumlah SDM pemulihan). Tombol Hitung otomatis menghasilkan RTO (periode pertama skor≥3), MTPD (periode pertama skor≥5), dan flag kritis (total skor ≥13). Daftar 16 layanan (8 kritis) dengan filter Semua/Hanya Kritis.</div><div class="fctags"><span class="tag tro">Probis 1.2</span></div></div>
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-map" style="color:#9D2257"></i> SKB — Strategi Pemulihan <span class="nbadge">Dirombak</span></div><div class="fcs">Hanya layanan ter-flag Kritis di ADB yang muncul. Bentuk Strategi dipilih dari 5 opsi (WFH Penuh / WFH Sebagian+Tethering / Alternate Site / DRC Backup / Manual Sementara), dilengkapi Jenis &amp; Jumlah Sumber Daya Utama — figur real dari tabel Penentuan Sumber Daya Pemulihan dokumen MKB.</div><div class="fctags"><span class="tag tro">Probis 1.3</span></div></div>
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-alert-octagon" style="color:#9D2257"></i> RTDB — Lanjutan ARKB</div><div class="fcs">Peringkat jenis bencana otomatis dari level risiko ARKB tertinggi ke terendah. CRUD (tambah/edit/hapus) untuk Prosedur Utama per risiko, Grab List, dan Nomor Darurat.</div><div class="fctags"><span class="tag tro">Probis 1.4</span></div></div>
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-refresh" style="color:#9D2257"></i> RKBU — Rencana Keberlangsungan</div><div class="fcs">RKBU-a (Standar SP, read-only dari Subkoordinator, dengan catatan cakupan layanan bisa berbeda dari ADB unit) + RKBU-b (rencana pemulihan per layanan kritis, kini dengan kolom MTPD selain RTO).</div><div class="fctags"><span class="tag tro">Probis 1.5</span></div></div>
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-sitemap" style="color:#9D2257"></i> RPKK — Form Susun Call Tree <span class="nbadge">Baru</span></div><div class="fcs">Selain template pesan kunci 7 elemen, kini ada form Call Tree: Nama Orang, Jabatan, Status Tim (Ketua/Wakil Ketua/Anggota Inti/Anggota Cadangan/Narahubung Eksternal), Kontak. Rekap tersimpan jadi acuan Eksekusi Call Tree Satgas &amp; Profil Pegawai.</div><div class="fctags"><span class="tag tro">Probis 1.6</span></div></div>
+          <div class="fc" style="border-left-color:#9D2257"><div class="fct"><i class="ti ti-send" style="color:#9D2257"></i> Kompilasi &amp; Submit ke Pimpinan</div><div class="fcs">Setelah dokumen lengkap → kompilasi → kirim ke Pimpinan Satker. Sistem cek kelengkapan sebelum bisa disubmit. Notif otomatis ke Pimpinan.</div><div class="fctags"><span class="tag tro">Alur approval</span></div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-database"></i> Data yang Digunakan</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Dokumen</th><th>Input Tim Pengembang</th><th>Output / Digunakan oleh</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pb" style="background:var(--npale);color:#0C447C">ARKB</span></td><td>Risiko (kategori, jenis, kemungkinan, dampak) → aset terdampak multiple</td><td>Level Risiko + Mitigasi otomatis · RTDB, Satgas (dropdown aset), popup referensi semua role</td></tr>
+            <tr><td><span class="pb" style="background:var(--npale);color:#0C447C">ADB</span></td><td>16 layanan × skor dampak 6 periode + jumlah SDM</td><td>RTO/MTPD/flag kritis otomatis · Feed ke SKB &amp; Satgas (Layanan Terdampak)</td></tr>
+            <tr><td><span class="pb" style="background:var(--npale);color:#0C447C">SKB</span></td><td>Bentuk Strategi + Jenis/Jumlah SDA per layanan kritis (hasil flag ADB)</td><td>Tim RKB untuk eksekusi pemulihan (checklist)</td></tr>
+            <tr><td><span class="pb" style="background:var(--rbg);color:#791F1F">RTDB</span></td><td>Prosedur evakuasi (ranking dari ARKB), nomor darurat, grab list</td><td>Panduan offline pegawai &amp; satgas</td></tr>
+            <tr><td><span class="pb" style="background:var(--rbg);color:#791F1F">RKBU-b</span></td><td>Rencana pemulihan per layanan kritis (RTO, MTPD, sistem pengendalian, PIC)</td><td>Referensi Tim RKB (stacked dgn SKB)</td></tr>
+            <tr><td><span class="pb" style="background:var(--rbg);color:#791F1F">RPKK</span></td><td>Template narasi 7 elemen + susunan Call Tree unit</td><td>Template satgas draft komunikasi · Eksekusi Call Tree</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-alert-triangle"></i> ARKB</div><div class="ue">Form 2 langkah: risiko dulu, aset kemudian</div><div class="ue">Toggle tabel rujukan Kemenkeu</div><div class="ue">Matriks hasil + selector Mitigasi per baris</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-chart-bar"></i> ADB</div><div class="ue">Matrix input 6 periode × skor + SDM</div><div class="ue">Hasil kalkulasi real-time (RTO/MTPD/flag)</div><div class="ue">Filter Semua/Hanya Kritis</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-map"></i> SKB</div><div class="ue">Tabel layanan kritis hasil flagging saja</div><div class="ue">Popup Input Strategi (3 field + pre-fill saat edit)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 4: TIM IMPLEMENTASI RKB ===== -->
+    <div class="panel" id="p4">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--pbg);color:#3C3489"><i class="ti ti-refresh"></i></div>
+        <div><div class="rtitle">Tim Implementasi RKB</div><div class="rsub">Eksekusi rencana pemulihan saat &amp; pasca bencana · Menyusun &amp; mengesahkan LPKB · Monitor recovery layanan kritis</div></div>
+        <div class="rtags"><span class="tag tb">Pra</span><span class="tag tr">Saat</span><span class="tag tg">Pasca</span></div>
+      </div>
+      <div class="alert" style="background:var(--pbg);border-color:#7F77DD">
+        <i class="ti ti-info-circle" style="color:#6B3FA0"></i>
+        <div><strong>Diperbarui v4:</strong> Referensi RKBU &amp; SKB kini tersusun atas-bawah (bukan kiri-kanan) — dokumen SKB (Layanan Kritis &amp; Strategi Terpilih) di atas, RKBU-b (Rencana Pemulihan) di bawah. Checklist eksekusi kini per layanan kritis sesuai RKBU (bukan satu checklist generik), dengan item Sistem Pengendalian yang bisa dicentang atau ditambah manual, dan % eksekusi dihitung otomatis. Monitoring Status Layanan sekarang dashboard nyata yang datanya <em>identik</em> dengan progress checklist — bukan tabel statis terpisah. LPKB disahkan Ketua Tim Implementasi RKB — bukan Ketua Pengembang.</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#7F77DD"><div class="fct"><i class="ti ti-folder" style="color:#7F77DD"></i> Referensi RKBU &amp; SKB <span class="nbadge">Dirombak</span></div><div class="fcs">Tersusun atas-bawah: tabel SKB "Layanan Kritis (Hasil Flagging ADB) &amp; Strategi Terpilih" (8 layanan, RTO/MTPD/Bentuk Strategi/SDA) di atas, tabel RKBU-b "Rencana Pemulihan per Layanan Kritis" (5 layanan, Prioritas/RTO/MTPD/Sistem Pengendalian/PIC/Alternate Site) di bawah. Tombol "Buka" dokumen kini fungsional (sebelumnya kosong).</div><div class="fctags"><span class="tag tp">RKBU V, SKB III</span><span class="tag tgr">Offline</span></div></div>
+          <div class="fc" style="border-left-color:#7F77DD"><div class="fct"><i class="ti ti-checklist" style="color:#7F77DD"></i> Eksekusi RKB — Checklist per Layanan Kritis <span class="nbadge">Dirombak</span></div><div class="fcs">Tab pilih salah satu dari 5 layanan kritis (RKBU). Checklist berisi item Sistem Pengendalian yang diidentifikasi, bisa dicentang atau ditambah manual via input. Progress % dihitung otomatis per layanan dan rata-rata keseluruhan.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">5.1</span></div></div>
+          <div class="fc" style="border-left-color:#7F77DD"><div class="fct"><i class="ti ti-chart-line" style="color:#7F77DD"></i> Monitoring Status Layanan <span class="nbadge">Dirombak</span></div><div class="fcs">Dashboard: Total Layanan Kritis, Normal, Dalam Proses Pemulihan, Belum Pulih (100% checklist=Normal, 1–99%=Dalam Proses, 0%=Belum Pulih). Data bersumber langsung dari progress checklist — centang di satu halaman otomatis mengubah angka di halaman lain.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">5.2</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-file-report" style="color:#1D9E75"></i> Susun &amp; Sahkan LPKB</div><div class="fcs">Input: kronologi, tindakan satgas, tindakan tim RKB, asesmen kecukupan, rekomendasi → sahkan (Ketua Tim Impl. RKB) → kirim ke Subkoordinator.</div><div class="fctags"><span class="pb" style="background:var(--gbg);color:#085041">LPKB VII</span><span class="tag tg">Pasca</span></div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-checklist"></i> Checklist RKB</div><div class="ue">Tab 5 layanan kritis + % per tab</div><div class="ue">Item checklist + form tambah manual</div><div class="ue">Progress bar layanan terpilih + rata-rata</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-chart-line"></i> Monitoring Status Layanan</div><div class="ue">4 metrik: Total/Normal/Proses/Belum Pulih</div><div class="ue">Sinkron real-time dgn Checklist RKB</div><div class="ue">Update status manual per layanan</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-file-report"></i> Form LPKB</div><div class="ue">4 field: kronologi, tindakan satgas, tim RKB, rekomendasi</div><div class="ue">Tombol: Sahkan (Ketua Tim Impl. RKB)</div><div class="ue">Kirim ke Subkoordinator</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 5: SUBKOORDINATOR ===== -->
+    <div class="panel" id="p5">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--pbg);color:#3C3489"><i class="ti ti-network"></i></div>
+        <div><div class="rtitle">Subkoordinator MKB</div><div class="rsub">Kantor Pusat Eselon I · Analisis dokumen unit · Susun &amp; tetapkan standar SP (mandiri) · Monitor jadwal simulasi &amp; status layanan lintas unit · Request broadcast SC ke Koordinator</div></div>
+        <div class="rtags"><span class="tag tb">Pra</span><span class="tag tr">Saat</span><span class="tag tg">Pasca</span></div>
+      </div>
+      <div class="alert" style="background:var(--pbg);border-color:#7F77DD">
+        <i class="ti ti-info-circle" style="color:#6B3FA0"></i>
+        <div><strong>Baru V15:</strong> Banner "Asesmen Bencana Masuk" kini tampil otomatis di Monitor SC &amp; Sumber Daya dan Monitoring Status Layanan setiap kali Tim Satgas unit di bawah Eselon I ini mengirim asesmen 5 aspek — lengkap dengan status "Belum/Sudah Dideklarasikan Pimpinan" — sehingga Subkoordinator tahu ada kondisi darurat di unit meski Pimpinan unit belum resmi mendeklarasikan.</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#6B3FA0"><div class="fct"><i class="ti ti-file-search" style="color:#6B3FA0"></i> Analisis Dokumen Unit <span class="nbadge">Dirombak</span></div><div class="fcs">Form: Aspek (dropdown 7 tipe dokumen MKB), Temuan (free text), Rekomendasi (free text) → "Tambah ke Rekap Analisis". Rekap tampil sebagai tabel dengan tombol Edit per baris, ditutup tombol "Kirim Hasil Reviu ke Unit".</div><div class="fctags"><span class="tag tp">Analisis terpisah</span></div></div>
+          <div class="fc" style="border-left-color:#6B3FA0"><div class="fct"><i class="ti ti-settings" style="color:#6B3FA0"></i> Susun &amp; Tetapkan Standar Sistem Pengendalian <span class="nbadge">Dirombak</span></div><div class="fcs">Tipe Organisasi + Layanan Kritis, lalu Bentuk Strategi (5 opsi, sama dgn SKB), Jenis Sumber Daya Utama, Jumlah Sumber Daya Utama, RTO Standar, Waktu Aktivasi SDM → Tetapkan/Publish mandiri → otomatis menempel ke unit sesuai tipe organisasi.</div><div class="fctags"><span class="pb" style="background:var(--pbg);color:#3C3489">RKBU V.a</span><span class="tag tp">Standarisasi mandiri</span></div></div>
+          <div class="fc" style="border-left-color:#3B8BD4"><div class="fct"><i class="ti ti-calendar-stats" style="color:#3B8BD4"></i> Dashboard Jadwal Simulasi &amp; Drill <span class="nbadge">Baru</span></div><div class="fcs">Statistik Terjadwal/Direncanakan/Selesai, histogram jumlah simulasi per bulan, breakdown jenis simulasi (Evakuasi Kebakaran/Drill Gempa/Table-top/Full-scale), dan tabel unit kerja + status simulasinya.</div><div class="fctags"><span class="tag tb">Pra-bencana</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-broadcast" style="color:#E24B4A"></i> Request Broadcast SC ke Koordinator</div><div class="fcs">Buat request broadcast SC (scope: unit Eselon I atau tertentu) → kirim ke Koordinator untuk di-approve → setelah disetujui, broadcast otomatis dikirim ke unit.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.2</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#6B3FA0"><div class="fct"><i class="ti ti-radar" style="color:#6B3FA0"></i> Monitor SC &amp; Sumber Daya <span class="nbadge">Diperbarui</span></div><div class="fcs">Rekap agregat kanwil (kartu info, tidak diklik lagi — karena angka gabungan banyak unit tidak cocok ditampilkan sebagai satu daftar nama). Tabel per unit: <strong>semua</strong> unit punya toggle "Lihat" per kategori Aman/Bantuan/Belum Respons. Kolom "Tingkat Respons" (Aman+Bantuan/Total) menggantikan progress bar tanpa keterangan.</div><div class="fctags"><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-chart-line" style="color:#E24B4A"></i> Monitoring Status Layanan Lintas Unit <span class="nbadge">Baru</span></div><div class="fcs">Rekap seluruh unit terdampak: Total Layanan Kritis, Normal, Dalam Proses Pemulihan, Belum Pulih — klik metrik untuk lihat daftar layanan (nama + unit). Tabel per unit dengan filter dropdown &amp; tombol Detail per unit. Data KPP Madya Pekanbaru sinkron persis dengan halaman Tim Impl. RKB.</div><div class="fctags"><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#6B3FA0"><div class="fct"><i class="ti ti-chart-bar" style="color:#6B3FA0"></i> Monitoring Kepatuhan MKB Unit</div><div class="fcs">Dashboard kepatuhan per unit: skor 7 dokumen, simulasi, awareness. Identifikasi unit perlu perhatian.</div><div class="fctags"><span class="pb" style="background:var(--pbg);color:#3C3489">6.2</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-file-report" style="color:#1D9E75"></i> Terima &amp; Review LPKB</div><div class="fcs">Terima LPKB dari Tim Implementasi RKB → review → teruskan ke Koordinator beserta rekomendasi tindak lanjut.</div><div class="fctags"><span class="pb" style="background:var(--gbg);color:#085041">LPKB VII</span><span class="tag tg">Pasca</span></div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-file-search"></i> Analisis Dok. Unit</div><div class="ue">Form Aspek/Temuan/Rekomendasi</div><div class="ue">Rekap tabel + Edit per baris</div><div class="ue">Tombol Kirim Hasil Reviu ke Unit</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-settings"></i> Standar SP</div><div class="ue">Bentuk Strategi + Jenis/Jumlah SDA</div><div class="ue">Tombol Tetapkan/Publish mandiri</div><div class="ue">Preview distribusi per tipe organisasi</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-calendar-stats"></i> Jadwal Simulasi</div><div class="ue">4 kartu statistik + histogram bulanan</div><div class="ue">Breakdown jenis simulasi (progress bar)</div><div class="ue">Tabel unit kerja + status</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-radar"></i> Monitor SC per Unit</div><div class="ue">Kartu agregat kanwil (info, non-klik)</div><div class="ue">Tabel per unit + toggle "Lihat" per kategori</div><div class="ue">Kolom Tingkat Respons (%)</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-chart-line"></i> Monitoring Status Layanan</div><div class="ue">4 metrik klik → popup daftar layanan</div><div class="ue">Tabel per unit + filter dropdown</div><div class="ue">Tombol Detail → popup layanan per unit</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 6: KOORDINATOR ===== -->
+    <div class="panel" id="p6">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--tbg);color:#042C53"><i class="ti ti-crown"></i></div>
+        <div><div class="rtitle">Koordinator MKB</div><div class="rsub">Setjen Kemenkeu — Karo Organta · Approve request broadcast SC · Broadcast nasional langsung · Dashboard nasional · Audit kepatuhan</div></div>
+        <div class="rtags"><span class="tag tb">Pra</span><span class="tag tr">Saat</span><span class="tag tg">Pasca</span></div>
+      </div>
+      <div class="alert" style="background:var(--tbg);border-color:#1D9E75">
+        <i class="ti ti-star" style="color:#0E7490"></i>
+        <div><strong>2 peran kunci broadcast:</strong> (1) Approve request broadcast SC dari Subkoordinator → broadcast dikirim ke unit. (2) Kirim broadcast nasional langsung tanpa approval siapapun (override untuk bencana nasional). Standar SP tidak perlu approval Koordinator — ditetapkan mandiri oleh Subkoordinator.</div>
+      </div>
+      <div class="alert" style="background:var(--tbg);border-color:#0E7490">
+        <i class="ti ti-info-circle" style="color:#0E7490"></i>
+        <div><strong>Baru V15:</strong> 3 dashboard nasional ditambahkan — Jadwal Simulasi &amp; Drill Nasional, Monitor SC &amp; Sumber Daya Nasional, dan Monitoring Status Layanan Nasional — masing-masing dengan filter Provinsi dan Jenis Unit Eselon I, merangkum data dari seluruh Subkoordinator per Eselon I di Indonesia.</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-check" style="color:#E24B4A"></i> Approve Request Broadcast SC</div><div class="fcs">Terima request broadcast dari Subkoordinator → review → Approve (broadcast dikirim) / Tolak. Koordinator selalu terinformasi sebelum broadcast terjadi.</div><div class="fctags"><span class="pb" style="background:var(--rbg);color:#791F1F">3.2</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-broadcast" style="color:#E24B4A"></i> Broadcast Nasional Langsung (Override)</div><div class="fcs">Kirim broadcast SC ke seluruh 286 unit Kemenkeu secara langsung — tanpa approval. Fungsi override untuk bencana nasional. Probis 3.3.</div><div class="fctags"><span class="pb" style="background:var(--tbg);color:#042C53">3.3</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#3B8BD4"><div class="fct"><i class="ti ti-calendar-stats" style="color:#3B8BD4"></i> Jadwal Simulasi &amp; Drill Nasional <span class="nbadge">Baru</span></div><div class="fcs">Statistik Terjadwal/Direncanakan/Selesai lintas 286 unit, histogram simulasi per bulan, breakdown jenis simulasi, tabel unit kerja + Provinsi + Eselon I. Filter Provinsi &amp; Jenis Unit Eselon I.</div><div class="fctags"><span class="tag tb">Pra-bencana</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-radar" style="color:#E24B4A"></i> Monitor SC &amp; Sumber Daya Nasional <span class="nbadge">Baru</span></div><div class="fcs">Rekap SC Aman/Butuh Bantuan/Belum Respons/Total seluruh Indonesia, tabel per kombinasi Provinsi × Eselon I dengan Tingkat Respons. Filter Provinsi &amp; Jenis Unit Eselon I.</div><div class="fctags"><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#E24B4A"><div class="fct"><i class="ti ti-chart-line" style="color:#E24B4A"></i> Monitoring Status Layanan Nasional <span class="nbadge">Baru</span></div><div class="fcs">Rekap Unit Terdampak/Normal/Dalam Proses/Belum Pulih nasional, komposisi status (stacked bar), tabel per Provinsi × Eselon I dengan tombol Detail ke level Subkoordinator. Filter Provinsi &amp; Jenis Unit Eselon I.</div><div class="fctags"><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#0E7490"><div class="fct"><i class="ti ti-chart-bar" style="color:#0E7490"></i> Audit Kepatuhan Nasional</div><div class="fcs">Review tahunan seluruh Eselon I: skor 7 dokumen, simulasi, awareness. Output: Laporan/Skor Kepatuhan. Probis 6.2.</div><div class="fctags"><span class="pb" style="background:var(--tbg);color:#042C53">6.2</span><span class="tag tg">Pasca</span></div></div>
+          <div class="fc" style="border-left-color:#0E7490"><div class="fct"><i class="ti ti-file-report" style="color:#0E7490"></i> Terima LPKB &amp; Susun Laporan Nasional</div><div class="fcs">Terima LPKB dari Subkoordinator → rekap lintas unit → susun laporan pasca bencana nasional. Probis 6.1.</div><div class="fctags"><span class="pb" style="background:var(--tbg);color:#042C53">6.1</span><span class="tag tg">Pasca</span></div></div>
+          <div class="fc" style="border-left-color:#0E7490"><div class="fct"><i class="ti ti-layout-dashboard" style="color:#0E7490"></i> Dashboard Nasional</div><div class="fcs">Overview 286 unit: darurat aktif, skor kepatuhan per Eselon I, rekap SC nasional, request broadcast pending.</div><div class="fctags"><span class="tag tt">Real-time</span></div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul</div>
+        <div class="ug">
+          <div class="uc"><div class="un"><i class="ti ti-layout-dashboard"></i> Dashboard Nasional</div><div class="ue">Peta sebaran risiko + darurat aktif</div><div class="ue">Metric: darurat/siaga/normal (286 unit)</div><div class="ue">Badge: request broadcast pending</div><div class="ue">Skor kepatuhan per Eselon I</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-check"></i> Approval Broadcast SC</div><div class="ue">List request dari Subkoordinator</div><div class="ue">Detail: scope, pesan, jenis bencana</div><div class="ue">Approve / Tolak + log</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-filter"></i> 3 Dashboard Nasional Baru</div><div class="ue">Filter: Provinsi + Jenis Unit Eselon I</div><div class="ue">Metrik agregat + tabel per kombinasi</div><div class="ue">Banner asesmen masuk + status deklarasi</div></div>
+          <div class="uc"><div class="un"><i class="ti ti-chart-bar"></i> Audit &amp; LPKB Nasional</div><div class="ue">Tabel skor per Eselon I (7 dimensi)</div><div class="ue">List LPKB + rekap rekomendasi</div><div class="ue">Export laporan PDF/Excel</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 7: KEPALA PERWAKILAN ===== -->
+    <div class="panel" id="p7">
+      <div class="role-hd">
+        <div class="ricon" style="background:var(--gbg);color:#085041"><i class="ti ti-map-pin"></i></div>
+        <div><div class="rtitle">Kepala Perwakilan Kemenkeu</div><div class="rsub">Kanwil Kemenkeu Provinsi · Monitor multi-unit lintas Eselon I · Satgas wilayah · Broadcast SC wilayah · Eskalasi ke Koordinator</div></div>
+        <div class="rtags"><span class="tag tr">Saat</span><span class="tag tg">Pasca</span></div>
+      </div>
+      <div class="alert" style="background:var(--gbg);border-color:#1D9E75">
+        <i class="ti ti-info-circle" style="color:#085041"></i>
+        <div><strong>Baru V15:</strong> 2 sidebar baru — Monitor SC &amp; Sumber Daya Wilayah dan Monitoring Status Layanan Wilayah, terkunci ke Provinsi Riau dengan filter Jenis Unit Eselon I. Monitoring Status Layanan Wilayah dibangun dinamis, membaca data yang sama persis dengan dashboard Tim Impl. RKB &amp; Subkoordinator (bukan angka statis terpisah).</div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout-grid"></i> Fitur</div>
+        <div class="fg">
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-map-pin" style="color:#1D9E75"></i> Monitor Status Unit Wilayah</div><div class="fcs">Pantau semua unit (KPP, KPPBC, KPKNL, dsb.) di provinsi: normal/siaga/darurat. SC per unit, sumber daya, laporan bencana aktif.</div><div class="fctags"><span class="tag tg">Wilayah</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-radar" style="color:#1D9E75"></i> Monitor SC &amp; Sumber Daya Wilayah <span class="nbadge">Baru</span></div><div class="fcs">Rekap SC Aman/Butuh Bantuan/Belum Respons/Total seluruh unit lintas Eselon I di Riau, dengan tombol "Lihat" detail pegawai per unit. Filter Jenis Unit Eselon I (Provinsi terkunci ke Riau).</div><div class="fctags"><span class="tag tg">Wilayah</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-chart-line" style="color:#1D9E75"></i> Monitoring Status Layanan Wilayah <span class="nbadge">Baru</span></div><div class="fcs">Rekap Unit Terdampak/Normal/Dalam Proses/Belum Pulih untuk unit-unit di Riau. Data KPP Madya Pekanbaru sinkron langsung dengan dashboard Tim Impl. RKB &amp; Subkoordinator — satu sumber data yang sama.</div><div class="fctags"><span class="tag tg">Wilayah</span><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-broadcast" style="color:#1D9E75"></i> Broadcast SC Wilayah</div><div class="fcs">Kirim broadcast SC ke semua pegawai di wilayah provinsi lintas Eselon I. Monitor rekap respons per unit.</div><div class="fctags"><span class="tag tg">Lintas Eselon I</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-clipboard-list" style="color:#1D9E75"></i> Aktivasi Satgas Wilayah</div><div class="fcs">Aktifkan satgas multi-unit untuk bencana lintas satker satu provinsi. Log aktivasi + koordinasi antar satgas unit.</div><div class="fctags"><span class="tag tr">Saat bencana</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-arrow-up-circle" style="color:#1D9E75"></i> Eskalasi ke Koordinator MKB</div><div class="fcs">Jika bencana melampaui kapasitas wilayah → trigger eskalasi ke Koordinator MKB nasional. Log + justifikasi.</div><div class="fctags"><span class="tag tg">Eskalasi</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-chart-bar" style="color:#1D9E75"></i> Rekap Kepatuhan MKB Wilayah</div><div class="fcs">Lihat skor kepatuhan MKB unit-unit di provinsi dari data sistem. Bukan fungsi reviu — hanya monitoring informatif.</div><div class="fctags"><span class="tag tgr">Read-only</span></div></div>
+          <div class="fc" style="border-left-color:#1D9E75"><div class="fct"><i class="ti ti-file-report" style="color:#1D9E75"></i> Laporan Bencana Wilayah</div><div class="fcs">Rekap bencana aktif &amp; selesai di wilayah. Lihat LPKB unit. Teruskan ke Koordinator jika ada implikasi lintas provinsi.</div><div class="fctags"><span class="tag tg">Pasca</span></div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="seclbl"><i class="ti ti-layout"></i> Tampilan yang Muncul — Dashboard Wilayah</div>
+        <div class="db-mock">
+          <div class="db-mock-title"><i class="ti ti-layout-dashboard"></i> Beranda — Kepala Perwakilan Kemenkeu Provinsi Riau</div>
+          <div class="db-alert" style="background:var(--rbg);border:0.5px solid #f5c0bb">
+            <i class="ti ti-alert-octagon" style="color:#E24B4A"></i>
+            <div><span style="font-weight:600;color:#791F1F">DARURAT AKTIF</span> — Kanwil DJBC Riau · Satgas wilayah aktif · 14 mnt lalu</div>
+            <button style="margin-left:auto;padding:3px 10px;border-radius:6px;border:0.5px solid #E24B4A;background:none;color:#E24B4A;font-size:10px;cursor:pointer">Pantau →</button>
+          </div>
+          <div class="db-row" style="grid-template-columns:repeat(4,1fr)">
+            <div class="db-met" style="border-left:3px solid #3B8BD4"><div class="db-met-lbl">Unit di Wilayah</div><div class="db-met-val">18</div><div class="db-met-sub">lintas Eselon I</div></div>
+            <div class="db-met" style="border-left:3px solid #E24B4A"><div class="db-met-lbl">Darurat Aktif</div><div class="db-met-val" style="color:#E24B4A">1</div></div>
+            <div class="db-met" style="border-left:3px solid #BA7517"><div class="db-met-lbl">Siaga</div><div class="db-met-val" style="color:#BA7517">3</div></div>
+            <div class="db-met" style="border-left:3px solid #1D9E75"><div class="db-met-lbl">Normal</div><div class="db-met-val" style="color:#1D9E75">14</div></div>
+          </div>
+          <div class="db-row" style="grid-template-columns:1fr 1fr">
+            <div class="db-card">
+              <div class="db-card-title"><i class="ti ti-map-pin"></i> Status Unit per Satker</div>
+              <div class="db-row-item"><div><div style="font-weight:500;font-size:11px">Kanwil DJBC Riau</div><div style="font-size:10px;color:var(--t2)">DJBC · 124 pegawai</div></div><span class="tag tr">Darurat</span></div>
+              <div class="db-row-item"><div><div style="font-weight:500;font-size:11px">KPP Pratama Pekanbaru</div><div style="font-size:10px;color:var(--t2)">DJP · 87 pegawai</div></div><span class="tag ta">Siaga</span></div>
+              <div class="db-row-item"><div><div style="font-weight:500;font-size:11px">KPPBC Dumai</div><div style="font-size:10px;color:var(--t2)">DJBC · 65 pegawai</div></div><span class="tag ta">Siaga</span></div>
+              <div class="db-row-item"><div><div style="font-weight:500;font-size:11px">KPP Madya Riau</div><div style="font-size:10px;color:var(--t2)">DJP · 102 pegawai</div></div><span class="tag tg">Normal</span></div>
+              <div class="db-row-item"><div><div style="font-weight:500;font-size:11px">KPKNL Pekanbaru</div><div style="font-size:10px;color:var(--t2)">DJKN · 45 pegawai</div></div><span class="tag tg">Normal</span></div>
+            </div>
+            <div class="db-card">
+              <div class="db-card-title"><i class="ti ti-users"></i> Rekap Safety Check Wilayah</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+                <div style="padding:7px;background:var(--gbg);border-radius:6px;text-align:center"><div style="font-size:16px;font-weight:600;color:#1D9E75">2.847</div><div style="font-size:9px;color:var(--t2)">Aman</div></div>
+                <div style="padding:7px;background:var(--rbg);border-radius:6px;text-align:center"><div style="font-size:16px;font-weight:600;color:#E24B4A">14</div><div style="font-size:9px;color:var(--t2)">Butuh Bantuan</div></div>
+                <div style="padding:7px;background:var(--abg);border-radius:6px;text-align:center"><div style="font-size:16px;font-weight:600;color:#BA7517">312</div><div style="font-size:9px;color:var(--t2)">Belum Respons</div></div>
+              </div>
+              <div class="db-row-item"><div style="font-size:11px">Kanwil DJBC Riau</div><div><div style="font-size:10px;color:#E24B4A">78%</div><div class="db-pbar"><div class="db-pfill" style="width:78%;background:#E24B4A"></div></div></div></div>
+              <div class="db-row-item"><div style="font-size:11px">KPP Pratama Pekanbaru</div><div><div style="font-size:10px;color:#BA7517">91%</div><div class="db-pbar"><div class="db-pfill" style="width:91%;background:#BA7517"></div></div></div></div>
+              <div class="db-row-item"><div style="font-size:11px">KPP Madya Riau</div><div><div style="font-size:10px;color:#1D9E75">96%</div><div class="db-pbar"><div class="db-pfill" style="width:96%;background:#1D9E75"></div></div></div></div>
+            </div>
+          </div>
+          <div class="db-row" style="grid-template-columns:1fr 1fr">
+            <div class="db-card">
+              <div class="db-card-title"><i class="ti ti-route"></i> Tindakan Cepat</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;border:0.5px solid var(--gray2);background:none;font-size:11px;cursor:pointer;text-align:left;color:var(--text)"><i class="ti ti-broadcast" style="font-size:15px;color:#1D9E75"></i><div><div style="font-weight:600">Kirim Broadcast SC Wilayah</div><div style="font-size:10px;color:var(--t2)">Ke 18 unit di Riau</div></div></button>
+                <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;border:0.5px solid #E24B4A;background:none;font-size:11px;cursor:pointer;text-align:left;color:#E24B4A"><i class="ti ti-clipboard-list" style="font-size:15px"></i><div><div style="font-weight:600">Aktifkan Satgas Wilayah</div><div style="font-size:10px;opacity:0.8">Bencana lintas satker</div></div></button>
+                <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;border:0.5px solid #BA7517;background:none;font-size:11px;cursor:pointer;text-align:left;color:#BA7517"><i class="ti ti-arrow-up-circle" style="font-size:15px"></i><div><div style="font-weight:600">Eskalasi ke Koordinator MKB</div><div style="font-size:10px;opacity:0.8">Jika melampaui kapasitas wilayah</div></div></button>
+              </div>
+            </div>
+            <div class="db-card">
+              <div class="db-card-title"><i class="ti ti-chart-bar"></i> Kepatuhan MKB Wilayah (Informatif)</div>
+              <div class="db-row-item"><div style="font-size:11px">Kanwil DJBC Riau</div><div style="font-size:12px;font-weight:600;color:#1D9E75">84</div></div>
+              <div class="db-row-item"><div style="font-size:11px">KPP Pratama Pekanbaru</div><div style="font-size:12px;font-weight:600;color:#1D9E75">91</div></div>
+              <div class="db-row-item"><div style="font-size:11px">KPPBC Dumai</div><div style="font-size:12px;font-weight:600;color:#BA7517">72</div></div>
+              <div class="db-row-item"><div style="font-size:11px">KPKNL Pekanbaru</div><div style="font-size:12px;font-weight:600;color:#E24B4A">58</div></div>
+              <div style="font-size:10px;color:var(--t3);margin-top:7px">Data dari sistem · Read-only · Reviu oleh masing-masing Subkoordinator</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px 12px;background:var(--abg);border-radius:8px;border:0.5px solid #f0d9a8;display:flex;align-items:center;gap:10px">
+            <i class="ti ti-clipboard-check" style="font-size:18px;color:#BA7517"></i>
+            <div style="font-size:11px"><strong>Banner Asesmen Bencana Masuk</strong> — muncul otomatis di Monitor SC &amp; Sumber Daya Wilayah dan Monitoring Status Layanan Wilayah setiap kali Tim Satgas mengirim asesmen 5 aspek, lengkap dengan status <span style="color:#BA7517;font-weight:600">⏳ Belum Dideklarasikan Pimpinan</span> / <span style="color:#1D9E75;font-weight:600">✓ Sudah Dideklarasikan</span> — meski belum resmi dideklarasikan Pimpinan Satker.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 8: ALUR PROBIS ===== -->
+    <div class="panel" id="p8">
+
+      <div class="flow-wrap">
+        <div class="flow-title"><i class="ti ti-git-branch"></i> Alur 1 — Approval Dokumen MKB (6 Dokumen Utama) <span class="cbadge">Diperbarui v3</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--rosebg);border-color:#D4537E;color:#4B1528">Tim Pengembang<br>Susun 6 dok</div><div class="fsub">ADB → SKB &amp; RKBU-b auto-feed</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--rosebg);border-color:#D4537E;color:#4B1528">Kompilasi &amp;<br>Submit</div><div class="fsub">Cek kelengkapan dulu</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--abg);border-color:#EF9F27;color:#412402">Pimpinan Satker<br>Review &amp; Approve</div><div class="fsub">Final approval</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Dokumen Aktif<br>di Sistem</div><div class="fsub">Repository + Profil unit</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#6B3FA0;color:#3C3489">Notif otomatis<br>ke Subkoordinator</div><div class="fsub">Untuk analisis terpisah</div></div>
+        </div>
+        <div class="flow-note">↩ Jika dikembalikan Pimpinan: Tim Pengembang revisi → submit ulang. Subkoordinator <strong>tidak</strong> punya hak approve/tolak dokumen unit — hanya menerima notif dan menganalisis secara terpisah untuk keperluan standar SP.</div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-settings"></i> Alur 2 — Standar Sistem Pengendalian (RKBU-a) <span class="cbadge">Diperbarui v4</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#6B3FA0;color:#3C3489">Subkoordinator<br>Analisis dok unit</div><div class="fsub">Form Aspek/Temuan/Rekomendasi</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#6B3FA0;color:#3C3489">Susun standar SP<br>di RKBU-a</div><div class="fsub">Bentuk Strategi + Jenis/Jumlah SDA — selaras form SKB</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#6B3FA0;color:#3C3489">Tetapkan / Publish<br>(mandiri)</div><div class="fsub">Tanpa approval Koordinator</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Otomatis menempel<br>ke unit sesuai<br>tipe organisasi</div><div class="fsub">KPP / KPPBC / KPKNL / dll</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Muncul di:<br>Repository, Profil<br>unit, Panduan RKB</div><div class="fsub">Pegawai, satgas, Tim RKB</div></div>
+        </div>
+        <div class="flow-note">Standar SP ditetapkan mandiri oleh Subkoordinator, kini dengan field Bentuk Strategi (5 opsi) + Jenis &amp; Jumlah Sumber Daya Utama — format identik dengan form SKB Tim Pengembang supaya standar nasional dan strategi unit bisa dibandingkan apel-ke-apel. Distribusi berdasarkan tipe organisasi.</div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-refresh"></i> Alur 6 — Eksekusi RKB → Monitoring Real-time <span class="cbadge">Baru v4</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--rosebg);border-color:#D4537E;color:#4B1528">Tim Pengembang<br>Susun SKB &amp; RKBU-b</div><div class="fsub">Layanan kritis + strategi + sistem pengendalian</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#7F77DD;color:#3C3489">Tim Impl. RKB<br>Centang Checklist</div><div class="fsub">Per layanan kritis, item Sistem Pengendalian</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#7F77DD;color:#3C3489">% Eksekusi<br>terhitung otomatis</div><div class="fsub">100%=Normal · 1-99%=Proses · 0%=Belum Pulih</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#7F77DD;color:#3C3489">Monitoring Status<br>Layanan (unit)</div><div class="fsub">Dashboard Tim Impl. RKB, data sama persis</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--tbg);border-color:#0E7490;color:#042C53">Monitoring lintas unit<br>(Subkoordinator)</div><div class="fsub">Agregat semua unit + drill-down per layanan</div></div>
+        </div>
+        <div class="flow-note">Tidak ada input status manual yang terpisah dari checklist — satu sumber data. Ketika Tim Impl. RKB mencentang item Sistem Pengendalian di satu unit, angka di dashboard Subkoordinator (lintas unit) ikut berubah karena membaca struktur data yang sama.</div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-git-branch"></i> Alur 3 — LPKB (Dokumen ke-7)</div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#7F77DD;color:#3C3489">Tim Impl. RKB<br>Susun LPKB</div><div class="fsub">Pasca-bencana</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#7F77DD;color:#3C3489">Ketua Tim Impl. RKB<br>Sahkan LPKB</div><div class="fsub">Bukan Ketua Pengembang</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#6B3FA0;color:#3C3489">Subkoordinator<br>Review &amp; Teruskan</div><div class="fsub">+ rekomendasi</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--tbg);border-color:#0E7490;color:#042C53">Koordinator MKB<br>Terima &amp; Rekap</div><div class="fsub">Laporan akhir nasional</div></div>
+        </div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-broadcast"></i> Alur 4 — Broadcast Safety Check <span class="cbadge">Diperbarui v3</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#6B3FA0;color:#3C3489">Subkoordinator<br>Buat request SC</div><div class="fsub">Scope: unit Eselon I / tertentu</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--tbg);border-color:#0E7490;color:#042C53">Koordinator<br>Approve / Tolak</div><div class="fsub">Koordinator selalu terinformasi</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--rbg);border-color:#E24B4A;color:#791F1F">Broadcast dikirim<br>ke unit</div><div class="fsub">Notif push pegawai</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--npale);border-color:#3B8BD4;color:#0C447C">Pegawai respons<br>Aman / Bantuan</div><div class="fsub">Offline safe</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Rekap terpantau<br>semua level</div><div class="fsub">Subkoord · Koord · Pimpinan</div></div>
+        </div>
+        <div class="flow-note">Koordinator dapat langsung mengirim broadcast nasional (Probis 3.3) tanpa melalui request. Kepala Perwakilan juga dapat broadcast ke seluruh unit di provinsinya secara langsung.</div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-message-dots"></i> Alur 5 — Komunikasi Kebencanaan (Probis 4.1–4.4)</div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--rbg);border-color:#E24B4A;color:#791F1F">Tim Satgas<br>Susun draft narasi</div><div class="fsub">Template RPKK 4 fase</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--abg);border-color:#EF9F27;color:#412402">Pimpinan Satker<br>Approve Rilis</div><div class="fsub">Probis 4.2</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Distribusi Internal<br>ke Pegawai</div><div class="fsub">Probis 4.3</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Distribusi Eksternal<br>Media / Website</div><div class="fsub">Probis 4.4</div></div>
+        </div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-alert-triangle"></i> Alur 7 — Rantai Risiko: ARKB → ADB → SKB → RTDB/Satgas <span class="cbadge">Baru v4</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--rosebg);border-color:#D4537E;color:#4B1528">ARKB<br>Risiko dulu</div><div class="fsub">Ancaman → Kemungkinan × Dampak → Level Risiko (matriks Kemenkeu) → aset terdampak (multiple)</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--rosebg);border-color:#D4537E;color:#4B1528">ADB<br>16 layanan dinilai</div><div class="fsub">Skor dampak 6 periode → RTO/MTPD/flag kritis otomatis (≥13)</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--rosebg);border-color:#D4537E;color:#4B1528">SKB<br>Hanya yang kritis</div><div class="fsub">8 layanan flag → Bentuk Strategi + SDA</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--rbg);border-color:#E24B4A;color:#791F1F">RTDB<br>Ranking bencana</div><div class="fsub">Diurutkan dari Level Risiko ARKB tertinggi</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--rbg);border-color:#E24B4A;color:#791F1F">Satgas<br>Pakai saat bencana</div><div class="fsub">Dropdown Aset (ARKB) · Layanan Terdampak (ADB) · Prosedur (RTDB)</div></div>
+        </div>
+        <div class="flow-note">Setiap tahap murni mengalir dari tahap sebelumnya — tidak ada data yang diketik ulang. Kalau Mitigasi di ARKB = "Ya" (otomatis untuk level Tinggi/Sangat Tinggi), muncul link langsung ke Prosedur Evakuasi RTDB yang relevan.</div>
+      </div>
+
+      <div class="flow-wrap" style="margin-top:10px">
+        <div class="flow-title"><i class="ti ti-clipboard-check"></i> Alur 8 — Damage Assessment: Trigger Lintas Role <span class="cbadge">Baru V15</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fbox" style="background:var(--rbg);border-color:#E24B4A;color:#791F1F">Tim Satgas<br>Asesmen 5 Aspek</div><div class="fsub">SDM, Aset, TIK, Arsip, Layanan Terdampak → Kirim Asesmen</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--abg);border-color:#EF9F27;color:#412402">Pimpinan Satker<br>Trigger Deklarasi</div><div class="fsub">Ringkasan 5 aspek muncul di halaman Deklarasi → Deklarasi Ya/Tidak</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--pbg);border-color:#7F77DD;color:#3C3489">Subkoordinator<br>Banner Masuk</div><div class="fsub">Status: Belum/Sudah Dideklarasikan</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--gbg);border-color:#1D9E75;color:#085041">Kepala Perwakilan<br>Banner Masuk</div><div class="fsub">Status: Belum/Sudah Dideklarasikan</div></div>
+          <div class="farr">→</div>
+          <div class="fstep"><div class="fbox" style="background:var(--tbg);border-color:#0E7490;color:#042C53">Koordinator MKB<br>Banner Masuk</div><div class="fsub">Status: Belum/Sudah Dideklarasikan</div></div>
+        </div>
+        <div class="flow-note">Asesmen dari Satgas tampil di ketiga dashboard pengawas (Subkoordinator, Perwakilan, Koordinator) <strong>segera setelah dikirim</strong> — tidak menunggu Pimpinan Satker resmi mendeklarasikan bencana. Status "Belum/Sudah Dideklarasikan" pada tiap banner memberi kejelasan tahap mana proses eskalasi sudah sampai.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-text">SIKUAD — Desain Probis Sistem Informasi MKB V15 · Kemenkeu · Agustus 2026</div>
+  <div class="footer-text">8 role · 7 dokumen MKB · Data contoh dari Dokumen MKB asli KPP Madya Pekanbaru</div>
+</div>
+
+<script>
+function sw(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('act',i===n));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('show',i===n));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

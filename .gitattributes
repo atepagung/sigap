@@ -1,0 +1,21 @@
+* text=auto eol=lf
+
+*.sh      text eol=lf
+Dockerfile text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.json    text eol=lf
+*.ts      text eol=lf
+*.html    text eol=lf
+*.scss    text eol=lf
+*.cs      text eol=lf
+*.csproj  text eol=lf
+
+*.cmd     text eol=crlf
+*.ps1     text eol=crlf
+
+*.png     binary
+*.jpg     binary
+*.pdf     binary
+*.xlsx    binary
+*.docx    binary
