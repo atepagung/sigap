@@ -226,14 +226,20 @@ setelah memverifikasi sendiri (PLAYBOOK "Alur satu sesi kerja" langkah 5).
   `upstream` untuk jejak asal. **UAT Railway tetap terhubung ke `donny-apps/mkb`**, jadi push ke
   repo baru tidak memperbarui UAT. Perubahan baru sampai ke UAT bila Railway diarahkan ulang
   atau Donny menarik perubahannya.
+  Perpindahan ini **sudah dijalankan dan di-push** (18 Sep 2026).
 - **Prototipe Next.js** (rujukan utama migrasi), salinan lokal: `C:\dev\MKB APPS\App`. Prompt
-  PLAYBOOK yang menyebut "prototipe" merujuk ke sini.
-- **Baseline porting: prototipe commit `1b1487a` (branch `main`, di `atepagung/sigap-prototipe`
-  setelah di-push).** API_CONTRACT,
-  PERMISSION_MAP, dan `BUSINESS_RULES_INDEX.md` diturunkan dari keadaan prototipe pada commit
-  itu. Perubahan prototipe sesudahnya **tidak** otomatis masuk kontrak. Sebelum porting (P4.4),
-  periksa `git log 1b1487a..origin/main` di repo prototipe dan putuskan per perubahan. Commit
-  ini baru ada di remote setelah butir 5.3 no. 2 selesai.
+  PLAYBOOK yang menyebut "prototipe" merujuk ke sini. **Di laptop lain, clone ke jalur yang
+  sama persis** (`C:\dev\sigap` dan `C:\dev\MKB APPS\App`), supaya seluruh rujukan jalur di
+  dokumen ini tetap berlaku.
+- **Baseline porting: prototipe commit `1b1487a` (branch `main`, `atepagung/sigap-prototipe`).**
+  API_CONTRACT, PERMISSION_MAP, dan `BUSINESS_RULES_INDEX.md` diturunkan dari keadaan prototipe
+  pada commit itu. Perubahan prototipe sesudahnya **tidak** otomatis masuk kontrak. Sebelum
+  porting (P4.4), periksa `git log 1b1487a..origin/main` di repo prototipe dan putuskan per
+  perubahan.
+- Di luar git, hanya di laptop pertama (`C:\dev\MKB APPS\`): folder `Input\` (termasuk
+  `Alur Sistem MKB.pdf`, `23082026 Probis_MKB_update.pdf`, `2. Presentasi SIKUAD.pptx`, yang
+  tidak ada di `docs/`), folder `Output\` (termasuk `Dokumen BaTII\`), dan dokumen Kebutuhan
+  Teknis `.docx`. Salin manual bila diperlukan.
 - Ada **dua** prototipe: `docs/mockup-sikuad-v17.html` (fokus alur proses bisnis) dan aplikasi
   Next.js di atas (fokus tampilan & fitur, yang dikoreksi dan di-refactor).
 - Nilai untuk placeholder `[ ]` di PLAYBOOK:
@@ -255,27 +261,21 @@ setelah memverifikasi sendiri (PLAYBOOK "Alur satu sesi kerja" langkah 5).
 | P2.1 | Kontrak API (47 endpoint) dan peta izin (23 permission) | `API_CONTRACT.md`, `PERMISSION_MAP.md` di repo ini |
 
 ### 5.3 Belum selesai / perlu tindakan pemilik proyek
+Sudah beres 18 Sep 2026: remote prototipe dipindah dan di-push; penulis 8 commit sesi itu
+(`cf9d727`…`1b1487a`) diganti dari Donny ke `atepagung` dengan isi kode identik; identitas git
+repo prototipe dibetulkan; dokumen di repo ini di-commit dan di-push. Branch
+`cadangan/sebelum-ganti-penulis` hanya ada di laptop pertama dan boleh dihapus.
+
 1. **Build prototipe belum terverifikasi lulus.** `npm run build` sempat gagal karena galat tipe
-   hasil P1.3; sudah diperbaiki (`1b1487a`) tetapi belum dijalankan ulang. Node.js tidak
-   tersedia di shell agen, jadi build hanya bisa dijalankan pemilik proyek.
-2. **Pindahkan remote prototipe lalu push**, dijalankan pemilik proyek. Agen diblokir mengarahkan
-   kode ke tujuan eksternal baru:
-   1. Buat repo **privat dan kosong** `atepagung/sigap-prototipe` di github.com/new.
-   2. `git remote rename origin upstream` lalu
-      `git remote add origin https://github.com/atepagung/sigap-prototipe.git`
-   3. Setelah butir 1 lulus: `git push -u origin main`. Hanya `main`, jangan `--all`, supaya
-      branch cadangan tidak ikut.
-   Penulis 8 commit sesi ini (`cf9d727`…`1b1487a`) sudah diganti dari Donny ke `atepagung`; isi
-   kode identik. Cadangan lamanya di branch lokal `cadangan/sebelum-ganti-penulis`, boleh
-   dihapus setelah push berhasil. Identitas git lokal repo prototipe (`.git/config`) masih Donny:
-   jalankan `git config --unset user.name` dan `git config --unset user.email` di repo itu.
-   Untuk UAT, lihat butir "Remote prototipe dipindah" di §5.1.
-3. **Commit dokumen di repo ini:** `MIGRATION_NOTES.md`, `API_CONTRACT.md`, `PERMISSION_MAP.md`.
-4. **Pertanyaan ke BaTII:** Lampiran E PLAYBOOK ditambah API_CONTRACT §9 butir 1–7 (termasuk
+   hasil P1.3. Sudah diperbaiki (`1b1487a`) tetapi belum dijalankan ulang. Jalankan
+   `npm install` lalu `npm run build` di repo prototipe.
+2. **UAT tim SOPB belum memuat koreksi 7** (lihat butir "Remote prototipe dipindah" di §5.1).
+   Perlu melibatkan Donny.
+3. **Pertanyaan ke BaTII:** Lampiran E PLAYBOOK ditambah API_CONTRACT §9 butir 1–7 (termasuk
    siapa menjalankan migrasi tabel ke-33).
-5. **Pertanyaan ke pemilik proses bisnis:** API_CONTRACT §9 butir 8–10 (wewenang mengakhiri
+4. **Pertanyaan ke pemilik proses bisnis:** API_CONTRACT §9 butir 8–10 (wewenang mengakhiri
    broadcast & tanggap darurat, jenis/batas lampiran, pemilik butir 1.1).
-6. **Langkah PLAYBOOK berikutnya: P2.2** (inventaris komponen UI). Catatan: prototipe punya 76
+5. **Langkah PLAYBOOK berikutnya: P2.2** (inventaris komponen UI). Catatan: prototipe punya 76
    berkas `.tsx` di `src/components`, bukan 69 seperti di PLAYBOOK.
 
 ### 5.4 Keputusan yang mengikat sistem baru
@@ -286,3 +286,16 @@ setelah memverifikasi sendiri (PLAYBOOK "Alur satu sesi kerja" langkah 5).
 - Aturan trigger: satu unit dipegang satu broadcast aktif per jenis bencana; trigger berikutnya
   melewati unit itu; sasaran dikunci saat dipicu; unit berdata kosong tidak ikut disasar
   (API_CONTRACT §3.3.1).
+
+### 5.5 Kesepakatan cara kerja dengan agen AI
+Ditulis di sini karena memori agen tidak ikut berpindah laptop.
+- **Tanyakan dulu bila permintaan bisa dibaca lebih dari satu cara.** Pakai pertanyaan pilihan
+  yang terfokus, dengan contoh konkret dari domain dan rekomendasi. Pekerjaan non-desain
+  (verifikasi, dokumentasi) langsung dikerjakan.
+- **Perubahan struktur tabel database selalu dilaporkan dulu**, tidak langsung dikerjakan.
+- Agen **tidak** menambah/mengganti remote, tidak push, dan tidak mengubah konfigurasi git.
+  Semua itu dijalankan pemilik proyek. Agen boleh commit bila diminta, dengan identitas
+  `atepagung <agungteja64@gmail.com>`.
+- Dokumen dan jawaban memakai bahasa Indonesia.
+- Periksa dulu apakah Node.js tersedia di shell agen. Di laptop pertama tidak tersedia, jadi
+  build dijalankan pemilik proyek dan agen memverifikasi secara statis dengan Python.
