@@ -1,0 +1,55 @@
+// .tabs — [ASUMSI] SELURUHNYA. Nama class dan strukturnya tebakan kita.
+// Dibutuhkan SIGAP untuk rekap safety check yang WAJIB tampil sebagai tab per
+// kondisi (Aman / Butuh Bantuan / Belum Merespons) — koreksi stakeholder #11.
+@use '../index' as *;
+
+.tabs {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-xs;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid $color-border;
+    list-style: none;
+  }
+
+  &__tab {
+    padding: $space-sm $space-md;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: $color-text-muted;
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-navy;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &--active {
+      border-bottom-color: $color-gold;
+      color: $color-navy;
+    }
+  }
+
+  // [ASUMSI] penghitung di samping label tab (mis. "Aman 128").
+  &__count {
+    margin-left: $space-xs;
+    padding: 0 $space-xs;
+    border-radius: 999px;
+    background: $color-surface-muted;
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__panel {
+    padding: $space-md 0;
+  }
+}

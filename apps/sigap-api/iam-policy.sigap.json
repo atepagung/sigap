@@ -1,0 +1,93 @@
+{
+  "_catatan": [
+    "Kebijakan IAM SIGAP sebagai DATA, sesuai standar ICS. Sumber kebenaran: PERMISSION_MAP.md (disetujui 18 Sep 2026).",
+    "Berkas ini bahan pendaftaran aturan IAM ke BaTII. [ASUMSI FORMAT] — disesuaikan setelah BaTII menjawab cara pendaftaran Scope dan Sieve (PLAYBOOK Lampiran E #6).",
+    "Dibaca oleh libs/iam-dummy selama iam.plugin asli belum tersedia. Jangan menyalin isinya ke kode (tidak ada if (role == ...) di aplikasi)."
+  ],
+  "aplikasi": "sigap",
+  "versiKebijakan": "2026-09-18",
+
+  "peran": {
+    "PEGAWAI":        { "grupSso": "sigap-pegawai" },
+    "SATGAS":         { "grupSso": "sigap-satgas" },
+    "PIMPINAN":       { "grupSso": "sigap-pimpinan" },
+    "PERWAKILAN":     { "grupSso": "sigap-perwakilan" },
+    "SUBKOORDINATOR": { "grupSso": "sigap-subkoordinator" },
+    "KOORDINATOR":    { "grupSso": "sigap-koordinator" },
+    "SEKJEN":         { "grupSso": "sigap-sekjen" },
+    "ADMIN":          { "grupSso": "sigap-admin" },
+    "PENGEMBANG":     { "grupSso": "sigap-pengembang", "fase": 2 },
+    "IMPL_RKB":       { "grupSso": "sigap-impl-rkb", "fase": 2 }
+  },
+
+  "profilLingkup": {
+    "SELF":     { "jenis": "generik", "predikat": "{pemilik} = @penggunaId" },
+    "UNIT":     { "jenis": "generik", "predikat": "{unit} = @unitId" },
+    "WILAYAH":  { "jenis": "generik", "predikat": "{unit} IN (SELECT \"id\" FROM \"Unit\" WHERE \"provinsi\" = @provinsi)",     "bilaParameterKosong": "UNIT" },
+    "ESELON_I": { "jenis": "generik", "predikat": "{unit} IN (SELECT \"id\" FROM \"Unit\" WHERE \"eselonIKey\" = @eselonIKey)", "bilaParameterKosong": "UNIT" },
+    "NASIONAL": { "jenis": "generik", "predikat": null },
+    "SASARAN_SAYA":         { "jenis": "domain", "wilayahDasar": "UNIT", "predikat": "b.\"selesaiPada\" IS NULL AND EXISTS (SELECT 1 FROM \"BroadcastSasaranUnit\" s WHERE s.\"broadcastId\" = b.\"id\" AND s.\"unitId\" = @unitId AND s.\"status\" = 'DISASAR')" },
+    "TERSENTUH":            { "jenis": "domain", "predikat": "EXISTS (SELECT 1 FROM \"BroadcastSasaranUnit\" s WHERE s.\"broadcastId\" = b.\"id\" AND {profil dalam kurung atas s.\"unitId\"}) OR b.\"dikirimOlehId\" = @penggunaId" },
+    "PEMICU_ATAU_MENCAKUP": { "jenis": "domain", "predikat": "pemicunya, atau lingkup dalam kurung mencakup seluruh unit DISASAR broadcast" },
+    "UNIT_SENDIRI":         { "jenis": "domain", "wilayahDasar": "UNIT", "predikat": "tulis selalu atas nama unit pemanggil; unitId dari identitas, tidak pernah dari body" },
+    "IKUT_INDUK":           { "jenis": "domain", "predikat": "baris induk lampiran terlihat menurut permission dan Scope induknya" }
+  },
+
+  "gabungMultiPeran": "OR atas profil peran yang memberi permission endpoint; peran lain diabaikan",
+
+  "permission": {
+    "sigap:safety-check:read":       { "PEGAWAI": { "GET /safety-check/aktif": "SASARAN_SAYA", "GET /safety-check/respons-saya": "SELF" } },
+    "sigap:safety-check:respond":    { "PEGAWAI": "SASARAN_SAYA" },
+    "sigap:safety-check:record":     { "SATGAS": "UNIT" },
+    "sigap:safety-check-rekap:read": { "PEGAWAI": "UNIT", "PIMPINAN": "UNIT", "SATGAS": "UNIT" },
+    "sigap:broadcast:trigger":       { "SATGAS": "UNIT", "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL" },
+    "sigap:broadcast:read":          { "SATGAS": "TERSENTUH(UNIT)", "PERWAKILAN": "TERSENTUH(WILAYAH)", "SUBKOORDINATOR": "TERSENTUH(ESELON_I)", "KOORDINATOR": "NASIONAL" },
+    "sigap:broadcast:close":         { "SATGAS": "PEMICU_ATAU_MENCAKUP(UNIT)", "PERWAKILAN": "PEMICU_ATAU_MENCAKUP(WILAYAH)", "SUBKOORDINATOR": "PEMICU_ATAU_MENCAKUP(ESELON_I)", "KOORDINATOR": "NASIONAL" },
+    "sigap:laporan:create":          { "PEGAWAI": "UNIT_SENDIRI" },
+    "sigap:laporan:read":            { "PEGAWAI": "SELF", "SATGAS": "UNIT" },
+    "sigap:laporan:verify":          { "SATGAS": "UNIT" },
+    "sigap:asesmen:create":          { "SATGAS": "UNIT_SENDIRI" },
+    "sigap:asesmen:update":          { "SATGAS": "UNIT" },
+    "sigap:asesmen:read":            { "SATGAS": "UNIT", "PIMPINAN": "UNIT", "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL", "SEKJEN": "NASIONAL" },
+    "sigap:asesmen:approve":         { "PIMPINAN": "UNIT" },
+    "sigap:tanggap-darurat:close":   { "PIMPINAN": "UNIT" },
+    "sigap:monitor:read":            { "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL", "SEKJEN": "NASIONAL" },
+    "sigap:layanan-kritis:read":     { "SATGAS": "UNIT", "PIMPINAN": "UNIT" },
+    "sigap:layanan-kritis:create":   { "SATGAS": "UNIT_SENDIRI" },
+    "sigap:referensi:read":          { "PEGAWAI": "UNIT", "SATGAS": "UNIT", "PIMPINAN": "UNIT", "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL", "SEKJEN": "NASIONAL" },
+    "sigap:lampiran:read":           { "PEGAWAI": "IKUT_INDUK", "SATGAS": "IKUT_INDUK", "PIMPINAN": "IKUT_INDUK", "PERWAKILAN": "IKUT_INDUK", "SUBKOORDINATOR": "IKUT_INDUK", "KOORDINATOR": "IKUT_INDUK", "SEKJEN": "IKUT_INDUK" },
+    "sigap:lampiran:upload":         { "PEGAWAI": "SELF", "SATGAS": "UNIT" },
+    "sigap:notifikasi:read":         { "PEGAWAI": "SELF", "SATGAS": "SELF", "PIMPINAN": "SELF", "PERWAKILAN": "SELF", "SUBKOORDINATOR": "SELF", "KOORDINATOR": "SELF", "SEKJEN": "SELF" },
+    "sigap:notifikasi:subscribe":    { "PEGAWAI": "SELF", "SATGAS": "SELF", "PIMPINAN": "SELF", "PERWAKILAN": "SELF", "SUBKOORDINATOR": "SELF", "KOORDINATOR": "SELF", "SEKJEN": "SELF" }
+  },
+
+  "sieve": {
+    "safety-check.rekap.lokasiTerakhir": {
+      "terlihatUntuk": ["SATGAS"],
+      "berlakuDi": ["GET /safety-check/rekap → data[].lokasiTerakhir"],
+      "alasan": "Koordinat pegawai adalah data paling sensitif; hanya diperlukan untuk penjemputan"
+    },
+    "safety-check.rekap.keterangan": {
+      "terlihatUntuk": ["SATGAS", "PIMPINAN"],
+      "berlakuDi": ["GET /safety-check/rekap → data[].keterangan"],
+      "alasan": "Catatan Satgas dapat memuat keadaan medis rekan kerja"
+    },
+    "safety-check.rekap.dicatatOleh": {
+      "terlihatUntuk": ["SATGAS", "PIMPINAN"],
+      "berlakuDi": ["GET /safety-check/rekap → data[].dicatatOleh"],
+      "alasan": "Catatan Satgas dapat memuat keadaan medis rekan kerja"
+    },
+    "asesmen.sdm.catatanKondisiPegawai": {
+      "terlihatUntuk": ["SATGAS", "PIMPINAN"],
+      "berlakuDi": ["GET /asesmen* → aspek.sdm.catatanKondisiPegawai", "GET /monitor/unit/{unitId} → asesmenTerkini.aspek.sdm.catatanKondisiPegawai"],
+      "alasan": "Memuat nama dan kondisi pegawai; pemantau cukup angka"
+    },
+    "asesmen.sdm.catatanTambahan": {
+      "terlihatUntuk": ["SATGAS", "PIMPINAN"],
+      "berlakuDi": ["GET /asesmen* → aspek.sdm.catatanTambahan", "GET /monitor/unit/{unitId} → asesmenTerkini.aspek.sdm.catatanTambahan"],
+      "alasan": "Memuat nama dan kondisi pegawai; pemantau cukup angka"
+    }
+  },
+
+  "_catatanSieve": "Field terlihat bila SALAH SATU peran pemanggil yang MEMBERI permission endpoint ada di terlihatUntuk (PERMISSION_MAP bagian 2.3). Karena itu aturan GET /monitor/unit/{unitId} (terlihatUntuk kosong di draf bagian 7) cukup memakai kunci yang sama: permission sigap:monitor:read tidak diberikan SATGAS maupun PIMPINAN, sehingga field-nya selalu null di endpoint itu."
+}

@@ -1,0 +1,599 @@
+{
+  "realm": "kemenkeu",
+  "displayName": "SSO Kemenkeu — DUMMY LOKAL (bukan SSO asli)",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": false,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "accessTokenLifespan": 900,
+  "ssoSessionIdleTimeout": 28800,
+  "ssoSessionMaxLifespan": 28800,
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"nip\",\"displayName\":\"NIP\",\"validations\":{\"pattern\":{\"pattern\":\"^[0-9]{18}$\",\"error-message\":\"NIP harus 18 digit\"}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"kode_satker\",\"displayName\":\"Kode satuan kerja\",\"validations\":{\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"kode_eselon1\",\"displayName\":\"Kode unit Eselon I\",\"validations\":{\"length\":{\"max\":64}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"
+          ]
+        }
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "sigap-pegawai",
+      "path": "/sigap-pegawai",
+      "attributes": {
+        "keterangan": [
+          "Pegawai Umum"
+        ]
+      }
+    },
+    {
+      "name": "sigap-satgas",
+      "path": "/sigap-satgas",
+      "attributes": {
+        "keterangan": [
+          "Tim Satgas Tanggap Darurat"
+        ]
+      }
+    },
+    {
+      "name": "sigap-pimpinan",
+      "path": "/sigap-pimpinan",
+      "attributes": {
+        "keterangan": [
+          "Pimpinan Satker"
+        ]
+      }
+    },
+    {
+      "name": "sigap-perwakilan",
+      "path": "/sigap-perwakilan",
+      "attributes": {
+        "keterangan": [
+          "Kepala Perwakilan"
+        ]
+      }
+    },
+    {
+      "name": "sigap-subkoordinator",
+      "path": "/sigap-subkoordinator",
+      "attributes": {
+        "keterangan": [
+          "Subkoordinator"
+        ]
+      }
+    },
+    {
+      "name": "sigap-koordinator",
+      "path": "/sigap-koordinator",
+      "attributes": {
+        "keterangan": [
+          "Koordinator MKB"
+        ]
+      }
+    },
+    {
+      "name": "sigap-sekjen",
+      "path": "/sigap-sekjen",
+      "attributes": {
+        "keterangan": [
+          "Sekretaris Jenderal"
+        ]
+      }
+    },
+    {
+      "name": "sigap-admin",
+      "path": "/sigap-admin",
+      "attributes": {
+        "keterangan": [
+          "Administrator Sistem"
+        ]
+      }
+    },
+    {
+      "name": "sigap-pengembang",
+      "path": "/sigap-pengembang",
+      "attributes": {
+        "keterangan": [
+          "Tim Pengembang MKB — Fase 2: didaftarkan saja, tanpa permission/menu di Fase 1"
+        ]
+      }
+    },
+    {
+      "name": "sigap-impl-rkb",
+      "path": "/sigap-impl-rkb",
+      "attributes": {
+        "keterangan": [
+          "Tim Implementasi RKB — Fase 2: didaftarkan saja, tanpa permission/menu di Fase 1"
+        ]
+      }
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "sigap-web-dev",
+      "name": "SIGAP remote module (dev)",
+      "description": "Client OIDC remote module. Public + PKCE.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:4299/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://localhost:4299"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*##http://localhost:4299/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "nip",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "nip",
+            "claim.name": "nip",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "kode_satker",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "kode_satker",
+            "claim.name": "kode_satker",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "kode_eselon1",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "kode_eselon1",
+            "claim.name": "kode_eselon1",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience sigap-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.custom.audience": "sigap-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "sigap-api-dev",
+      "name": "SIGAP microservice (dev)",
+      "description": "Client OIDC microservice. Confidential; secret dari .env (di platform: dari vault).",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${SIGAP_API_DEV_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "sigap-uji-lokal",
+      "name": "HANYA LOKAL — pengambil token untuk tes",
+      "description": "BUKAN bagian permintaan ke BaTII. Mengizinkan password grant agar skrip dan tes bisa mengambil token akun uji tanpa browser.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocolMappers": [
+        {
+          "name": "nip",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "nip",
+            "claim.name": "nip",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "kode_satker",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "kode_satker",
+            "claim.name": "kode_satker",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "kode_eselon1",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "kode_eselon1",
+            "claim.name": "kode_eselon1",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience sigap-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.custom.audience": "sigap-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "900000000000000001",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Pegawai Umum",
+      "email": "pegawai@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000001"
+        ],
+        "kode_satker": [
+          "DEMO-KPP-MADYA-PKU"
+        ],
+        "kode_eselon1": [
+          "djp"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-pegawai"
+      ]
+    },
+    {
+      "username": "900000000000000002",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Tim Satgas Tanggap Darurat",
+      "email": "satgas@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000002"
+        ],
+        "kode_satker": [
+          "DEMO-KPP-MADYA-PKU"
+        ],
+        "kode_eselon1": [
+          "djp"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-satgas"
+      ]
+    },
+    {
+      "username": "900000000000000003",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Pimpinan Satker",
+      "email": "pimpinan@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000003"
+        ],
+        "kode_satker": [
+          "DEMO-KPP-MADYA-PKU"
+        ],
+        "kode_eselon1": [
+          "djp"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-pimpinan"
+      ]
+    },
+    {
+      "username": "900000000000000004",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Kepala Perwakilan",
+      "email": "perwakilan@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000004"
+        ],
+        "kode_satker": [
+          "DEMO-KANWIL-RIAU"
+        ],
+        "kode_eselon1": [
+          "setjen"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-perwakilan"
+      ]
+    },
+    {
+      "username": "900000000000000005",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Subkoordinator",
+      "email": "subkoordinator@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000005"
+        ],
+        "kode_satker": [
+          "djp"
+        ],
+        "kode_eselon1": [
+          "djp"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-subkoordinator"
+      ]
+    },
+    {
+      "username": "900000000000000006",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Koordinator MKB",
+      "email": "koordinator@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000006"
+        ],
+        "kode_satker": [
+          "setjen.biro-organisasi-dan-ketatalaksanaan"
+        ],
+        "kode_eselon1": [
+          "setjen"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-koordinator"
+      ]
+    },
+    {
+      "username": "900000000000000007",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Sekretaris Jenderal",
+      "email": "sekjen@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000007"
+        ],
+        "kode_satker": [
+          "setjen"
+        ],
+        "kode_eselon1": [
+          "setjen"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-sekjen"
+      ]
+    },
+    {
+      "username": "900000000000000008",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Administrator Sistem",
+      "email": "admin@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000008"
+        ],
+        "kode_satker": [
+          "DEMO-KANWIL-RIAU"
+        ],
+        "kode_eselon1": [
+          "setjen"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-admin"
+      ]
+    },
+    {
+      "username": "900000000000000009",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Tim Pengembang MKB",
+      "email": "pengembang@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000009"
+        ],
+        "kode_satker": [
+          "DEMO-KPP-MADYA-PKU"
+        ],
+        "kode_eselon1": [
+          "djp"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-pengembang"
+      ]
+    },
+    {
+      "username": "900000000000000010",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Uji",
+      "lastName": "Tim Implementasi RKB",
+      "email": "impl-rkb@sigap-uji.invalid",
+      "attributes": {
+        "nip": [
+          "900000000000000010"
+        ],
+        "kode_satker": [
+          "DEMO-KPP-MADYA-PKU"
+        ],
+        "kode_eselon1": [
+          "djp"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SIGAP_UJI_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/sigap-impl-rkb"
+      ]
+    }
+  ]
+}

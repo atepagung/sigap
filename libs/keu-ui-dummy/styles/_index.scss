@@ -1,0 +1,19 @@
+// =============================================================================
+// ENTRY TOKEN — DUMMY pengganti @danarakca/keu-ui
+//
+// Inilah berkas yang diresolusi oleh `@use 'index' as *` di komponen aplikasi,
+// selama folder `libs/keu-ui-dummy/styles` terdaftar di
+// `stylePreprocessorOptions.includePaths` (angular.json).
+//
+// PENTING: berkas ini sengaja HANYA mem-forward token (variabel/mixin/function)
+// dan tidak menghasilkan satu baris CSS pun. Katalog komponen (.page-header,
+// .stats-row, dst) dimuat SEKALI SAJA secara global lewat `styles/catalog.scss`
+// — bukan dari sini — supaya CSS-nya tidak terduplikasi di setiap komponen yang
+// menulis `@use 'index' as *`.
+//
+// [ASUMSI] Pemisahan token vs katalog ini tebakan kita. Slide hanya menyebut
+// `@use 'index' as *` dan nama class katalog, tidak menjelaskan bagaimana CSS
+// katalog dimuat. Perlu diverifikasi ke BaTII — lihat DUMMY_REGISTRY.md.
+// =============================================================================
+
+@forward 'tokens';

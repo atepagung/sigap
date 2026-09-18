@@ -182,13 +182,13 @@ detail tekstual di bawah ini sudah divalidasi lewat PLAYBOOK Lampiran A).
 4. Jangan pernah tempel secret asli ke prompt — lewat environment variable/vault.
 5. Struktur 32 tabel database tidak berubah. **Satu pengecualian disetujui pemilik proyek
    (18 Sep 2026):** tabel ke-33 `"BroadcastSasaranUnit"` untuk kepemilikan unit per trigger
-   safety check. Spesifikasinya di [API_CONTRACT.md](API_CONTRACT.md) §5. Perubahan tabel
+   safety check. Spesifikasinya di [API_CONTRACT.md](API_CONTRACT.md) bagian 5. Perubahan tabel
    lain tetap harus dibawa ke diskusi lebih dulu.
 
 **Lima aturan dummy** (Fase 3, PLAYBOOK bagian III): karantina di `libs/*-dummy/` /
 `apps/shell-dummy/`; kontrak identik dengan dokumentasi platform; isi sesederhana mungkin;
 tidak boleh naik ke production (build gagal kalau dummy masih ter-resolve); tercatat di
-`DUMMY_REGISTRY.md` (belum dibuat — dibuat di Fase 3 sesuai format Lampiran D PLAYBOOK).
+[DUMMY_REGISTRY.md](DUMMY_REGISTRY.md).
 
 **Catatan lintas platform (Windows dev / Linux production):** kapitalisasi nama file & import
 harus persis sama, akhir baris LF, path forward-slash (`Path.Combine()` di C#), script npm
@@ -201,8 +201,8 @@ lengkap di PLAYBOOK Bagian I.
 
 - `AGENTS.md` — belum ada di repo. Dibuat di P4.3 (Fase 4), isi mengikuti spesifikasi di
   PLAYBOOK P4.3.
-- `DUMMY_REGISTRY.md` — belum ada di repo. Dibuat di Fase 3 begitu dummy pertama dibuat, format
-  di Lampiran D PLAYBOOK.
+- ~~`DUMMY_REGISTRY.md`~~ — **sudah dibuat 18 Sep 2026** bersama dummy pertama
+  (`libs/keu-ui-dummy`, P3.1). Perbarui tiap ada dummy atau asumsi baru.
 - Pertanyaan ke BaTII (Lampiran E PLAYBOOK) belum dikonfirmasi terkirim — cek F0.3 di checklist
   PLAYBOOK Bagian II sebelum lanjut ke Fase 3 (banyak dummy butuh jawaban BaTII untuk tahu apa
   yang harus ditiru).
@@ -259,6 +259,12 @@ setelah memverifikasi sendiri (PLAYBOOK "Alur satu sesi kerja" langkah 5).
 | P1.2 | Sudah terpenuhi tanpa perubahan: flag `MODE_MATRIKS` + `RUTE_MATRIKS`/`PERAN_MATRIKS`/`PERAN_DISEMBUNYIKAN` di `src/logic/rilis.ts`; urutan sidebar pra→saat→pasca di `src/components/Shell.tsx` | repo prototipe |
 | P1.3 | Logika bisnis dipindah ke `src/logic/` (33 berkas, tanpa impor React/Next.js); peta porting di `BUSINESS_RULES_INDEX.md` | repo prototipe, commit `61a48f4`…`ad8147a`, perbaikan tipe `1b1487a` |
 | P2.1 | Kontrak API (47 endpoint) dan peta izin (23 permission) | `API_CONTRACT.md`, `PERMISSION_MAP.md` di repo ini |
+| P2.2 | Inventaris 76 komponen prototipe, dikelompokkan jadi kandidat design system / khusus SIGAP / jangan diporting | `COMPONENT_INVENTORY.md` di repo ini |
+| P3.1 | Dummy design system + registry dummy. SCSS terverifikasi kompilasi bersih (`sass` 1.80.6); TypeScript bersih selain `@angular/*` yang memang belum di-install | `libs/keu-ui-dummy/`, `tsconfig.base.json`, `DUMMY_REGISTRY.md` |
+| P3.2 | Shell dummy + sigap-web sebagai remote Native Federation (Angular 22.1). Identitas remote di satu berkas. Diuji di browser: mode mandiri, deep link, sinkronisasi URL dua arah (klik sidebar shell, klik di dalam remote, back/forward, pindah ke modul lain dan kembali), remote mati → shell tetap hidup. 9 unit test lulus. Alias `@danarakca/keu-ui` terbukti ter-resolve. Jalankan lewat `npm run start:web` / `npm run start:shell`, bukan `ng serve` | `apps/shell-dummy/`, `apps/sigap-web/`, `package.json` root (npm workspaces) |
+| P3.3 | Dummy `iam.plugin` (.NET 10) + directive `*hasPermission`. Kebijakan IAM sebagai data di `apps/sigap-api/iam-policy.sigap.json` — terbukti identik dengan draf PERMISSION_MAP bagian 7 (blok JSON di dokumen itu diganti rujukan ke berkas). 38 tes .NET: aturan PERMISSION_MAP pada kebijakan asli, Scope dieksekusi di SQLite, SQL PostgreSQL diperiksa (`WHERE ... = ANY (@UnitIds)`, `WHERE FALSE` tanpa izin), pipeline HTTP dengan JWT (401/403/Sieve). 4 tes directive | `libs/iam-dummy/`, `libs/iam-dummy-web/`, `apps/sigap-api/iam-policy.sigap.json` |
+| P3.4 | Realm Keycloak `kemenkeu` sesuai Kebutuhan Teknis bagian E: dua client, klaim `nip`/`kode_satker`/`kode_eselon1`/`groups`, aud `sigap-api`, 15 menit/8 jam, sepuluh akun uji (NIP palsu `9000…`). Kredensial acak di `.env` (tidak masuk git). Terverifikasi pada Keycloak berjalan: 18/18 pemeriksaan spesifikasi, 13/13 uji ujung ke ujung token asli → `libs/iam-dummy` (jumlah permission per peran cocok dengan PERMISSION_MAP; Admin & dua akun Fase 2 = 0). Skrip verifikasi disimpan di repo | `infra/keycloak/`, `docker-compose.yml`, `.env.example` |
+| P3.5 | Seeder 1.431 gedung kantor (Master Aset BMN) dari `data/kantor-bmn.json` prototipe → tabel `"KantorBmn"` Postgres dev. Koordinat digenerate deterministik per provinsi (34 provinsi, bbox kasar) untuk seluruh baris (SIMAN belum kirim satu pun), ditandai kolom baru `isKoordinatDummy` — **perubahan skema disetujui pemilik proyek 18 Sep 2026 sebelum dikerjakan**. Terverifikasi: 7 tes generator, seeding sungguhan 1.431/1.431 baris, idempotensi dibuktikan (jalan 2× → koordinat identik), 3 penjaga dev-only diuji sampai benar-benar menolak. `unitId` sengaja `NULL` (pencocokan ke unit organisasi di luar cakupan) | `infra/kantor-bmn-seed/`, `docker-compose.yml` |
 
 ### 5.3 Belum selesai / perlu tindakan pemilik proyek
 Sudah beres 18 Sep 2026: remote prototipe dipindah dan di-push; penulis 8 commit sesi itu
@@ -269,23 +275,45 @@ repo prototipe dibetulkan; dokumen di repo ini di-commit dan di-push. Branch
 1. **Build prototipe belum terverifikasi lulus.** `npm run build` sempat gagal karena galat tipe
    hasil P1.3. Sudah diperbaiki (`1b1487a`) tetapi belum dijalankan ulang. Jalankan
    `npm install` lalu `npm run build` di repo prototipe.
-2. **UAT tim SOPB belum memuat koreksi 7** (lihat butir "Remote prototipe dipindah" di §5.1).
+2. **UAT tim SOPB belum memuat koreksi 7** (lihat butir "Remote prototipe dipindah" di bagian 5.1).
    Perlu melibatkan Donny.
-3. **Pertanyaan ke BaTII:** Lampiran E PLAYBOOK ditambah API_CONTRACT §9 butir 1–7 (termasuk
+3. **Pertanyaan ke BaTII:** Lampiran E PLAYBOOK ditambah API_CONTRACT bagian 9 butir 1–7 (termasuk
    siapa menjalankan migrasi tabel ke-33).
-4. **Pertanyaan ke pemilik proses bisnis:** API_CONTRACT §9 butir 8–10 (wewenang mengakhiri
+4. **Pertanyaan ke pemilik proses bisnis:** API_CONTRACT bagian 9 butir 8–10 (wewenang mengakhiri
    broadcast & tanggap darurat, jenis/batas lampiran, pemilik butir 1.1).
-5. **Langkah PLAYBOOK berikutnya: P2.2** (inventaris komponen UI). Catatan: prototipe punya 76
+5. **Langkah PLAYBOOK berikutnya: P3.6** (dummy notifikasi) — Fase 3 tinggal ini. Setelahnya
+   Fase 4 (bangun aplikasi): seeder P3.5 belum membuat baris `"User"` untuk sepuluh NIP uji
+   Keycloak (tabel `"User"` juga belum ada — menyusul P4.2), jadi lingkup data akun uji masih
+   kosong (fail-closed) sampai itu dikerjakan. Catatan: P2.2 sudah selesai — prototipe punya 76
    berkas `.tsx` di `src/components`, bukan 69 seperti di PLAYBOOK.
+6. **Aturan dummy #4 belum ditegakkan:** belum ada pipeline build yang menggagalkan build
+   production kalau dummy masih ter-resolve. Wajib dipasang di P4.3/P6.2.
+7. **Node.js tersedia di laptop kedua** (v24.21.0, npx 11.19.0) — berbeda dari laptop pertama.
+   Agen bisa menjalankan verifikasi build sendiri di sini.
+8. **Asumsi integrasi shell ↔ remote** (DUMMY_REGISTRY.md bagian 3.3, butir 42–51) paling mahal
+   kalau meleset. Layak ditanyakan ke BaTII bersamaan dengan Lampiran E #1 (`starter.mfe`) —
+   kalau `starter.mfe` sudah membawa semuanya, cukup minta template itu.
+9. **Docker Desktop dinyalakan pemilik proyek sendiri**; agen tidak menyalakan atau memperbaiki
+   Docker Desktop. Bila muncul dialog galat soal `sailor-ingest.sock` (socket basi di
+   `%LOCALAPPDATA%\Docker\run`), **jangan** pilih "Reset to factory defaults" — itu menghapus
+   semua image, container, dan volume.
+10. Di laptop lain: jalankan `node infra/keycloak/buat-env.mjs` untuk membuat `.env` sendiri —
+    berkas itu sengaja tidak ikut git.
+11. **Laptop ini punya PostgreSQL 17 native Windows yang juga mendengarkan di port 5432**,
+    bentrok dengan Docker. Karena itu `docker-compose.yml` memetakan Postgres ke **port host
+    5433** (bukan 5432 standar) — lihat catatan di berkas itu dan di
+    `infra/kantor-bmn-seed/README.md`. Semua koneksi dev ke Postgres dari host Windows pakai
+    `localhost:5433`, bukan `:5432`. Instalasi native itu **tidak disentuh**; pemilik proyek
+    yang memutuskan sesuatu terhadapnya bila diperlukan.
 
 ### 5.4 Keputusan yang mengikat sistem baru
 - **Prototipe sengaja TIDAK disamakan** dengan API_CONTRACT (keputusan 18 Sep 2026). Seluruh
-  selisih di API_CONTRACT §6 (12 butir) **wajib diterapkan di sigap-api/sigap-web**. Saat
-  porting P4.4 ("logika identik"), butir §6 mengalahkan perilaku prototipe.
+  selisih di API_CONTRACT bagian 6 (12 butir) **wajib diterapkan di sigap-api/sigap-web**. Saat
+  porting P4.4 ("logika identik"), butir bagian 6 mengalahkan perilaku prototipe.
 - Tabel ke-33 `"BroadcastSasaranUnit"` disetujui (lihat aturan mutlak no. 5 di atas).
 - Aturan trigger: satu unit dipegang satu broadcast aktif per jenis bencana; trigger berikutnya
   melewati unit itu; sasaran dikunci saat dipicu; unit berdata kosong tidak ikut disasar
-  (API_CONTRACT §3.3.1).
+  (API_CONTRACT bagian 3.3.1).
 
 ### 5.5 Kesepakatan cara kerja dengan agen AI
 Ditulis di sini karena memori agen tidak ikut berpindah laptop.

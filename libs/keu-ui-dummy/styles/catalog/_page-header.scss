@@ -1,0 +1,32 @@
+// .page-header — [RESMI] nama class disebut di Standar-Arsitektur-ICS.pdf.
+// [ASUMSI] seluruh struktur anak (__title, __subtitle, __actions) dan tampilannya.
+@use '../index' as *;
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-md;
+  padding: $space-lg 0;
+  border-bottom: 1px solid $color-border;
+
+  &__title {
+    margin: 0;
+    color: $color-navy;
+    font-size: $font-size-title;
+    font-weight: $font-weight-bold;
+  }
+
+  &__subtitle {
+    margin: $space-xs 0 0;
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+  }
+}
