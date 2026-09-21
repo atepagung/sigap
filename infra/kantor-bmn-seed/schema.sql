@@ -4,9 +4,14 @@
 -- dari kesepakatan struktur tabel, KECUALI kolom "isKoordinatDummy" di bawah, yang sudah
 -- disetujui pemilik proyek (18 Sep 2026, P3.5) sebagai penanda koordinat hasil generate.
 --
--- unitId SENGAJA tanpa foreign key: tabel "Unit" belum dibuat (menyusul saat EF Core/P4.2
--- membangun skema penuh). Seeder ini hanya mengisi data BMN; menautkan ke unit organisasi
--- di luar cakupan permintaan ini dan dibiarkan NULL untuk semua baris.
+-- Sejak P4.2 (21 Sep 2026) skema penuh dipasang lebih dulu oleh infra/skema/terapkan.mjs, dan
+-- berkas ini praktis tidak berbuat apa-apa (IF NOT EXISTS). Ia dipertahankan hanya supaya
+-- seeder tetap dapat dijalankan sendirian. Foreign key "unitId" → "Unit" dipasang oleh
+-- infra/skema, bukan di sini, karena di sini "Unit" belum tentu ada.
+--
+-- [DIPERBAIKI 21 Sep 2026, P4.2] Kolom waktu sebelumnya ditulis timestamptz, menyimpang dari
+-- Prisma (TIMESTAMP(3) tanpa zona waktu, berisi waktu UTC) padahal komentar di atas menyatakan
+-- tipenya mengikuti Prisma. Penyimpangan itu tidak pernah disetujui, dan kini diluruskan.
 --
 -- Nama kolom quoted camelCase, konsisten dengan seluruh skema Prisma prototipe (tanpa @map).
 CREATE TABLE IF NOT EXISTS "KantorBmn" (
@@ -38,8 +43,8 @@ CREATE TABLE IF NOT EXISTS "KantorBmn" (
   "bujur"              double precision,
   "unitId"             text,
   "sumber"             text NOT NULL,
-  "ditarikPada"        timestamptz NOT NULL,
-  "createdAt"          timestamptz NOT NULL DEFAULT now(),
+  "ditarikPada"        timestamp(3) NOT NULL,
+  "createdAt"          timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   -- [DISETUJUI 18 Sep 2026] Penanda koordinat hasil generate seeder (belum tersedia dari
   -- SIMAN), BUKAN bagian skema Prisma prototipe. Lihat README.md di folder ini.

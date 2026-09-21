@@ -70,7 +70,10 @@ nanti `sigap-api` memanggil `postgres:5432`) tidak terpengaruh.
 ## Batas & asumsi
 
 - Skema kolom `KantorBmn` mengikuti model Prisma prototipe apa adanya (skema-first), **kecuali**
-  `isKoordinatDummy` yang baru. Lihat `schema.sql` untuk DDL lengkap dan alasan `unitId` tanpa FK.
+  `isKoordinatDummy` yang baru. Sejak P4.2 (21 Sep 2026) skema penuh dipasang lebih dulu oleh
+  [infra/skema](../skema/README.md), termasuk foreign key `unitId` → `Unit`; `schema.sql` di sini
+  tinggal cadangan agar seeder dapat jalan sendirian. Tipe kolom waktunya sempat `timestamptz`
+  (menyimpang dari Prisma) dan sudah dikembalikan ke `TIMESTAMP(3)`.
 - Path sumber default: `C:\dev\MKB APPS\App\data\kantor-bmn.json` — salinan lokal yang sama
   dipakai `[path file salinan SIMAN]` di PLAYBOOK P3.5 (dicatat di MIGRATION_NOTES bagian 5.1).
   Sudah berupa JSON hasil ekstraksi xlsx, bukan xlsx mentah.
