@@ -26,5 +26,8 @@ async function register(): Promise<void> {
     return;
   }
   const app = await createApplication(mergeApplicationConfig(appConfig, remoteFederationConfig));
-  customElements.define(elementName, createCustomElement(RemoteEntryComponent, { injector: app.injector }));
+  customElements.define(
+    elementName,
+    createCustomElement(RemoteEntryComponent, { injector: app.injector }),
+  );
 }

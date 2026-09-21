@@ -4,12 +4,20 @@
   "scripts": {
     "ng": "ng",
     "start": "node scripts/serve.mjs",
+    "clean": "rimraf dist .angular coverage",
     "prebuild": "node scripts/generate-remote-sources.mjs",
     "build": "ng build",
+    "build:prod": "cross-env NODE_ENV=production npm run build",
     "prewatch": "node scripts/generate-remote-sources.mjs",
     "watch": "ng build --watch --configuration development",
     "pretest": "node scripts/generate-remote-sources.mjs",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:styles": "stylelint \"src/**/*.{scss,css,html}\" \"../../libs/keu-ui-dummy/styles/**/*.scss\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run lint:styles && npm run format:check && npm test"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
@@ -30,10 +38,21 @@
     "@angular/build": "^22.1.8",
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
+    "@eslint/js": "^10.0.1",
+    "@softarc/native-federation-orchestrator": "^4.6.0",
+    "angular-eslint": "^22.5.0",
+    "cross-env": "^10.1.0",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
     "jsdom": "^28.0.0",
+    "postcss-html": "^2.0.0",
     "prettier": "^3.8.1",
+    "rimraf": "^6.1.3",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard-scss": "^17.0.0",
     "typescript": "~6.0.2",
-    "vitest": "^4.0.8",
-    "@softarc/native-federation-orchestrator": "^4.6.0"
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^4.0.8"
   }
 }

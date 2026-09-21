@@ -7,6 +7,8 @@ indent_style = space
 indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
+# Produksi berjalan di Linux; akhir baris wajib LF (AGENTS.md bagian Lintas platform).
+end_of_line = lf
 
 [*.ts]
 quote_type = single

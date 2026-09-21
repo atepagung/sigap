@@ -39,7 +39,11 @@ export function generateRemoteSources() {
   mkdirSync(GENERATED_DIR, { recursive: true });
   writeFileSync(
     join(GENERATED_DIR, 'remote-identity.ts'),
-    [...HEADER, `export const REMOTE_IDENTITY = ${JSON.stringify(identity, null, 2)} as const;`, ''].join('\n'),
+    [
+      ...HEADER,
+      `export const REMOTE_IDENTITY = ${JSON.stringify(identity, null, 2)} as const;`,
+      '',
+    ].join('\n'),
   );
   writeFileSync(
     join(GENERATED_DIR, 'remote-entry.ts'),
