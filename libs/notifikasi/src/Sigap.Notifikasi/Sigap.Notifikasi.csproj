@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    BUKAN dummy. Abstraksi kanal notifikasi SIGAP: ia tetap dipakai apa pun jawaban BaTII
+    atas Lampiran E #9 (layanan notifikasi bersama platform) dan #13 (izin Web Push).
+    Yang berubah saat jawabannya tiba hanyalah daftar "Notifikasi:Kanal" di konfigurasi.
+
+    Proyek ini sengaja tidak bergantung pada ASP.NET Core, EF Core, maupun sigap-api, karena
+    solusi .NET-nya baru dibangun di P4.1. Sambungan ke database ditulis sebagai port
+    (ICatatanKiriman, IGudangLanggananPush) yang diimplementasikan Infrastructure di P4.2.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Sigap.Notifikasi</RootNamespace>
+    <AssemblyName>Sigap.Notifikasi</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Sigap.Notifikasi.Tests" />
+  </ItemGroup>
+
+</Project>
