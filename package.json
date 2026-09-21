@@ -6,13 +6,27 @@
     "apps/sigap-web"
   ],
   "scripts": {
+    "prepare": "husky",
     "start:shell": "npm run start --workspace apps/shell-dummy",
     "start:web": "npm run start --workspace apps/sigap-web",
     "build:shell": "npm run build --workspace apps/shell-dummy",
     "build:web": "npm run build --workspace apps/sigap-web",
-    "test:web": "npm run test --workspace apps/sigap-web"
+    "test:web": "npm run test --workspace apps/sigap-web",
+    "lint:web": "npm run lint --workspace apps/sigap-web",
+    "lint:styles": "npm run lint:styles --workspace apps/sigap-web",
+    "format:web": "npm run format --workspace apps/sigap-web",
+    "check:web": "npm run check --workspace apps/sigap-web",
+    "periksa:repo": "node scripts/periksa-repo.mjs",
+    "test:skrip": "node --test \"scripts/**/*.spec.mjs\"",
+    "verifikasi:linux": "node scripts/verifikasi-linux.mjs"
   },
   "dependencies": {
     "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1"
   }
 }
