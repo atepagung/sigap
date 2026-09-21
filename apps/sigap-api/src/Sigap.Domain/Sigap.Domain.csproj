@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Layer terdalam. Aturan bisnis murni: entitas, tipe nilai, perhitungan, aturan status.
+    TIDAK BOLEH bergantung pada apa pun — tanpa EF Core, tanpa ASP.NET, tanpa iam.plugin.
+    Tujuan porting src/logic/ prototipe yang berupa perhitungan dan aturan (PLAYBOOK P4.4).
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Sigap.Domain</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -107,6 +107,27 @@ menyediakannya.
 | **Status** | **Aktif** (dibuat dan diverifikasi 18 Sep 2026, P3.5): 1.431/1.431 baris tersimpan, 7 tes generator lulus, idempotensi dan tiga penjaga dev-only terbukti lewat pengujian sungguhan, bukan asumsi |
 | **[DISETUJUI 18 Sep 2026]** | Kolom baru `"KantorBmn"."isKoordinatDummy"` (boolean) — perubahan struktur tabel di luar 32 tabel prototipe, disetujui pemilik proyek sebelum dikerjakan, sesuai aturan mutlak #5 |
 | **Kewajiban P4** | UI peta wajib membaca `isKoordinatDummy` dan menampilkan banner peringatan selama ada baris bertanda begitu — belum bisa diimplementasikan karena UI-nya sendiri belum dibangun |
+| **[DIPERBAIKI 21 Sep 2026, P4.2]** | Seeder sempat membuat kolom `"ditarikPada"`/`"createdAt"` bertipe `timestamptz`, menyimpang dari Prisma (`TIMESTAMP(3)`) tanpa persetujuan. `infra/skema/terapkan.mjs` mengembalikannya ke bentuk Prisma dan `schema.sql` seeder dibetulkan; 1.431 baris terbukti cocok 100% dengan sumbernya (hanya mikrodetik yang dibulatkan ke milidetik). Foreign key `"unitId"` → `"Unit"` kini terpasang lewat `infra/skema` |
+
+### 1.8 `libs/notifikasi-dummy`
+
+Berbeda dari entri lain: yang dummy **hanya kanal log dan pengisi port sementara**. Abstraksi
+kanal notifikasi beserta kanal `dalam-aplikasi` dan `web-push` ada di `libs/notifikasi` dan
+**bukan dummy** — lapisan itu tetap dipakai apa pun jawaban BaTII, karena yang berubah hanya
+daftar kanal di konfigurasi. Menaruhnya di `libs/*-dummy` justru akan melanggar aturan dummy
+#4, sebab kode itu memang harus ikut naik ke production.
+
+| Kolom | Isi |
+| --- | --- |
+| **Nama dummy** | `libs/notifikasi-dummy` (proyek `Sigap.Notifikasi.Dummy`, .NET 10) |
+| **Menggantikan** | `KanalLog`: tidak meniru apa pun, hanya untuk pengembangan. `CatatanKirimanMemori` → tabel `"KirimanPush"` lewat EF Core (P4.2). `GudangLanggananPushMemori` → tabel `"LanggananPush"` lewat EF Core (P4.2). `PengirimWebPushTiruan` → paket `WebPush` + kunci VAPID (P5.3) |
+| **Kontrak ditiru dari** | Tidak ada dokumentasi platform soal notifikasi — itulah sebabnya lapisan ini berupa abstraksi, bukan tiruan. Perilaku push diambil dari prototipe `src/lib/push.ts`; bentuk pemberitahuan dari API_CONTRACT #43 |
+| **Asumsi yang perlu diverifikasi** | Lihat bagian 6 di bawah |
+| **Pemicu penukaran** | `DbContext` ada (P4.2); jawaban Lampiran E #13 + kunci VAPID (P5.3) |
+| **Perkiraan beban** | Ringan — tiga implementasi port, tanpa menyentuh kode fitur |
+| **Status** | **Aktif** (dibuat dan diverifikasi 21 Sep 2026, P3.6): 58 tes lulus |
+| **Kunci penukaran** | `ProjectReference` ke proyek ini di sigap-api diberi `Condition="'$(Configuration)' == 'Debug'"`, sehingga build Release tidak menyusunnya sama sekali |
+| **Tidak ada perubahan skema** | Idempotensi memakai tabel `"KirimanPush"` yang sudah ada di antara 32 tabel. Menyimpan pemberitahuan sebagai baris tersendiri akan menuntut tabel ke-34 dan **tidak dilakukan** — API_CONTRACT #43 menetapkan peringatan dihitung saat diminta |
 
 ---
 
@@ -318,6 +339,7 @@ sudah ada di PERMISSION_MAP bagian 8 dan API_CONTRACT bagian 9 dirujuk, tidak di
 | 72 | Format berkas kebijakan `iam-policy.sigap.json`. Tiga penyempurnaan dari draf PERMISSION_MAP bagian 7: (a) `PEMICU_ATAU_MENCAKUP(X)` diberi argumen wilayah; (b) profil ditandai `generik`/`domain` + `wilayahDasar`; (c) Sieve dikunci per kunci field dan aturan `/monitor/unit/{unitId}` digabung (hasilnya identik karena butir 67) | Lampiran E #6 |
 | 73 | Permission yang tidak terdaftar di kebijakan → galat 500, bukan 403 | Perilaku plugin asli terhadap permission tak dikenal? |
 | 74 | Audit trail **tidak ditiru** | Lampiran E #10 |
+| 101 | `DataScope` tidak punya konstruktor publik, sehingga tes unit di luar iam-dummy tidak dapat merakitnya. Kode aplikasi menyiasatinya dengan memisahkan bagian murni yang bekerja atas `ScopeGrant` (publik) — lihat `LingkupTampilan` di sigap-api. *(ditemukan 21 Sep 2026, P4.1)* | Apakah `iam.plugin` menyediakan cara merakit lingkup untuk pengujian? Tanpa itu, setiap use case yang membaca `DataScope` hanya dapat diuji lewat tes integrasi berpipeline penuh |
 
 ### 4.3 Frontend (`*hasPermission`)
 
@@ -350,7 +372,37 @@ jadi seluruh nilai di dummy adalah **usulan kita**.
 
 ---
 
-## 6. Urutan penukaran (Lampiran D PLAYBOOK)
+## 6. Asumsi notifikasi yang perlu diverifikasi ke BaTII
+
+Bernomor lanjutan dari bagian 5. Berbeda dari bagian lain, di sini **tidak ada satu pun
+kontrak platform yang ditiru** — slide arsitektur ICS tidak menyebut notifikasi sama sekali.
+Itulah sebabnya bentuknya abstraksi: ia menyerap jawaban apa pun tanpa mengubah kode fitur.
+
+### 6.1 Dua pertanyaan yang menentukan
+
+| # | Asumsi kita | Pertanyaan ke BaTII |
+| --- | --- | --- |
+| 89 ★ | Platform **tidak** menyediakan layanan notifikasi bersama, sehingga SIGAP mengantar sendiri | Apakah ada layanan notifikasi bersama di antara 20 layanan data/API? (Lampiran E #9) Bila ada, ia menjadi satu kanal tambahan dan abstraksinya tidak berubah |
+| 90 ★ | Web Push **belum** diizinkan, jadi kanalnya disiapkan tetapi dimatikan | Apakah Web Push diizinkan di domain platform? Kalau tidak, penggantinya apa? (Lampiran E #13) |
+
+### 6.2 Yang kita tetapkan sendiri
+
+| # | Pilihan kita | Catatan |
+| --- | --- | --- |
+| 91 | Nama kanal `dalam-aplikasi`, `web-push`, `log` | Tidak ada konvensi platform yang diketahui |
+| 92 | Bentuk konfigurasi: `Notifikasi:Kanal` berupa daftar nama, seluruhnya dijalankan bersamaan | Bukan rantai cadangan — untuk sistem kedaruratan, dua jalur paralel lebih andal daripada satu rantai yang bergantung pada deteksi kegagalan |
+| 93 | Konfigurasi wajib memuat minimal satu kanal **tahan luring**, kalau tidak proses menolak mulai | Menegakkan syarat PLAYBOOK P5.3 di tingkat konfigurasi, bukan lewat disiplin |
+| 94 | Muatan Web Push memakai bentuk satu butir `GET /notifikasi` | **Sengaja berbeda dari prototipe**, yang menaruh `tautan` (rute halaman) di muatan. API_CONTRACT #43: `terkait` menunjuk sumber daya, pemetaan ke halaman urusan Angular. Rute yang tertanam di muatan peladen akan basi tiap kali rute berubah |
+| 95 | TTL 3600 detik; `Urgency: high` hanya untuk tingkat `GENTING` | TTL dari prototipe; pemetaan urgency kita tetapkan |
+| 96 | Panjang maksimum judul 200 dan pesan 500 karakter | API_CONTRACT belum menetapkannya |
+| 97 | Pemberitahuan `GENTING` wajib menyertakan `terkait` | Peringatan paling genting yang tidak dapat dibuka penerimanya tidak ada gunanya |
+| 98 | Idempotensi memakai `"KirimanPush"."kunci"` yang sudah ada, untuk **semua** kanal sekaligus | Tanpa perubahan skema. Ditangani di lapisan pengirim supaya satu keadaan tidak lolos di satu kanal dan tertahan di kanal lain |
+| 99 | Kunci VAPID hanya lewat environment variable atau vault | Siapa menerbitkan dan memutar kunci VAPID bila Web Push disetujui? |
+| 100 | Jejak audit pemberitahuan **tidak ditiru** | Senada butir 74, menunggu Lampiran E #10 |
+
+---
+
+## 7. Urutan penukaran (Lampiran D PLAYBOOK)
 
 | No | Dummy | Lokasi | Dipicu oleh | Beban | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -360,17 +412,20 @@ jadi seluruh nilai di dummy adalah **usulan kita**.
 | 4 | SSO | Keycloak lokal (`infra/keycloak/`) | Client OIDC didaftarkan BaTII | Ringan, ganti issuer & client id | **Aktif** |
 | 5 | Shell + starter.mfe | `apps/shell-dummy`, `apps/sigap-web/src/federation/` | Akses shell ICS + template | Sedang, lihat P7.2 | **Aktif** |
 | 6 | Data SIMAN (koordinat) | `infra/kantor-bmn-seed/` | API SIMAN + koordinat tersedia | Ringan, ganti seeder | **Aktif** |
-| 7 | Notifikasi | `libs/notifikasi-dummy` | Jawaban Web Push / layanan platform | Ringan, ganti konfigurasi channel | Belum dibuat (P3.6) |
+| 7 | Notifikasi | `libs/notifikasi-dummy` | Jawaban Web Push / layanan platform | Ringan, ganti konfigurasi kanal | **Aktif** |
 
 ---
 
-## 7. Aturan dummy (ringkasan, sumber `docs/PLAYBOOK.md` Fase 3)
+## 8. Aturan dummy (ringkasan, sumber `docs/PLAYBOOK.md` Fase 3)
 
 1. **Karantina** — semua dummy di `libs/*-dummy/` atau `apps/shell-dummy/`, terpisah dari kode aplikasi.
 2. **Kontrak identik** — nama dan signature mengikuti dokumentasi platform.
 3. **Isi sesederhana mungkin** — dummy tidak perlu benar, hanya perlu berjalan.
 4. **Tidak boleh naik ke production** — build production gagal kalau dummy masih ter-resolve.
-   *(Belum diimplementasikan — belum ada pipeline build; wajib dipasang di P4.3/P6.2.)*
+   *(Sebagian ditegakkan 21 Sep 2026, P4.1: target `LarangDummyDiPublish` di `Sigap.Api.csproj`
+   menggagalkan `dotnet publish` selama masih ada rujukan ber-nama `*Dummy*`, dan
+   `libs/notifikasi-dummy` bahkan tidak ikut disusun pada konfigurasi Release. Pemeriksa
+   seluruh solusi di CI menyusul di P6.2.)*
 5. **Tercatat di berkas ini.**
 
 Yang ditiru adalah **kontraknya**, bukan cara kerjanya. Kode aplikasi ditulis seolah-olah platform
