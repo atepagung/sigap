@@ -4,6 +4,7 @@ using Sigap.Infrastructure.Keamanan;
 using Sigap.Infrastructure.Persistensi.Broadcast;
 using Sigap.Infrastructure.Persistensi.Laporan;
 using Sigap.Infrastructure.Persistensi.Organisasi;
+using Sigap.Infrastructure.Persistensi.Referensi;
 
 namespace Sigap.Infrastructure.Tests;
 
@@ -98,18 +99,36 @@ public class DatabaseTests
     }
 
     [FaktaDatabase]
-    public async Task KantorBmn_terbaca_dengan_waktu_UTC_yang_benar()
+    public async Task Waktu_KantorBmn_bolak_balik_sebagai_UTC_dan_dibulatkan_ke_milidetik()
     {
+        // Mandiri: menulis barisnya sendiri di dalam transaksi yang di-rollback. Sebelumnya tes ini
+        // membaca gedung dari 1.431 baris seeder P3.5, yang sumbernya di luar repo — sehingga
+        // pasti gagal di CI yang databasenya kosong.
         await using var db = Bantuan.Konteks(Bantuan.KoneksiDev);
+        await using var tx = await db.Database.BeginTransactionAsync();
 
-        var gedung = await db.KantorBmn.AsNoTracking().FirstOrDefaultAsync(k => k.Id == "BEC22D37E1E4094EE0531561F20ACDA0");
+        // Sumber seeder: 2026-08-25T06:54:33.451735+00:00 — mikrodetik, lebih halus dari kolom.
+        var ditarik = new DateTime(2026, 8, 25, 6, 54, 33, DateTimeKind.Utc).AddTicks(4_517_350);
+        db.KantorBmn.Add(new KantorBmn
+        {
+            Id = "UJI-BMN-0001",
+            NamaGedung = "Gedung Uji",
+            Sumber = "tes",
+            DitarikPada = ditarik,
+            IsKoordinatDummy = true
+        });
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
 
-        Assert.NotNull(gedung);
-        Assert.Equal("Gd. Sumitro Djoyohadikusumo", gedung.NamaGedung);
+        var gedung = await db.KantorBmn.AsNoTracking().SingleAsync(k => k.Id == "UJI-BMN-0001");
+
         Assert.Equal(DateTimeKind.Utc, gedung.DitarikPada.Kind);
-        // Sumber: 2026-08-25T06:54:33.451735+00:00 → TIMESTAMP(3) membulatkan ke milidetik.
+        // TIMESTAMP(3) membulatkan ke milidetik, persis cara Prisma menyimpan.
         Assert.Equal(new DateTime(2026, 8, 25, 6, 54, 33, 452, DateTimeKind.Utc), gedung.DitarikPada);
         Assert.True(gedung.IsKoordinatDummy);
+        Assert.NotEqual(default, gedung.CreatedAt);   // DEFAULT CURRENT_TIMESTAMP
+
+        await tx.RollbackAsync();
     }
 
     [FaktaDatabase]
@@ -124,7 +143,11 @@ public class DatabaseTests
         pengguna.Roles.Add(new UserRole { Role = RoleKey.Satgas });
         var laporan = new DisasterAlert
         {
-            Unit = unit, Pelapor = pengguna, JenisBencana = "Gempa Bumi", Level = "Sedang", Lokasi = "Lantai 2"
+            Unit = unit,
+            Pelapor = pengguna,
+            JenisBencana = "Gempa Bumi",
+            Level = "Sedang",
+            Lokasi = "Lantai 2"
         };
         db.AddRange(unit, pengguna, laporan);
         await db.SaveChangesAsync();
@@ -155,7 +178,10 @@ public class DatabaseTests
         var pengguna = new User { Nip = "900000000000000098", Nama = "Satgas Uji", Unit = unit };
         var broadcast = new ActiveBroadcast
         {
-            JenisBencana = "Gempa Bumi", Lokasi = "Riau", Pesan = "Uji", DikirimOleh = pengguna
+            JenisBencana = "Gempa Bumi",
+            Lokasi = "Riau",
+            Pesan = "Uji",
+            DikirimOleh = pengguna
         };
         db.AddRange(unit, pengguna, broadcast);
         await db.SaveChangesAsync();
@@ -163,7 +189,10 @@ public class DatabaseTests
         // DILEWATI tanpa pemegang melanggar CHECK "sasaran_dilewati_wajib_pemegang".
         db.Add(new BroadcastSasaranUnit
         {
-            Broadcast = broadcast, Unit = unit, JenisBencana = "Gempa Bumi", Status = StatusSasaran.Dilewati
+            Broadcast = broadcast,
+            Unit = unit,
+            JenisBencana = "Gempa Bumi",
+            Status = StatusSasaran.Dilewati
         });
 
         var galat = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync());

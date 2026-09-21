@@ -27,7 +27,7 @@ public sealed class PembuatCuid : ValueGenerator<string>
     private const int BlokUkuran = 4;
     private static readonly long Rentang = (long)Math.Pow(36, BlokUkuran);
     private static readonly string SidikProses = BuatSidikProses();
-    private static int _pencacah = RandomNumberGenerator.GetInt32((int)Rentang);
+    private static int PencacahUrut = RandomNumberGenerator.GetInt32((int)Rentang);
 
     public override bool GeneratesTemporaryValues => false;
 
@@ -36,7 +36,7 @@ public sealed class PembuatCuid : ValueGenerator<string>
     public static string Buat()
     {
         var waktu = KeBase36(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()).PadLeft(8, '0');
-        var pencacah = Blok(Interlocked.Increment(ref _pencacah) % Rentang);
+        var pencacah = Blok(Interlocked.Increment(ref PencacahUrut) % Rentang);
         var acak = Blok(RandomNumberGenerator.GetInt32((int)Rentang)) +
                    Blok(RandomNumberGenerator.GetInt32((int)Rentang));
 

@@ -7,6 +7,7 @@ Microservice SIGAP, .NET 10, Clean Architecture. Kontraknya di
 docker compose up -d postgres
 node infra/skema/terapkan.mjs --yes-development   # sekali, memasang 33 tabel ke database dev
 dotnet test apps/sigap-api/sigap-api.slnx          # 191 tes
+dotnet format apps/sigap-api/sigap-api.slnx --verify-no-changes
 dotnet run --project apps/sigap-api/src/Sigap.Api
 ```
 
@@ -123,6 +124,12 @@ dev) — lalu dipasangkan lewat `("unitId", "submittedById", "createdAt")`. Liha
   asumsi sampai standar gateway ICS diketahui.
 - **Analyzer:** `TreatWarningsAsErrors`, `AnalysisLevel=latest-recommended`,
   `EnforceCodeStyleInBuild`. Aturannya di `.editorconfig`; yang dimatikan diberi alasan.
+- **Penamaan field:** `_camelCase` hanya untuk field *instans* privat; `const` dan `static`
+  (termasuk `static readonly`) PascalCase. **Aturan penamaan baru ditegakkan penuh oleh
+  `dotnet format --verify-no-changes`, bukan oleh `dotnet build`** — build lulus bersih sementara
+  `dotnet format` melaporkan pelanggaran. Jalankan keduanya; CI menjalankan keduanya.
+- **Akhir baris LF** (`end_of_line = lf`) dan path memakai `Path.Combine()`. Lihat
+  [AGENTS.md](../../AGENTS.md) bagian Lintas platform; `npm run periksa:repo` memeriksanya.
 - **ContentRoot = folder keluaran** (`Program.cs`), supaya `iam-policy.sigap.json` ditemukan
   dengan cara yang sama saat `dotnet run` maupun setelah publish.
 

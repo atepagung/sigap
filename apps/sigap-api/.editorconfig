@@ -39,11 +39,27 @@ dotnet_naming_symbols.antarmuka.applicable_accessibilities = *
 dotnet_naming_style.berawalan_i.required_prefix = I
 dotnet_naming_style.berawalan_i.capitalization = pascal_case
 
-dotnet_naming_rule.field_privat_garis_bawah.severity = warning
-dotnet_naming_rule.field_privat_garis_bawah.symbols = field_privat
-dotnet_naming_rule.field_privat_garis_bawah.style = garis_bawah_camel
-dotnet_naming_symbols.field_privat.applicable_kinds = field
-dotnet_naming_symbols.field_privat.applicable_accessibilities = private
+# Konvensi C# yang lazim: field INSTANS privat memakai _camelCase; const dan static (termasuk
+# static readonly) memakai PascalCase. Aturan static ditulis lebih dulu karena lebih spesifik.
+dotnet_naming_rule.field_statis_pascal_case.severity = warning
+dotnet_naming_rule.field_statis_pascal_case.symbols = field_statis
+dotnet_naming_rule.field_statis_pascal_case.style = pascal_case
+dotnet_naming_symbols.field_statis.applicable_kinds = field
+dotnet_naming_symbols.field_statis.applicable_accessibilities = *
+dotnet_naming_symbols.field_statis.required_modifiers = static
+
+dotnet_naming_rule.field_const_pascal_case.severity = warning
+dotnet_naming_rule.field_const_pascal_case.symbols = field_const
+dotnet_naming_rule.field_const_pascal_case.style = pascal_case
+dotnet_naming_symbols.field_const.applicable_kinds = field
+dotnet_naming_symbols.field_const.applicable_accessibilities = *
+dotnet_naming_symbols.field_const.required_modifiers = const
+
+dotnet_naming_rule.field_instans_privat.severity = warning
+dotnet_naming_rule.field_instans_privat.symbols = field_instans_privat
+dotnet_naming_rule.field_instans_privat.style = garis_bawah_camel
+dotnet_naming_symbols.field_instans_privat.applicable_kinds = field
+dotnet_naming_symbols.field_instans_privat.applicable_accessibilities = private
 dotnet_naming_style.garis_bawah_camel.required_prefix = _
 dotnet_naming_style.garis_bawah_camel.capitalization = camel_case
 
