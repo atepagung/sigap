@@ -22,6 +22,22 @@ cache artefak Native Federation; dev server lalu menyajikan campuran chunk produ
 development (gejalanya: halaman kosong, `ngDevMode is not defined`, 404 pada `_angular_*.js`).
 Kalau terjadi, cukup restart dev server-nya.
 
+## Kualitas kode
+
+**Baca [AGENTS.md](AGENTS.md) sebelum menulis kode** — aturan platform ICS (routing flat, styling
+lewat token, keamanan, batas Fase 1) dan aturan lintas platform.
+
+```bash
+npm run check:web      # dari root: ESLint + Stylelint + Prettier + tes
+npm run lint:web       # ESLint
+npm run lint:styles    # Stylelint — melarang warna di luar berkas token
+npm run format:web     # Prettier --write
+```
+
+Skrip `package.json` di sini **harus lintas platform** (PowerShell dan bash): `rimraf` untuk
+menghapus, `cross-env` untuk variabel lingkungan — jangan `rm -rf` atau `NODE_ENV=x cmd`.
+Pre-commit dan CI menjalankan pemeriksaan yang sama.
+
 ## Identitas remote — satu berkas
 
 Seluruh identitas (remoteName, element, function, selector, route path, display name, port) ada di

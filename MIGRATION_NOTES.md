@@ -264,6 +264,7 @@ setelah memverifikasi sendiri (PLAYBOOK "Alur satu sesi kerja" langkah 5).
 | P3.2 | Shell dummy + sigap-web sebagai remote Native Federation (Angular 22.1). Identitas remote di satu berkas. Diuji di browser: mode mandiri, deep link, sinkronisasi URL dua arah (klik sidebar shell, klik di dalam remote, back/forward, pindah ke modul lain dan kembali), remote mati → shell tetap hidup. 9 unit test lulus. Alias `@danarakca/keu-ui` terbukti ter-resolve. Jalankan lewat `npm run start:web` / `npm run start:shell`, bukan `ng serve` | `apps/shell-dummy/`, `apps/sigap-web/`, `package.json` root (npm workspaces) |
 | P3.3 | Dummy `iam.plugin` (.NET 10) + directive `*hasPermission`. Kebijakan IAM sebagai data di `apps/sigap-api/iam-policy.sigap.json` — terbukti identik dengan draf PERMISSION_MAP bagian 7 (blok JSON di dokumen itu diganti rujukan ke berkas). 38 tes .NET: aturan PERMISSION_MAP pada kebijakan asli, Scope dieksekusi di SQLite, SQL PostgreSQL diperiksa (`WHERE ... = ANY (@UnitIds)`, `WHERE FALSE` tanpa izin), pipeline HTTP dengan JWT (401/403/Sieve). 4 tes directive | `libs/iam-dummy/`, `libs/iam-dummy-web/`, `apps/sigap-api/iam-policy.sigap.json` |
 | P3.4 | Realm Keycloak `kemenkeu` sesuai Kebutuhan Teknis bagian E: dua client, klaim `nip`/`kode_satker`/`kode_eselon1`/`groups`, aud `sigap-api`, 15 menit/8 jam, sepuluh akun uji (NIP palsu `9000…`). Kredensial acak di `.env` (tidak masuk git). Terverifikasi pada Keycloak berjalan: 18/18 pemeriksaan spesifikasi, 13/13 uji ujung ke ujung token asli → `libs/iam-dummy` (jumlah permission per peran cocok dengan PERMISSION_MAP; Admin & dua akun Fase 2 = 0). Skrip verifikasi disimpan di repo | `infra/keycloak/`, `docker-compose.yml`, `.env.example` |
+| P4.3 | Dasar kualitas kode. `AGENTS.md` di root dan `apps/sigap-web` (identitas remote, routing, styling, keamanan, scope Fase 1, larangan proyek, bagian **Lintas platform**). sigap-web: ESLint (aturan platform ditegakkan: tanpa `children`, tanpa hex/rgb, impor lewat `@danarakca/*`, tanpa `document.title`), Prettier, Stylelint (larangan warna di luar `_tokens.scss`), Husky + lint-staged + commitlint, skrip `rimraf`/`cross-env`. sigap-api: `.editorconfig` (LF), analyzer, `dotnet format` sebagai penjaga penamaan. CI GitHub Actions dengan filter path (`sigap-web`, `sigap-api`, `repo`). `scripts/periksa-repo.mjs` (LF di index, kapitalisasi, skrip npm, `Path.Combine`) dan `scripts/verifikasi-linux.mjs` (pipeline di container Linux). `CONTRIBUTING.md` (Conventional Commits). **Seluruh pipeline terbukti lulus di container Linux** (node:24 dan dotnet sdk 10). Workflow belum pernah berjalan di GitHub sungguhan | `AGENTS.md`, `apps/sigap-web/`, `.github/workflows/`, `scripts/`, `CONTRIBUTING.md` |
 | P4.2 | EF Core schema-first ke 33 tabel (32 prototipe + tabel ke-33), entity dikelompokkan per domain, 13 tabel Fase 2 dipetakan terpisah. Sumber skemanya DDL Prisma apa adanya di `infra/skema/` (prototipe tidak punya folder migrasi), terpasang ke PostgreSQL dev lewat `terapkan.mjs`. Konvensi Prisma ditiru di aplikasi: cuid, `updatedAt`, waktu UTC tanpa zona. `OrganisasiDariTabelUserUnit` kini membaca `"User"`/`"Unit"`; `/health/ready` memeriksa database. 191 tes sigap-api lulus; penjaga skema dibuktikan menggigit lewat tiga uji mutasi. Dokumen kandidat Scope/Sieve dibandingkan dengan PERMISSION_MAP | `infra/skema/`, `apps/sigap-api/src/Sigap.Infrastructure/Persistensi/`, [KANDIDAT_SCOPE_SIEVE.md](KANDIDAT_SCOPE_SIEVE.md) |
 | P4.1 | Solusi .NET 10 `apps/sigap-api`: 4 proyek layer + 3 proyek tes, dikelompokkan per domain (11 domain dari bagian 2 API_CONTRACT). Lima aspek asesmen jadi sub-struktur di dalam domain Asesmen, **bukan** lima domain — satu asesmen ditulis ke dua tabel dalam satu transaksi dan tidak punya endpoint per aspek. Controller tipis, satu kelas per use case, tanpa MediatR. Konvensi di `Directory.Build.props` + `.editorconfig`; OpenAPI bawaan .NET 10 + Scalar (Development saja). `GET /me/konteks` berjalan. 39 tes lulus; `dotnet publish` gagal selama dummy masih ter-resolve | `apps/sigap-api/`, [README-nya](apps/sigap-api/README.md) |
 | P3.6 | Abstraksi kanal notifikasi + tiga kanal (`dalam-aplikasi`, `web-push` nonaktif, `log` dummy), dipilih lewat `Notifikasi:Kanal` di konfigurasi. **Abstraksinya bukan dummy** dan ada di `libs/notifikasi`; yang dummy hanya kanal log dan pengisi port sementara. Tanpa perubahan skema — idempotensi memakai `"KirimanPush"` yang sudah ada. Konfigurasi tanpa kanal tahan luring ditolak saat proses mulai (syarat P5.3). 58 tes lulus | `libs/notifikasi/`, `libs/notifikasi-dummy/` |
@@ -284,7 +285,7 @@ repo prototipe dibetulkan; dokumen di repo ini di-commit dan di-push. Branch
    siapa menjalankan migrasi tabel ke-33).
 4. **Pertanyaan ke pemilik proses bisnis:** API_CONTRACT bagian 9 butir 8–10 (wewenang mengakhiri
    broadcast & tanggap darurat, jenis/batas lampiran, pemilik butir 1.1).
-5. **Langkah PLAYBOOK berikutnya: P4.3** (tooling, lint, CI, AGENTS.md). Yang menunggu:
+5. **Langkah PLAYBOOK berikutnya: P4.4** (porting aturan bisnis, ulang per domain). Yang menunggu:
    - Tabel `"User"` dan `"Unit"` sudah ada dan terbaca, tetapi **masih kosong** di database dev.
      Lingkup data sepuluh akun uji Keycloak tetap kosong (fail-closed) sampai keduanya diisi —
      sumber yang tersedia: `data/otk_bundle.json` prototipe, plus baris `"User"` untuk NIP uji
@@ -294,30 +295,41 @@ repo prototipe dibetulkan; dokumen di repo ini di-commit dan di-push. Branch
      sebelum domain Asesmen diporting di P4.4.
    - Catatan: P2.2 sudah selesai — prototipe punya 76 berkas `.tsx` di `src/components`, bukan
      69 seperti di PLAYBOOK.
-6. **Angka baris aturan bisnis yang sebenarnya (dihitung 21 Sep 2026):** `src/logic/` prototipe
+6. **Hook Git belum terpasang di clone ini.** Husky memasang hook lewat `core.hooksPath` saat
+   `npm install` — mengubah konfigurasi git, wewenang pemilik repo, jadi dependensi dipasang
+   dengan `--ignore-scripts` dan hook hanya diuji langsung (lint-staged atas berkas yang
+   di-stage). Jalankan `npm install` (atau `npx husky`) sekali. Di Linux/macOS, hook perlu bit
+   eksekusi: `git update-index --chmod=+x .husky/pre-commit .husky/commit-msg`.
+7. **Workflow CI belum pernah berjalan di GitHub.** Sintaksnya divalidasi `actionlint` dan setiap
+   langkahnya dijalankan di container Linux, tetapi hal yang hanya ada di GitHub (service
+   container, cache, filter path, izin) baru terbukti pada run pertama. Periksa hasilnya saat
+   pertama kali di-push, dan aktifkan branch protection agar `sigap-web`, `sigap-api`, dan `repo`
+   menjadi syarat merge.
+8. **Angka baris aturan bisnis yang sebenarnya (dihitung 21 Sep 2026):** `src/logic/` prototipe
    berisi **4.284** baris, bukan ~3.700 seperti di PLAYBOOK P4.1. Yang benar-benar diporting ke
    C# di Fase 1 **2.789** baris; 603 baris sengaja tidak diporting — termasuk `wewenang.ts`
    (208) dan `lingkup.ts` (99) yang **sudah menjadi** `iam-policy.sigap.json`, sehingga
    memportingnya sama dengan menulis ulang logika keamanan yang Lampiran A larang; sisanya 892
    baris milik Fase 2. Peta lengkapnya ada di riwayat sesi P4.1 dan diringkas per domain di
    [apps/sigap-api/README.md](apps/sigap-api/README.md).
-7. **Aturan dummy #4 sebagian ditegakkan (21 Sep 2026, P4.1):** `dotnet publish` sigap-api
+9. **Aturan dummy #4 sebagian ditegakkan (21 Sep 2026, P4.1):** `dotnet publish` sigap-api
    gagal dengan `SIGAP001` selama masih ada rujukan ber-nama `*Dummy*` — terbukti berhenti di
    `Kemenkeu.Iam.Dummy`. `libs/notifikasi-dummy` bahkan tidak ikut disusun pada konfigurasi
-   Release. Yang belum: pemeriksa seluruh solusi yang dijalankan CI (P6.2), dan CI itu sendiri
-   belum ada (P4.3).
-8. **Node.js tersedia di laptop kedua** (v24.21.0, npx 11.19.0) — berbeda dari laptop pertama.
+   Release. Sejak P4.3, workflow `sigap-api` menjalankan `dotnet publish` dan **gagal bila publish
+   berhasil**, atau gagal bukan karena `SIGAP001` — jadi aturannya dijaga di CI. Yang belum:
+   pemeriksa yang menyapu seluruh solusi dan rujukan `package.json` (P6.2).
+10. **Node.js tersedia di laptop kedua** (v24.21.0, npx 11.19.0) — berbeda dari laptop pertama.
    Agen bisa menjalankan verifikasi build sendiri di sini.
-9. **Asumsi integrasi shell ↔ remote** (DUMMY_REGISTRY.md bagian 3.3, butir 42–51) paling mahal
+11. **Asumsi integrasi shell ↔ remote** (DUMMY_REGISTRY.md bagian 3.3, butir 42–51) paling mahal
    kalau meleset. Layak ditanyakan ke BaTII bersamaan dengan Lampiran E #1 (`starter.mfe`) —
    kalau `starter.mfe` sudah membawa semuanya, cukup minta template itu.
-10. **Docker Desktop dinyalakan pemilik proyek sendiri**; agen tidak menyalakan atau memperbaiki
+12. **Docker Desktop dinyalakan pemilik proyek sendiri**; agen tidak menyalakan atau memperbaiki
    Docker Desktop. Bila muncul dialog galat soal `sailor-ingest.sock` (socket basi di
    `%LOCALAPPDATA%\Docker\run`), **jangan** pilih "Reset to factory defaults" — itu menghapus
    semua image, container, dan volume.
-11. Di laptop lain: jalankan `node infra/keycloak/buat-env.mjs` untuk membuat `.env` sendiri —
+13. Di laptop lain: jalankan `node infra/keycloak/buat-env.mjs` untuk membuat `.env` sendiri —
     berkas itu sengaja tidak ikut git.
-12. **Laptop ini punya PostgreSQL 17 native Windows yang juga mendengarkan di port 5432**,
+14. **Laptop ini punya PostgreSQL 17 native Windows yang juga mendengarkan di port 5432**,
     bentrok dengan Docker. Karena itu `docker-compose.yml` memetakan Postgres ke **port host
     5433** (bukan 5432 standar) — lihat catatan di berkas itu dan di
     `infra/kantor-bmn-seed/README.md`. Semua koneksi dev ke Postgres dari host Windows pakai

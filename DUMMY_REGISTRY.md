@@ -195,7 +195,7 @@ menyebut nilainya tapi tidak menyebut nama variabelnya.
 | --- | --- | --- |
 | 17 ★ | Warna merek | `$color-navy`, `$color-blue`, `$color-gold` |
 | 18 | Turunan merek | `$color-navy-dark`, `$color-blue-light`, `$color-gold-light` |
-| 19 | Permukaan & garis | `$color-surface`, `$color-surface-muted`, `$color-border`, `$color-border-strong` |
+| 19 | Permukaan & garis | `$color-surface`, `$color-surface-muted`, `$color-border`, `$color-border-strong`, `$color-overlay` *(ditambah 21 Sep 2026: aturan lint warna menemukan `rgba()` hardcode di `_modal.scss`)* |
 | 20 | Teks | `$color-text`, `$color-text-muted`, `$color-text-inverse` |
 | 21 | Status | `$color-success`, `$color-warning`, `$color-danger`, `$color-info` + varian `-light` / `-dark` |
 | 22 | Jarak | `$space-xs` … `$space-xl` |
@@ -425,7 +425,8 @@ Itulah sebabnya bentuknya abstraksi: ia menyerap jawaban apa pun tanpa mengubah 
    *(Sebagian ditegakkan 21 Sep 2026, P4.1: target `LarangDummyDiPublish` di `Sigap.Api.csproj`
    menggagalkan `dotnet publish` selama masih ada rujukan ber-nama `*Dummy*`, dan
    `libs/notifikasi-dummy` bahkan tidak ikut disusun pada konfigurasi Release. Pemeriksa
-   seluruh solusi di CI menyusul di P6.2.)*
+   seluruh solusi menyusul di P6.2. Sejak P4.3, workflow CI `sigap-api` menjalankan `dotnet publish`
+   dan gagal bila publish berhasil atau gagal bukan karena `SIGAP001`.)*
 5. **Tercatat di berkas ini.**
 
 Yang ditiru adalah **kontraknya**, bukan cara kerjanya. Kode aplikasi ditulis seolah-olah platform
