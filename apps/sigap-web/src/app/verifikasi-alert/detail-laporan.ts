@@ -85,6 +85,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
               <label class="form-field__label" for="alasan">Alasan (wajib bila menolak)</label>
               <textarea id="alasan" name="alasan" [(ngModel)]="alasan"></textarea>
             </div>
+            <app-pesan-galat [pesan]="galat.pesanAksi()" />
             <button
               type="button"
               class="button button--success"
@@ -136,12 +137,12 @@ export class DetailLaporan implements OnInit {
     }
 
     this.memproses.set(true);
-    try {
-      this.laporan.set(
-        await this.laporanService.verifikasiAsync(l.id, keputusan, this.alasan || undefined),
-      );
-    } finally {
-      this.memproses.set(false);
+    const hasil = await this.galat.jalankanAksiAsync(() =>
+      this.laporanService.verifikasiAsync(l.id, keputusan, this.alasan || undefined),
+    );
+    this.memproses.set(false);
+    if (hasil) {
+      this.laporan.set(hasil);
     }
   }
 }

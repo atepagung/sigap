@@ -37,6 +37,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           }
         </div>
       </header>
+      <app-pesan-galat [pesan]="galat.pesanAksi()" />
 
       <div class="stats-row">
         <div class="stat-card">
@@ -125,10 +126,10 @@ export class DetailBroadcast implements OnInit {
     }
 
     this.memproses.set(true);
-    try {
-      this.detail.set(await this.broadcast.selesaiAsync(d.id));
-    } finally {
-      this.memproses.set(false);
+    const hasil = await this.galat.jalankanAksiAsync(() => this.broadcast.selesaiAsync(d.id));
+    this.memproses.set(false);
+    if (hasil) {
+      this.detail.set(hasil);
     }
   }
 }

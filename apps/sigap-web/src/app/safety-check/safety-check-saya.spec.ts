@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { flushAsync } from '../shared/testing/flush-async';
 import { TestBed } from '@angular/core/testing';
 import { provideIamPermissions } from '@danarakca/iam';
@@ -89,5 +90,31 @@ describe('SafetyCheckSaya', () => {
         b.textContent?.includes('Saya Aman'),
       ),
     ).toBe(false);
+  });
+
+  it('galat saat menjawab tampil di DALAM modal wajib (yang tidak bisa ditutup), dan tombol aktif kembali', async () => {
+    const { fixture, service } = await render([AKTIF_BELUM_DIJAWAB]);
+    service.jawabSayaAsync.mockRejectedValueOnce(
+      new HttpErrorResponse({ status: 409, error: { detail: 'Broadcast ini sudah selesai.' } }),
+    );
+    const el = fixture.nativeElement as HTMLElement;
+    const tombolModal = [...el.querySelectorAll('keu-modal button')].find(
+      (b) => b.textContent?.trim() === 'Saya Aman',
+    ) as HTMLButtonElement;
+
+    tombolModal.click();
+    await flushAsync();
+    fixture.detectChanges();
+
+    expect(el.querySelector('keu-modal [role="alert"]')?.textContent?.trim()).toBe(
+      'Broadcast ini sudah selesai.',
+    );
+    expect(el.querySelector('keu-modal')).not.toBeNull();
+    expect(service.aktifAsync).toHaveBeenCalledTimes(1);
+    expect(
+      ([...el.querySelectorAll('keu-modal button')] as HTMLButtonElement[]).every(
+        (b) => !b.disabled,
+      ),
+    ).toBe(true);
   });
 });

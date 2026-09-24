@@ -62,6 +62,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           >
           <input id="rto" type="number" name="rto" min="1" [(ngModel)]="rtoJam" />
         </div>
+        <app-pesan-galat [pesan]="galat.pesanAksi()" />
         <button
           type="button"
           class="button"
@@ -100,14 +101,16 @@ export class LayananKritisPage implements OnInit {
       return;
     }
 
+    const { nama, rtoJam } = this;
     this.memproses.set(true);
-    try {
-      await this.asesmen.tambahLayananKritisAsync(this.nama, this.rtoJam);
+    const baru = await this.galat.jalankanAksiAsync(() =>
+      this.asesmen.tambahLayananKritisAsync(nama, rtoJam),
+    );
+    if (baru) {
       this.nama = '';
       this.rtoJam = null;
       await this.muatAsync();
-    } finally {
-      this.memproses.set(false);
     }
+    this.memproses.set(false);
   }
 }

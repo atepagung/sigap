@@ -100,4 +100,82 @@ describe('RekapSafetyCheck', () => {
       'Terjadi kesalahan',
     );
   });
+
+  describe('galat saat menyimpan catatan', () => {
+    const tombol = (el: HTMLElement, teks: string) =>
+      [...el.querySelectorAll('button')].find((b) => b.textContent?.trim() === teks) as
+        HTMLButtonElement | undefined;
+    const alertModal = (el: HTMLElement) =>
+      el.querySelector('keu-modal [role="alert"]')?.textContent?.trim();
+
+    async function bukaModal() {
+      const hasil = await render(REKAP);
+      const el = hasil.fixture.nativeElement as HTMLElement;
+      tombol(el, 'Catatkan')!.click();
+      hasil.fixture.detectChanges();
+      return { ...hasil, el };
+    }
+
+    async function simpan(fixture: { detectChanges: () => void }, el: HTMLElement) {
+      tombol(el, 'Simpan')!.click();
+      await flushAsync();
+      fixture.detectChanges();
+    }
+
+    it('400 menampilkan pesan API DI DALAM modal, modal tetap terbuka, dan tidak memuat ulang', async () => {
+      const { fixture, service, el } = await bukaModal();
+      service.catatAsync.mockRejectedValueOnce(
+        new HttpErrorResponse({
+          status: 400,
+          error: { detail: 'Sebutkan dari mana keadaan ini diketahui, minimal lima huruf.' },
+        }),
+      );
+
+      await simpan(fixture, el);
+
+      expect(alertModal(el)).toBe('Sebutkan dari mana keadaan ini diketahui, minimal lima huruf.');
+      expect(el.querySelector('keu-modal')).not.toBeNull();
+      expect(service.rekapAsync).toHaveBeenCalledTimes(1);
+      expect(tombol(el, 'Simpan')!.disabled).toBe(false);
+    });
+
+    it('percobaan berikutnya yang berhasil menutup modal, menghapus pesan, dan memuat ulang rekap', async () => {
+      const { fixture, service, el } = await bukaModal();
+      service.catatAsync.mockRejectedValueOnce(new HttpErrorResponse({ status: 500 }));
+      await simpan(fixture, el);
+      expect(alertModal(el)).toBeTruthy();
+
+      await simpan(fixture, el);
+
+      expect(el.querySelector('keu-modal')).toBeNull();
+      expect(el.querySelector('[role="alert"]')).toBeNull();
+      expect(service.catatAsync).toHaveBeenCalledTimes(2);
+      expect(service.rekapAsync).toHaveBeenCalledTimes(2);
+    });
+
+    it('PUT berhasil dengan badan kosong (null) tetap dianggap berhasil, bukan gagal', async () => {
+      const { fixture, service, el } = await bukaModal();
+      service.catatAsync.mockResolvedValueOnce(null);
+
+      await simpan(fixture, el);
+
+      expect(el.querySelector('keu-modal')).toBeNull();
+      expect(el.querySelector('[role="alert"]')).toBeNull();
+    });
+
+    it('Batal lalu buka ulang tidak membawa pesan galat lama', async () => {
+      const { fixture, service, el } = await bukaModal();
+      service.catatAsync.mockRejectedValueOnce(new HttpErrorResponse({ status: 403 }));
+      await simpan(fixture, el);
+      expect(alertModal(el)).toBeTruthy();
+
+      tombol(el, 'Batal')!.click();
+      fixture.detectChanges();
+      tombol(el, 'Catatkan')!.click();
+      fixture.detectChanges();
+
+      expect(el.querySelector('keu-modal')).not.toBeNull();
+      expect(alertModal(el)).toBeUndefined();
+    });
+  });
 });

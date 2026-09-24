@@ -154,7 +154,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
     }
 
     @if (dicatat(); as target) {
-      <keu-modal [open]="true" title="Catatkan Keadaan Pegawai" (closed)="dicatat.set(null)">
+      <keu-modal [open]="true" title="Catatkan Keadaan Pegawai" (closed)="tutupCatat()">
         <p>{{ target.pegawai.nama }}</p>
         <div class="form-field">
           <label class="form-field__label" for="status-catat">Status</label>
@@ -170,8 +170,9 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           <textarea id="alasan-catat" name="alasan" [(ngModel)]="alasanCatat"></textarea>
           <p class="form-field__hint">5–300 karakter — dasar pencatatan atas nama pegawai lain.</p>
         </div>
+        <app-pesan-galat [pesan]="galat.pesanAksi()" />
         <div keuModalFooter>
-          <button type="button" class="button button--secondary" (click)="dicatat.set(null)">
+          <button type="button" class="button button--secondary" (click)="tutupCatat()">
             Batal
           </button>
           <button type="button" class="button" (click)="kirimCatatAsync()" [disabled]="mengirim()">
@@ -243,7 +244,13 @@ export class RekapSafetyCheck implements OnInit {
   protected bukaCatat(b: RekapBaris): void {
     this.statusCatat = 'BUTUH_BANTUAN';
     this.alasanCatat = '';
+    this.galat.hapusPesanAksi();
     this.dicatat.set(b);
+  }
+
+  protected tutupCatat(): void {
+    this.galat.hapusPesanAksi();
+    this.dicatat.set(null);
   }
 
   protected async kirimCatatAsync(): Promise<void> {
@@ -254,17 +261,20 @@ export class RekapSafetyCheck implements OnInit {
     }
 
     this.mengirim.set(true);
-    try {
+    // Hasil `true` (bukan nilai kembali PUT, yang bisa kosong) menandai berhasil; `null` = gagal.
+    const berhasil = await this.galat.jalankanAksiAsync(async () => {
       await this.safetyCheck.catatAsync(
         broadcastId,
         target.pegawai.id,
         this.statusCatat,
         this.alasanCatat,
       );
+      return true;
+    });
+    this.mengirim.set(false);
+    if (berhasil) {
       this.dicatat.set(null);
       await this.muatAsync();
-    } finally {
-      this.mengirim.set(false);
     }
   }
 }

@@ -94,6 +94,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           </tbody>
         </table>
       </div>
+      <app-pesan-galat [pesan]="galat.pesanAksi()" />
     }
 
     @if (wajibDijawab(); as wajib) {
@@ -102,6 +103,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           Broadcast safety check untuk <strong>{{ wajib.broadcast.jenisBencana }}</strong> di
           {{ wajib.broadcast.lokasi }} sedang berjalan. {{ wajib.pesan }}
         </p>
+        <app-pesan-galat [pesan]="galat.pesanAksi()" />
         <div keuModalFooter *hasPermission="'sigap:safety-check:respond'">
           <button
             type="button"
@@ -152,11 +154,14 @@ export class SafetyCheckSaya implements OnInit {
 
   protected async jawabAsync(a: Aktif, status: 'AMAN' | 'BUTUH_BANTUAN'): Promise<void> {
     this.mengirim.set(true);
-    try {
+    // Hasil `true` (bukan nilai kembali PUT, yang bisa kosong) menandai berhasil; `null` = gagal.
+    const berhasil = await this.galat.jalankanAksiAsync(async () => {
       await this.safetyCheck.jawabSayaAsync(a.broadcast.id, status);
+      return true;
+    });
+    if (berhasil) {
       await this.muatAsync();
-    } finally {
-      this.mengirim.set(false);
     }
+    this.mengirim.set(false);
   }
 }

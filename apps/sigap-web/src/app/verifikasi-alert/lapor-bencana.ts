@@ -61,6 +61,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
             <label class="form-field__label" for="deskripsi">Deskripsi</label>
             <textarea id="deskripsi" name="deskripsi" [(ngModel)]="deskripsi"></textarea>
           </div>
+          <app-pesan-galat [pesan]="galat.pesanAksi()" />
           <button
             type="button"
             class="button"
@@ -80,6 +81,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           <p class="form-field__hint">
             Foto, video, atau pesan suara — maksimum 10 MB per berkas, 5 berkas.
           </p>
+          <app-pesan-galat [pesan]="galat.pesanAksi()" />
           <input type="file" (change)="unggahAsync($event)" [disabled]="mengunggah()" />
           <ul>
             @for (l of lampiran(); track l.id) {
@@ -133,16 +135,17 @@ export class LaporBencana implements OnInit {
 
   protected async kirimAsync(): Promise<void> {
     this.mengirim.set(true);
-    try {
-      const hasil = await this.laporan.buatAsync(
+    const hasil = await this.galat.jalankanAksiAsync(() =>
+      this.laporan.buatAsync(
         this.jenisBencana,
         this.level,
         this.lokasi,
         this.deskripsi || undefined,
-      );
+      ),
+    );
+    this.mengirim.set(false);
+    if (hasil) {
       this.laporanId.set(hasil.id);
-    } finally {
-      this.mengirim.set(false);
     }
   }
 
@@ -154,11 +157,12 @@ export class LaporBencana implements OnInit {
     }
 
     this.mengunggah.set(true);
-    try {
-      const hasil = await this.laporan.unggahLampiranAsync(id, berkas);
+    const hasil = await this.galat.jalankanAksiAsync(() =>
+      this.laporan.unggahLampiranAsync(id, berkas),
+    );
+    this.mengunggah.set(false);
+    if (hasil) {
       this.lampiran.update((l) => [...l, hasil]);
-    } finally {
-      this.mengunggah.set(false);
     }
   }
 

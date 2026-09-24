@@ -58,6 +58,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           }
         </div>
       </header>
+      <app-pesan-galat [pesan]="galat.pesanAksi()" />
 
       <div class="stats-row">
         <div class="stat-card">
@@ -323,10 +324,10 @@ export class DetailAsesmen implements OnInit {
     const a = this.asesmenSignal();
     if (!a) return;
     this.memproses.set(true);
-    try {
-      this.asesmenSignal.set(await this.asesmenService.setujuiAsync(a.id));
-    } finally {
-      this.memproses.set(false);
+    const hasil = await this.galat.jalankanAksiAsync(() => this.asesmenService.setujuiAsync(a.id));
+    this.memproses.set(false);
+    if (hasil) {
+      this.asesmenSignal.set(hasil);
     }
   }
 
@@ -335,11 +336,13 @@ export class DetailAsesmen implements OnInit {
     const tanggapDaruratId = a?.persetujuan.tanggapDarurat?.id;
     if (!tanggapDaruratId) return;
     this.memproses.set(true);
-    try {
+    const terbaru = await this.galat.jalankanAksiAsync(async () => {
       await this.asesmenService.selesaikanTanggapDaruratAsync(tanggapDaruratId);
-      this.asesmenSignal.set(await this.asesmenService.bacaAsync(a!.id));
-    } finally {
-      this.memproses.set(false);
+      return this.asesmenService.bacaAsync(a!.id);
+    });
+    this.memproses.set(false);
+    if (terbaru) {
+      this.asesmenSignal.set(terbaru);
     }
   }
 }

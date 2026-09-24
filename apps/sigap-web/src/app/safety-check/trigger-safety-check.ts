@@ -22,6 +22,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
   providers: [PenampungGalat],
   template: `
     <app-pesan-galat [pesan]="galat.pesan()" />
+    <app-pesan-galat [pesan]="galat.pesanAksi()" />
     <header class="page-header">
       <div>
         <h1 class="page-header__title">Trigger Safety Check</h1>
@@ -122,23 +123,23 @@ export class TriggerSafetyCheck implements OnInit {
 
   protected async pratinjauAsync(): Promise<void> {
     this.memproses.set(true);
-    try {
-      this.pratinjau.set(
-        await this.broadcast.pratinjauAsync(this.jenisBencana, {
-          provinsi: this.provinsi || undefined,
-          kabupatenKota: this.kabupatenKota || undefined,
-          eselonI: this.eselonI || undefined,
-        }),
-      );
-    } finally {
-      this.memproses.set(false);
+    const hasil = await this.galat.jalankanAksiAsync(() =>
+      this.broadcast.pratinjauAsync(this.jenisBencana, {
+        provinsi: this.provinsi || undefined,
+        kabupatenKota: this.kabupatenKota || undefined,
+        eselonI: this.eselonI || undefined,
+      }),
+    );
+    this.memproses.set(false);
+    if (hasil) {
+      this.pratinjau.set(hasil);
     }
   }
 
   protected async picuAsync(): Promise<void> {
     this.memproses.set(true);
-    try {
-      const hasil = await this.broadcast.picuAsync({
+    const hasil = await this.galat.jalankanAksiAsync(() =>
+      this.broadcast.picuAsync({
         jenisBencana: this.jenisBencana,
         pesan: this.pesan || undefined,
         penyempit: {
@@ -146,10 +147,11 @@ export class TriggerSafetyCheck implements OnInit {
           kabupatenKota: this.kabupatenKota || undefined,
           eselonI: this.eselonI || undefined,
         },
-      });
+      }),
+    );
+    this.memproses.set(false);
+    if (hasil) {
       await this.router.navigate(['detail-broadcast', hasil.id]);
-    } finally {
-      this.memproses.set(false);
     }
   }
 }

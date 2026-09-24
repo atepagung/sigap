@@ -156,6 +156,7 @@ const CATATAN: Record<(typeof ASPEK)[number], readonly string[]> = {
       </table>
     </div>
 
+    <app-pesan-galat [pesan]="galat.pesanAksi()" />
     <button
       *hasPermission="asesmenIdSedangDiubah() ? 'sigap:asesmen:update' : 'sigap:asesmen:create'"
       type="button"
@@ -266,29 +267,28 @@ export class FormAsesmen implements OnInit {
 
   protected async kirimAsync(): Promise<void> {
     this.mengirim.set(true);
-    try {
-      const isi = {
-        kondisiBencana: {
-          jenisBencana: this.jenisBencana,
-          kondisiFisik: this.kondisiFisik,
-          uraian: this.uraian || undefined,
-        },
-        aspek: {
-          sdm: this.subObjek('sdm'),
-          aset: this.subObjek('aset'),
-          tik: this.subObjek('tik'),
-          arsip: this.subObjek('arsip'),
-          layanan: this.barisLayanan().map((b) => ({ layananId: b.layananId, status: b.status })),
-        },
-      };
+    const isi = {
+      kondisiBencana: {
+        jenisBencana: this.jenisBencana,
+        kondisiFisik: this.kondisiFisik,
+        uraian: this.uraian || undefined,
+      },
+      aspek: {
+        sdm: this.subObjek('sdm'),
+        aset: this.subObjek('aset'),
+        tik: this.subObjek('tik'),
+        arsip: this.subObjek('arsip'),
+        layanan: this.barisLayanan().map((b) => ({ layananId: b.layananId, status: b.status })),
+      },
+    };
 
-      const id = this.asesmenIdSedangDiubah();
-      const hasil = id
-        ? await this.asesmen.revisiAsync(id, isi)
-        : await this.asesmen.kirimAsync(isi);
+    const id = this.asesmenIdSedangDiubah();
+    const hasil = await this.galat.jalankanAksiAsync(() =>
+      id ? this.asesmen.revisiAsync(id, isi) : this.asesmen.kirimAsync(isi),
+    );
+    this.mengirim.set(false);
+    if (hasil) {
       await this.router.navigate(['/detail-asesmen', hasil.id]);
-    } finally {
-      this.mengirim.set(false);
     }
   }
 

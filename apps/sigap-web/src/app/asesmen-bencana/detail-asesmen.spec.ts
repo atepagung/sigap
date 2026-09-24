@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { provideIamPermissions } from '@danarakca/iam';
@@ -119,5 +119,32 @@ describe('DetailAsesmen', () => {
   it('catatan SDM yang di-Sieve tampil "Tidak tersedia", bukan kosong tanpa keterangan', async () => {
     const { fixture } = await render(asesmen());
     expect(fixture.nativeElement.textContent).toContain('Tidak tersedia');
+  });
+
+  it('setuju yang ditolak API menampilkan pesan dan tidak mengubah status yang ditampilkan', async () => {
+    const { fixture, service } = await render(asesmen());
+    service.setujuiAsync.mockRejectedValueOnce(
+      new HttpErrorResponse({ status: 409, error: { detail: 'Asesmen ini sudah disetujui.' } }),
+    );
+    const el = fixture.nativeElement as HTMLElement;
+
+    (
+      [...el.querySelectorAll('button')].find(
+        (b) => b.textContent?.trim() === 'Setujui Asesmen',
+      ) as HTMLButtonElement
+    ).click();
+    await flushAsync();
+    fixture.detectChanges();
+
+    expect(el.querySelector('[role="alert"]')?.textContent?.trim()).toBe(
+      'Asesmen ini sudah disetujui.',
+    );
+    expect(el.textContent).toContain('MENUNGGU_PIMPINAN');
+    expect(el.textContent).not.toContain('DISETUJUI');
+    expect(
+      ([...el.querySelectorAll('button')] as HTMLButtonElement[]).find(
+        (b) => b.textContent?.trim() === 'Setujui Asesmen',
+      )?.disabled,
+    ).toBe(false);
   });
 });
