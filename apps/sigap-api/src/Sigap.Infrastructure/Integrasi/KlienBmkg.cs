@@ -19,7 +19,7 @@ public sealed class BmkgTidakTersediaException(string pesan, Exception? inner = 
 /// memori proses; cadangan hilang bila proses dimulai ulang, dan tidak dibagi antarinstans. Aman karena
 /// gempa lama tidak pernah memicu (jendela waktu) dan satu kejadian hanya memicu sekali (penanda kejadian).
 /// </remarks>
-internal sealed class CadanganBmkg
+internal sealed class CadanganBmkg : ICadanganGempa
 {
     private readonly ConcurrentDictionary<string, (IReadOnlyList<Gempa> Data, DateTimeOffset Kapan)> _isi = new(StringComparer.Ordinal);
 
@@ -27,6 +27,13 @@ internal sealed class CadanganBmkg
 
     public (IReadOnlyList<Gempa> Data, DateTimeOffset Kapan)? Ambil(string sumber) =>
         _isi.TryGetValue(sumber, out var nilai) ? nilai : null;
+
+    /// <summary>Gempa terbaru lebih dulu, lalu gempa dirasakan, seperti urutan <see cref="KlienBmkg"/>.</summary>
+    public IReadOnlyList<Gempa> Terakhir() =>
+    [
+        .. Ambil(KlienBmkg.SumberTerbaru)?.Data ?? [],
+        .. Ambil(KlienBmkg.SumberDirasakan)?.Data ?? []
+    ];
 }
 
 /// <summary>

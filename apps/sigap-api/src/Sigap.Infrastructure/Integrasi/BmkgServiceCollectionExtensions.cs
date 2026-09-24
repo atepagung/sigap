@@ -25,6 +25,7 @@ internal static class BmkgServiceCollectionExtensions
 
         services.AddOptions<BmkgOptions>().Bind(bagian);
         services.AddSingleton<CadanganBmkg>();
+        services.AddSingleton<ICadanganGempa>(sp => sp.GetRequiredService<CadanganBmkg>());
         services.AddSingleton(sp =>
         {
             var o = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<BmkgOptions>>().Value;

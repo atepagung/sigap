@@ -1,11 +1,14 @@
 using Kemenkeu.Iam;
 using Sigap.Application.Asesmen;
+using Sigap.Application.Broadcast;
+using Sigap.Application.Integrasi;
 using Sigap.Application.Keamanan;
 using Sigap.Application.Laporan;
 using Sigap.Application.Referensi;
 using Sigap.Application.SafetyCheck;
 using Sigap.Application.Umum;
 using Sigap.Domain.Asesmen.Layanan;
+using Sigap.Domain.Integrasi;
 using Sigap.Domain.Laporan;
 using Sigap.Domain.Notifikasi;
 
@@ -28,6 +31,9 @@ public sealed class BacaPeringatan(
     ISafetyCheckStore safetyCheck,
     ILaporanStore laporan,
     IAsesmenStore asesmen,
+    ICadanganGempa cadanganGempa,
+    OpsiPicuOtomatis opsiPicu,
+    IBroadcastStore broadcast,
     TimeProvider waktu)
 {
     private static readonly PermintaanHalaman HanyaTotal = new() { Ukuran = 1 };
@@ -42,6 +48,7 @@ public sealed class BacaPeringatan(
         await TambahAsesmenMenungguAsync(hasil, ct);
         await TambahRtoAsync(hasil, sekarang, ct);
         await TambahPicuBelumAsync(hasil, ct);
+        await TambahGempaTanpaKantorAsync(hasil, sekarang, ct);
 
         return new DaftarDto<PeringatanDto>([.. hasil.OrderBy(p => TingkatPeringatan.Urutan(p.Tingkat))]);
     }
@@ -189,5 +196,52 @@ public sealed class BacaPeringatan(
             $"{halaman.Total} laporan terverifikasi, safety check belum dipicu siapa pun",
             "Selama belum dipicu, pegawai di wilayah terdampak belum ditanyakan kondisinya. Siapa yang lebih dulu tahu, dialah yang memicu.",
             null));
+    }
+
+    /// <summary>
+    /// BMKG mencatat guncangan kuat di wilayah yang tidak punya unit (P5.1). Pemicu otomatis hanya menyasar unit
+    /// yang ada, jadi wilayah tanpa kantor tidak menghasilkan broadcast; pemantau nasional diberi tahu supaya dapat
+    /// memicu safety check manual bila ada pegawai yang bertugas di sana.
+    ///
+    /// <para>
+    /// Dihitung dari cadangan hasil BMKG yang ditulis worker, bukan disimpan (skema tidak punya tabelnya): peringatan
+    /// hilang sendiri begitu kejadiannya keluar dari jendela. Hanya untuk pemegang <c>sigap:monitor:read</c> berlingkup
+    /// <b>nasional</b> (Koordinator MKB dan Sekretaris Jenderal): provinsi sebuah wilayah tanpa kantor tidak dapat
+    /// diketahui dari namanya, jadi Kepala Perwakilan dan Subkoordinator tidak dapat ditentukan sebagai penerimanya.
+    /// Kosong bila pemicu otomatis mati atau belum pernah berhasil membaca BMKG.
+    /// </para>
+    /// </summary>
+    private async Task TambahGempaTanpaKantorAsync(List<PeringatanDto> hasil, DateTime sekarang, CancellationToken ct)
+    {
+        if (!opsiPicu.Aktif
+            || !pengguna.HasPermission(Izin.MonitorRead)
+            || pengguna.GetScope(Izin.MonitorRead).Terluas() is not { Area.IsNational: true })
+        {
+            return;
+        }
+
+        var gempa = cadanganGempa.Terakhir();
+        if (gempa.Count == 0)
+        {
+            return;
+        }
+
+        var unit = await broadcast.UnitBerkabkotaAsync(ct);
+        var kejadian = PenilaiKejadianBmkg.Nilai(gempa, opsiPicu, new DateTimeOffset(sekarang, TimeSpan.Zero), unit)
+            .Where(k => k.Status == PenilaiKejadianBmkg.Memenuhi && k.WilayahTanpaUnit.Count > 0)
+            .DistinctBy(k => k.Kunci);
+
+        foreach (var k in kejadian)
+        {
+            string tempat = string.Join(", ", k.WilayahTanpaUnit.Select(w => w.Nama));
+            string romawi = SkalaMmi.KeRomawi(k.Mmi);
+            hasil.Add(new PeringatanDto(
+                KodePemberitahuan.GempaKuatTanpaKantor, TingkatPeringatan.Peringatan,
+                $"Gempa MMI {romawi} di {tempat}: tidak ada kantor di sana",
+                $"Gempa M {k.Gempa.Magnitudo} {k.Gempa.Wilayah}. BMKG mencatat guncangan di {tempat}, tetapi tidak ada unit Kemenkeu " +
+                "yang terdaftar di wilayah itu, jadi safety check tidak dinyalakan otomatis. Bila ada pegawai yang bertugas atau " +
+                "berada di sana, pertimbangkan memicu safety check secara manual. Sumber: BMKG.",
+                null));
+        }
     }
 }

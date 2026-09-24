@@ -64,6 +64,12 @@ public static class KodePemberitahuan
     /// </summary>
     public const string PicuBelum = "PICU_BELUM";
 
+    /// <summary>
+    /// <b>[ASUMSI]</b> Peringatan #43 ke pemantau nasional: BMKG mencatat guncangan kuat di wilayah yang tidak
+    /// punya unit, jadi tidak ada broadcast otomatis dan pemantau dapat memicu safety check manual (P5.1).
+    /// </summary>
+    public const string GempaKuatTanpaKantor = "GEMPA_KUAT_TANPA_KANTOR";
+
     /// <summary>Jenis sumber daya pada <c>terkait</c>.</summary>
     public const string TerkaitLaporan = "LAPORAN";
     public const string TerkaitAsesmen = "ASESMEN";

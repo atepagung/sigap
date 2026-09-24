@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Sigap.Application.Integrasi;
 using Sigap.Application.Lampiran;
+using Sigap.Domain.Integrasi;
 using Sigap.Infrastructure.Keamanan;
 using Sigap.Notifikasi;
 
@@ -29,6 +31,18 @@ public sealed class AplikasiUjiDb : AplikasiUji, IAsyncLifetime
 
     /// <summary>Semua perintah SQL yang dijalankan EF Core, untuk membuktikan Scope ada di klausa WHERE.</summary>
     public ConcurrentQueue<string> Sql { get; } = new();
+
+    /// <summary>
+    /// Cadangan hasil BMKG yang dibaca #43 (peringatan gempa tanpa kantor). Kosong bawaan; tes yang mengisinya
+    /// wajib mengosongkannya lagi, supaya peringatan tidak bocor ke tes lain.
+    /// </summary>
+    public CadanganGempaUji CadanganGempa { get; } = new();
+
+    /// <summary>
+    /// Pengaturan pemicu otomatis yang dilihat use case. Worker tetap mati: ia membaca <c>Bmkg:Aktif</c> dari
+    /// konfigurasi (false), bukan dari sini.
+    /// </summary>
+    public OpsiPicuOtomatis OpsiBmkg { get; set; } = new(true, 5, TimeSpan.FromHours(3), "SISTEM-UJI");
 
     /// <summary>Bila terisi, dipakai menggantikan penyimpan lampiran asli (mis. yang selalu gagal).</summary>
     public IPenyimpanLampiran? PenyimpanPengganti { get; set; }
@@ -115,6 +129,11 @@ public sealed class AplikasiUjiDb : AplikasiUji, IAsyncLifetime
             services.Remove(identitasAsli);
             services.AddScoped<ICurrentUserContext>(sp => new IdentitasUji((ICurrentUserContext)identitasAsli.ImplementationFactory!(sp)));
 
+            services.RemoveAll<ICadanganGempa>();
+            services.AddSingleton<ICadanganGempa>(CadanganGempa);
+            services.RemoveAll<OpsiPicuOtomatis>();
+            services.AddScoped(_ => OpsiBmkg);
+
             services.RemoveAll<IPengirimNotifikasi>();
             services.AddSingleton<IPengirimNotifikasi>(Pengirim);
 
@@ -187,6 +206,13 @@ internal sealed class LampiranStoreUji(AplikasiUjiDb app, ILampiranStore dalam) 
     public Task<RujukanLampiran?> BacaRujukanAsync(string id, DataScope lingkupLaporan, DataScope lingkupAsesmen, CancellationToken ct) =>
         dalam.BacaRujukanAsync(id, lingkupLaporan, lingkupAsesmen, ct);
 }
+public sealed class CadanganGempaUji : ICadanganGempa
+{
+    public IReadOnlyList<Gempa> Isi { get; set; } = [];
+
+    public IReadOnlyList<Gempa> Terakhir() => Isi;
+}
+
 /// <summary>Meneruskan ke identitas asli, kecuali <see cref="AplikasiUjiDb.AkunSementara"/> terisi.</summary>
 internal sealed class IdentitasUji(ICurrentUserContext dalam) : ICurrentUserContext
 {

@@ -1,4 +1,3 @@
-using System.Globalization;
 using Kemenkeu.Iam;
 using Sigap.Application.Broadcast;
 using Sigap.Application.Notifikasi;
@@ -87,9 +86,6 @@ public sealed class PicuBroadcastOtomatis(
 
     public const string JenisBencana = "Gempa Bumi";
 
-    /// <summary>Jam perangkat BMKG boleh sedikit mendahului jam server.</summary>
-    private static readonly TimeSpan ToleransiMasaDepan = TimeSpan.FromMinutes(5);
-
     public async Task<HasilPicuOtomatis> JalankanAsync(CancellationToken ct)
     {
         if (!opsi.Aktif)
@@ -107,68 +103,47 @@ public sealed class PicuBroadcastOtomatis(
         var gempa = await klien.AmbilGempaAsync(ct);
         var sekarang = waktu.GetUtcNow();
         var kejadian = new List<KejadianDiproses>();
-        int tertinggi = 0;
-        IReadOnlyList<RingkasUnit>? unitBerkabkota = null;
+        int tertinggi = gempa.Where(x => !string.IsNullOrEmpty(x.Dirasakan)).Select(x => SkalaMmi.Tertinggi(x.Dirasakan)).DefaultIfEmpty(0).Max();
 
-        foreach (var g in gempa.Where(x => !string.IsNullOrEmpty(x.Dirasakan)))
+        // Daftar unit hanya dimuat bila ada gempa yang mencapai ambang.
+        IReadOnlyList<RingkasUnit> unit = tertinggi >= opsi.Ambang ? await store.UnitBerkabkotaAsync(ct) : [];
+
+        foreach (var k in PenilaiKejadianBmkg.Nilai(gempa, opsi, sekarang, unit))
         {
-            int mmi = SkalaMmi.Tertinggi(g.Dirasakan);
-            tertinggi = Math.Max(tertinggi, mmi);
-            if (mmi < opsi.Ambang)
+            if (k.Status != PenilaiKejadianBmkg.Memenuhi)
             {
+                kejadian.Add(new(k.Kunci, k.Mmi, k.Status, k.Keterangan, null, 0, 0));
                 continue;
             }
 
-            string kunci = PemicuOtomatis.KunciKejadian(g);
-            if (!DateTimeOffset.TryParse(g.Waktu, CultureInfo.InvariantCulture, DateTimeStyles.None, out var terjadi))
+            if (k.Kandidat.Count == 0)
             {
-                kejadian.Add(new(kunci, mmi, StatusKejadian.WaktuTakTerbaca,
-                    "Waktu kejadian tidak terbaca, jadi kesegarannya tidak dapat dipastikan.", null, 0, 0));
+                kejadian.Add(new(k.Kunci, k.Mmi, StatusKejadian.TanpaSasaran,
+                    $"Tidak ada unit di wilayah berguncangan: {string.Join(", ", k.Wilayah.Select(w => w.Nama))}.", null, 0, 0));
                 continue;
             }
 
-            var usia = sekarang - terjadi;
-            if (usia > opsi.Jendela || usia < -ToleransiMasaDepan)
+            if (await store.KejadianSudahDipicuAsync(k.Kunci, ct))
             {
-                kejadian.Add(new(kunci, mmi, StatusKejadian.TerlaluLama,
-                    usia < TimeSpan.Zero ? "Waktu kejadian di masa depan." : $"Kejadian {(int)usia.TotalMinutes} menit lalu, di luar jendela.",
-                    null, 0, 0));
-                continue;
-            }
-
-            if (await store.KejadianSudahDipicuAsync(kunci, ct))
-            {
-                kejadian.Add(new(kunci, mmi, StatusKejadian.SudahDipicu, null, null, 0, 0));
-                continue;
-            }
-
-            var wilayah = NamaWilayah.BerguncangKuat(g.Dirasakan, opsi.Ambang);
-            unitBerkabkota ??= await store.UnitBerkabkotaAsync(ct);
-            var kandidat = unitBerkabkota
-                .Where(u => wilayah.Any(k => NamaWilayah.Cocok(k.Nama, u.KabupatenKota)))
-                .ToList();
-            if (kandidat.Count == 0)
-            {
-                kejadian.Add(new(kunci, mmi, StatusKejadian.TanpaSasaran,
-                    $"Tidak ada unit di wilayah berguncangan: {string.Join(", ", wilayah.Select(k => k.Nama))}.", null, 0, 0));
+                kejadian.Add(new(k.Kunci, k.Mmi, StatusKejadian.SudahDipicu, null, null, 0, 0));
                 continue;
             }
 
             var naskah = new NaskahBroadcast(
                 pelakuId, PeranPemicu, ProfilPemicu, unitPelakuId,
                 TaksonomiBencana.KategoriDari(JenisBencana)!, JenisBencana,
-                PemicuOtomatis.SusunPesan(g, mmi, opsi.Ambang),
-                Kriteria(g, wilayah, kandidat), sekarang.UtcDateTime, new SumberOtomatis(kunci, mmi));
+                PemicuOtomatis.SusunPesan(k.Gempa, k.Mmi, opsi.Ambang),
+                Kriteria(k.Gempa, k.Wilayah, k.Kandidat), sekarang.UtcDateTime, new SumberOtomatis(k.Kunci, k.Mmi));
 
-            var hasil = await store.PicuAsync(naskah, kandidat, ct);
+            var hasil = await store.PicuAsync(naskah, k.Kandidat, ct);
             if (hasil.BroadcastId is null)
             {
-                kejadian.Add(new(kunci, mmi, StatusKejadian.SeluruhSasaranSudahDipegang, null, null, 0, hasil.Dilewati.Count));
+                kejadian.Add(new(k.Kunci, k.Mmi, StatusKejadian.SeluruhSasaranSudahDipegang, null, null, 0, hasil.Dilewati.Count));
                 continue;
             }
 
             await KirimAsync(hasil, naskah.Pesan, ct);
-            kejadian.Add(new(kunci, mmi, StatusKejadian.Dipicu, null, hasil.BroadcastId, hasil.Disasar.Count, hasil.Dilewati.Count));
+            kejadian.Add(new(k.Kunci, k.Mmi, StatusKejadian.Dipicu, null, hasil.BroadcastId, hasil.Disasar.Count, hasil.Dilewati.Count));
         }
 
         return new(StatusProses.Selesai, gempa.Count, tertinggi, kejadian);
