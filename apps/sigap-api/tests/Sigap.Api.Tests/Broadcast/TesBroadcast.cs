@@ -11,7 +11,8 @@ namespace Sigap.Api.Tests.Broadcast;
 /// </summary>
 public abstract class TesBroadcast(AplikasiUjiDb app) : TesEndpoint(app), IAsyncLifetime
 {
-    private readonly List<string> _unitDibuat = [];
+    /// <summary>Unit fiktif yang dibuang di akhir tes; subclass yang membuat unit sendiri wajib mendaftarkannya.</summary>
+    protected List<string> UnitDibuat { get; } = [];
 
     protected const string Broadcast = "/api/v1/safety-check/broadcast";
 
@@ -31,7 +32,7 @@ public abstract class TesBroadcast(AplikasiUjiDb app) : TesEndpoint(app), IAsync
         {
             string unitId = $"uji-bc-{kode}-{i}";
             string kabkota = $"Kota Uji {kode}-{i}";
-            _unitDibuat.Add(unitId);
+            UnitDibuat.Add(unitId);
             await App.Database.JalankanAsync(
                 """INSERT INTO "Unit" ("id","nama","tipe","provinsi","kabkota","eselonIKey","updatedAt") VALUES (@id,@nama,'KPP',@prov,@kab,@es,CURRENT_TIMESTAMP)""",
                 ("id", unitId), ("nama", $"Unit Broadcast {kode}-{i}"), ("prov", provinsi), ("kab", kabkota), ("es", eselon));
@@ -50,7 +51,7 @@ public abstract class TesBroadcast(AplikasiUjiDb app) : TesEndpoint(app), IAsync
     {
         string kode = Guid.NewGuid().ToString("N")[..8];
         string unitId = "uji-bc-kosong-" + kode;
-        _unitDibuat.Add(unitId);
+        UnitDibuat.Add(unitId);
         await App.Database.JalankanAsync(
             """INSERT INTO "Unit" ("id","nama","tipe","updatedAt") VALUES (@id,@nama,'KPP',CURRENT_TIMESTAMP)""",
             ("id", unitId), ("nama", "Unit Tanpa Data " + kode));
@@ -118,12 +119,12 @@ public abstract class TesBroadcast(AplikasiUjiDb app) : TesEndpoint(app), IAsync
     /// <summary>Membuang unit fiktif yang dibuat tes ini beserta seluruh turunannya, mengikuti kunci asing.</summary>
     public async Task DisposeAsync()
     {
-        if (_unitDibuat.Count == 0)
+        if (UnitDibuat.Count == 0)
         {
             return;
         }
 
-        (string, object?)[] unit = [("u", _unitDibuat.ToArray())];
+        (string, object?)[] unit = [("u", UnitDibuat.ToArray())];
         string[] langkah =
         [
             """DELETE FROM "SafetyCheckResponse" WHERE "unitId" = ANY(@u)""",

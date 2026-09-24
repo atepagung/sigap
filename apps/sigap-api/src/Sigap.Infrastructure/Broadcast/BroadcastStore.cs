@@ -104,6 +104,16 @@ internal sealed class BroadcastStore(SigapDbContext db, IJejakAudit jejak) : IBr
             .CountAsync(ct);
     }
 
+    public Task<bool> KejadianSudahDipicuAsync(string kunciKejadian, CancellationToken ct) =>
+        db.ActiveBroadcast.AsNoTracking().AnyAsync(b => b.SumberKejadian == kunciKejadian, ct);
+
+    public async Task<IReadOnlyList<RingkasUnit>> UnitBerkabkotaAsync(CancellationToken ct) =>
+        await db.Unit.AsNoTracking()
+            .Where(u => u.Kabkota != null && u.Kabkota != "")
+            .OrderBy(u => u.Id)
+            .Select(u => new RingkasUnit(u.Id, u.Nama, u.Provinsi, u.Kabkota, u.EselonIKey))
+            .ToListAsync(ct);
+
     public async Task<HasilPicu> PicuAsync(NaskahBroadcast naskah, IReadOnlyList<RingkasUnit> kandidat, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(naskah);
@@ -124,7 +134,9 @@ internal sealed class BroadcastStore(SigapDbContext db, IJejakAudit jejak) : IBr
             TargetUnitId = naskah.Kriteria.TargetUnitId,
             TargetKabkota = naskah.Kriteria.Kota,
             TargetEselonIKey = naskah.Kriteria.Eselon,
-            Otomatis = false,
+            Otomatis = naskah.Otomatis is not null,
+            SumberKejadian = naskah.Otomatis?.KunciKejadian,
+            MmiTertinggi = naskah.Otomatis?.MmiTertinggi,
             CreatedAt = naskah.DipicuPada
         };
         jejak.Tandai(AksiJejak.Dipicu, $"{naskah.Peran}|{naskah.Profil}|{naskah.UnitPemicuId}");

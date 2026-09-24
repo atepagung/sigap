@@ -18,6 +18,11 @@
     <None Include="../../../../infra/skema/*.sql" LinkBase="skema" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- Respons asli BMKG dan varian buatan tangan untuk tes penguraian. -->
+  <ItemGroup>
+    <None Include="Integrasi/Fikstur/*.json" LinkBase="Integrasi/Fikstur" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>

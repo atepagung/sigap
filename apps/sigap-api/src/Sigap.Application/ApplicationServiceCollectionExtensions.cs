@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Sigap.Application.Asesmen;
 using Sigap.Application.Auth;
 using Sigap.Application.Broadcast;
+using Sigap.Application.Integrasi;
 using Sigap.Application.Lampiran;
 using Sigap.Application.Laporan;
 using Sigap.Application.Monitor;
@@ -63,6 +64,7 @@ public static class ApplicationServiceCollectionExtensions
         // ── Broadcast: trigger safety check (#12–#16) ──
         services.AddScoped<PratinjauTrigger>();
         services.AddScoped<PicuBroadcast>();
+        services.AddScoped<PicuBroadcastOtomatis>();
         services.AddScoped<BacaBroadcast>();
         services.AddScoped<AkhiriBroadcast>();
 

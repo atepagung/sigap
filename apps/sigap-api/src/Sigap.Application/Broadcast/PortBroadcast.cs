@@ -7,7 +7,15 @@ namespace Sigap.Application.Broadcast;
 /// <summary>Naskah siap simpan untuk satu trigger (#13). <c>Peran</c> dan <c>Profil</c> dari <c>DataScope.Terluas()</c>.</summary>
 public sealed record NaskahBroadcast(
     string PemicuId, string Peran, string Profil, string UnitPemicuId,
-    string KategoriBencana, string JenisBencana, string Pesan, SasaranPemicu Kriteria, DateTime DipicuPada);
+    string KategoriBencana, string JenisBencana, string Pesan, SasaranPemicu Kriteria, DateTime DipicuPada,
+    SumberOtomatis? Otomatis = null);
+
+/// <summary>
+/// Penanda broadcast yang dipicu mesin (BMKG): <c>"ActiveBroadcast"."otomatis"</c>,
+/// <c>"sumberKejadian"</c> (satu kejadian hanya memicu sekali), dan <c>"mmiTertinggi"</c>. <c>null</c> pada
+/// trigger manual.
+/// </summary>
+public sealed record SumberOtomatis(string KunciKejadian, int MmiTertinggi);
 
 /// <summary><c>BroadcastId</c> <c>null</c> bila seluruh kandidat sudah dipegang (409, tidak ada yang dibuat).</summary>
 public sealed record HasilPicu(string? BroadcastId, IReadOnlyList<RingkasUnit> Disasar, IReadOnlyList<DilewatiDto> Dilewati);
@@ -39,6 +47,15 @@ public interface IBroadcastStore
     /// ulang dan dicatat DILEWATI lewat savepoint, supaya baris lain di transaksi yang sama tetap masuk.
     /// </summary>
     Task<HasilPicu> PicuAsync(NaskahBroadcast naskah, IReadOnlyList<RingkasUnit> kandidat, CancellationToken ct);
+
+    /// <summary>Sudah ada broadcast (aktif maupun selesai) dengan penanda kejadian ini, yaitu kejadian BMKG itu pernah memicu.</summary>
+    Task<bool> KejadianSudahDipicuAsync(string kunciKejadian, CancellationToken ct);
+
+    /// <summary>
+    /// Seluruh unit yang kabupaten/kotanya terisi, tanpa Scope: pemicu otomatis bukan pengguna, dan sasarannya
+    /// ditentukan wilayah guncangan, bukan lingkup peran. Pencocokan nama wilayah dilakukan pemanggil.
+    /// </summary>
+    Task<IReadOnlyList<RingkasUnit>> UnitBerkabkotaAsync(CancellationToken ct);
 
     Task<DetailBroadcastDto?> BacaAsync(string id, DataScope lingkup, string? penggunaId, CancellationToken ct);
 

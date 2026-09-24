@@ -15,6 +15,7 @@ using Sigap.Application.SafetyCheck;
 using Sigap.Infrastructure.Asesmen;
 using Sigap.Infrastructure.Audit;
 using Sigap.Infrastructure.Broadcast;
+using Sigap.Infrastructure.Integrasi;
 using Sigap.Infrastructure.Keamanan;
 using Sigap.Infrastructure.Lampiran;
 using Sigap.Infrastructure.Laporan;
@@ -103,6 +104,9 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IMonitorStore, MonitorStore>();
         services.AddScoped<INotifikasiStore, NotifikasiStore>();
         services.AddSingleton<IPenyimpanLampiran>(_ => new PenyimpanLampiranDisk(folderLampiran));
+
+        // Pemicu Safety Check otomatis dari BMKG (P5.1): mati bawaan, dinyalakan lewat Bmkg:Aktif.
+        services.AddBmkg(configuration);
 
         return services;
     }
