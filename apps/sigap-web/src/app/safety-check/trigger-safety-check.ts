@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HasPermissionDirective } from '@danarakca/iam';
 import { KelompokBencana } from '../core/referensi/referensi.model';
 import { ReferensiService } from '../core/referensi/referensi.service';
 import { Pratinjau } from './broadcast.model';
@@ -17,7 +18,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
  */
 @Component({
   selector: 'app-trigger-safety-check',
-  imports: [PesanGalat, FormsModule],
+  imports: [PesanGalat, FormsModule, HasPermissionDirective],
   styleUrl: './trigger-safety-check.scss',
   providers: [PenampungGalat],
   template: `
@@ -30,7 +31,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
       </div>
     </header>
 
-    <div class="table-card">
+    <div class="table-card" *hasPermission="'sigap:broadcast:trigger'">
       <div class="table-card__header">
         <h2 class="table-card__title">Kriteria</h2>
       </div>
@@ -91,7 +92,13 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
         </div>
       </div>
 
-      <button type="button" class="button" (click)="picuAsync()" [disabled]="memproses()">
+      <button
+        *hasPermission="'sigap:broadcast:trigger'"
+        type="button"
+        class="button"
+        (click)="picuAsync()"
+        [disabled]="memproses()"
+      >
         Picu Safety Check
       </button>
     }

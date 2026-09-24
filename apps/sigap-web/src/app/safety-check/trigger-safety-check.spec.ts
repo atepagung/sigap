@@ -1,6 +1,7 @@
 import { flushAsync } from '../shared/testing/flush-async';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideIamPermissions } from '@danarakca/iam';
 import { ReferensiService } from '../core/referensi/referensi.service';
 import { BroadcastService } from './broadcast.service';
 import { TriggerSafetyCheck } from './trigger-safety-check';
@@ -12,7 +13,7 @@ const PRATINJAU = {
   dilewati: [],
 };
 
-async function render() {
+async function render(permissions: readonly string[] = ['sigap:broadcast:trigger']) {
   const referensi = {
     jenisBencanaAsync: vi.fn().mockResolvedValue({
       data: [{ kategori: 'ALAM', label: 'Bencana Alam', jenis: ['Gempa Bumi', 'Banjir'] }],
@@ -28,6 +29,7 @@ async function render() {
       provideRouter([]),
       { provide: ReferensiService, useValue: referensi },
       { provide: BroadcastService, useValue: broadcast },
+      provideIamPermissions(() => Promise.resolve(permissions)),
     ],
   });
 
@@ -69,5 +71,21 @@ describe('TriggerSafetyCheck', () => {
         b.textContent?.includes('Picu Safety Check'),
       ),
     ).toBe(true);
+  });
+
+  it('tanpa izin sigap:broadcast:trigger tidak ada formulir maupun tombol aksi', async () => {
+    const { fixture } = await render([]);
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.querySelector('#jenis')).toBeNull();
+    expect(el.querySelectorAll('button').length).toBe(0);
+    expect(el.textContent).toContain('Trigger Safety Check');
+  });
+
+  it('izin lain (mis. baca broadcast) tidak cukup untuk memicu', async () => {
+    const { fixture } = await render(['sigap:broadcast:read']);
+
+    expect(fixture.nativeElement.querySelector('#jenis')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('button').length).toBe(0);
   });
 });

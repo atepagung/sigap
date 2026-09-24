@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HasPermissionDirective } from '@danarakca/iam';
 import { KelompokBencana, Opsi } from '../core/referensi/referensi.model';
 import { ReferensiService } from '../core/referensi/referensi.service';
 import { LaporanService } from './laporan.service';
@@ -10,7 +11,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
 /** Laporkan Potensi Bencana (#7) + unggah lampiran (#8) — Pegawai Umum. */
 @Component({
   selector: 'app-lapor-bencana',
-  imports: [PesanGalat, FormsModule],
+  imports: [PesanGalat, FormsModule, HasPermissionDirective],
   styleUrl: './lapor-bencana.scss',
   providers: [PenampungGalat],
   template: `
@@ -22,7 +23,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
     </header>
 
     @if (!laporanId()) {
-      <div class="table-card">
+      <div class="table-card" *hasPermission="'sigap:laporan:create'">
         <div class="table-card__header">
           <h2 class="table-card__title">Form Laporan</h2>
         </div>
@@ -82,7 +83,12 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
             Foto, video, atau pesan suara — maksimum 10 MB per berkas, 5 berkas.
           </p>
           <app-pesan-galat [pesan]="galat.pesanAksi()" />
-          <input type="file" (change)="unggahAsync($event)" [disabled]="mengunggah()" />
+          <input
+            *hasPermission="'sigap:lampiran:upload'"
+            type="file"
+            (change)="unggahAsync($event)"
+            [disabled]="mengunggah()"
+          />
           <ul>
             @for (l of lampiran(); track l.id) {
               <li>{{ l.tipe }} — {{ l.ukuranBytes }} bytes</li>
