@@ -42,7 +42,7 @@ async function main() {
   } catch (err) {
     throw new Error(`Tidak bisa membaca OTK di "${jalur}" (${err.code ?? err.message}). Beri --otk=<path> atau OTK_BUNDLE.`);
   }
-  const { unit, pengguna } = bangunSemua(bundle, JSON.parse(readFileSync(REALM, 'utf8')));
+  const { unit, pengguna, layanan } = bangunSemua(bundle, JSON.parse(readFileSync(REALM, 'utf8')));
 
   const client = new pg.Client({ connectionString: databaseUrl });
   await client.connect();
@@ -51,12 +51,12 @@ async function main() {
     // Tahap 1: unit tanpa induk (induk mungkin belum tersimpan), tahap 2: pasang induk.
     for (const u of unit) {
       await client.query(
-        `INSERT INTO "Unit" ("id","isDemo","nama","kode","tipe","tingkat","eselonIKey","provinsi","updatedAt")
-         VALUES ($1,$2,$3,$4,$5,$6::"TingkatUnit",$7,$8,now())
+        `INSERT INTO "Unit" ("id","isDemo","nama","kode","tipe","tingkat","eselonIKey","provinsi","kabkota","updatedAt")
+         VALUES ($1,$2,$3,$4,$5,$6::"TingkatUnit",$7,$8,$9,now())
          ON CONFLICT ("kode") DO UPDATE SET "nama"=EXCLUDED."nama","tipe"=EXCLUDED."tipe",
            "tingkat"=EXCLUDED."tingkat","eselonIKey"=EXCLUDED."eselonIKey","provinsi"=EXCLUDED."provinsi",
-           "isDemo"=EXCLUDED."isDemo","updatedAt"=now()`,
-        [u.id, u.isDemo, u.nama, u.kode, u.tipe, u.tingkat, u.eselonIKey, u.provinsi],
+           "kabkota"=EXCLUDED."kabkota","isDemo"=EXCLUDED."isDemo","updatedAt"=now()`,
+        [u.id, u.isDemo, u.nama, u.kode, u.tipe, u.tingkat, u.eselonIKey, u.provinsi, u.kabkota ?? null],
       );
     }
     for (const u of unit.filter((x) => x.parentUnitId)) {
@@ -80,6 +80,13 @@ async function main() {
         );
       }
     }
+    // Akun layanan BMKG: tanpa "UserRole", passwordHash, dan email; bukan data demo.
+    await client.query(
+      `INSERT INTO "User" ("id","isDemo","nip","nama","aktif","unitId","updatedAt")
+       VALUES ($1,false,$2,$3,true,$4,now())
+       ON CONFLICT ("nip") DO UPDATE SET "nama"=EXCLUDED."nama","unitId"=EXCLUDED."unitId","aktif"=true,"updatedAt"=now()`,
+      [layanan.id, layanan.nip, layanan.nama, layanan.unitId],
+    );
     await client.query('COMMIT');
 
     const hitung = async (sql) => (await client.query(sql)).rows[0].n;

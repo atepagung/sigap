@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { bangunAkunUji, bangunSemua, bangunUnitOtk } from './bangun.mjs';
+import { AKUN_LAYANAN_BMKG, UNIT_DEMO, bangunAkunUji, bangunSemua, bangunUnitOtk } from './bangun.mjs';
 
 const OTK_ASLI = 'C:/dev/MKB APPS/App/data/otk_bundle.json';
 const REALM = new URL('../keycloak/import/kemenkeu-realm.json', import.meta.url);
@@ -72,4 +72,30 @@ test('sepuluh akun realm menjadi sepuluh pengguna, satu peran tiap akun, semuany
   const per = Object.fromEntries(pengguna.map((p) => [p.nip, p]));
   assert.equal(per['900000000000000005'].unitId, 'otk-djp');
   assert.equal(per['900000000000000007'].unitId, 'otk-setjen');
+});
+
+const APPSETTINGS = new URL('../../apps/sigap-api/src/Sigap.Api/appsettings.json', import.meta.url);
+
+test('NIP akun layanan sama persis dengan Bmkg:NipLayanan di konfigurasi API', () => {
+  // appsettings.json memuat komentar (bukan JSON murni), jadi dibaca dengan pola. Bila keduanya berbeda,
+  // worker tidak menemukan akunnya dan pemicu otomatis diam-diam tidak berjalan.
+  const teks = readFileSync(APPSETTINGS, 'utf8');
+  const nip = teks.match(/"Bmkg"\s*:\s*\{[^}]*?"NipLayanan"\s*:\s*"([^"]+)"/s)?.[1];
+  assert.ok(nip, 'Bmkg:NipLayanan tidak ditemukan di appsettings.json');
+  assert.equal(AKUN_LAYANAN_BMKG.nip, nip);
+});
+
+test('akun layanan terbaca dari builder: di unit akar, bukan pegawai, dan tanpa satu pun peran', {
+  skip: !existsSync(OTK_ASLI) && 'otk_bundle.json tidak ada di jalur default',
+}, () => {
+  const { unit, pengguna, layanan } = bangunSemua(JSON.parse(readFileSync(OTK_ASLI, 'utf8')), JSON.parse(readFileSync(REALM, 'utf8')));
+  assert.equal(layanan.nip, AKUN_LAYANAN_BMKG.nip);
+  assert.equal(layanan.unitId, unit.find((u) => u.kode === 'kemenkeu').id);
+  assert.ok(!pengguna.some((p) => p.nip === layanan.nip), 'akun layanan tidak boleh ikut daftar pengguna berperan');
+  assert.ok(!('peran' in layanan), 'akun layanan tidak punya peran (penyebut rekap membaca UserRole PEGAWAI)');
+});
+
+test('unit demo Pekanbaru berkabupaten/kota, unit OTK tidak (data OTK tidak memuatnya)', () => {
+  assert.ok(UNIT_DEMO.every((u) => u.kabkota === 'Kota Pekanbaru'));
+  assert.ok(bangunUnitOtk(kecil).every((u) => u.kabkota === null));
 });

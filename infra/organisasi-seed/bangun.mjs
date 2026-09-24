@@ -37,12 +37,20 @@ const NAMA_PEGAWAI_PELENGKAP = [
 ];
 
 export const UNIT_DEMO = [
-  { id: 'unit-demo-pekanbaru', kode: 'DEMO-KPP-MADYA-PKU', nama: 'KPP Madya Pekanbaru', tipe: 'KPP Madya', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djp', provinsi: 'Riau' },
-  { id: 'unit-demo-kanwil-riau', kode: 'DEMO-KANWIL-RIAU', nama: 'Kanwil Kemenkeu Provinsi Riau', tipe: 'Kanwil Terpadu', tingkat: 'ESELON_II', eselonIKey: 'setjen', provinsi: 'Riau' },
-  { id: 'unit-demo-kppn-pekanbaru', kode: 'DEMO-KPPN-PKU', nama: 'KPPN Pekanbaru', tipe: 'KPPN', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djpb', provinsi: 'Riau' },
-  { id: 'unit-demo-tampan', kode: 'DEMO-KPP-PRATAMA-TAMPAN', nama: 'KPP Pratama Pekanbaru Tampan', tipe: 'KPP Pratama', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djp', provinsi: 'Riau' },
-  { id: 'unit-demo-senapelan', kode: 'DEMO-KPP-PRATAMA-SENAPELAN', nama: 'KPP Pratama Pekanbaru Senapelan', tipe: 'KPP Pratama', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djp', provinsi: 'Riau' },
+  { id: 'unit-demo-pekanbaru', kode: 'DEMO-KPP-MADYA-PKU', nama: 'KPP Madya Pekanbaru', tipe: 'KPP Madya', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djp', provinsi: 'Riau', kabkota: 'Kota Pekanbaru' },
+  { id: 'unit-demo-kanwil-riau', kode: 'DEMO-KANWIL-RIAU', nama: 'Kanwil Kemenkeu Provinsi Riau', tipe: 'Kanwil Terpadu', tingkat: 'ESELON_II', eselonIKey: 'setjen', provinsi: 'Riau', kabkota: 'Kota Pekanbaru' },
+  { id: 'unit-demo-kppn-pekanbaru', kode: 'DEMO-KPPN-PKU', nama: 'KPPN Pekanbaru', tipe: 'KPPN', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djpb', provinsi: 'Riau', kabkota: 'Kota Pekanbaru' },
+  { id: 'unit-demo-tampan', kode: 'DEMO-KPP-PRATAMA-TAMPAN', nama: 'KPP Pratama Pekanbaru Tampan', tipe: 'KPP Pratama', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djp', provinsi: 'Riau', kabkota: 'Kota Pekanbaru' },
+  { id: 'unit-demo-senapelan', kode: 'DEMO-KPP-PRATAMA-SENAPELAN', nama: 'KPP Pratama Pekanbaru Senapelan', tipe: 'KPP Pratama', tingkat: 'INSTANSI_VERTIKAL', eselonIKey: 'djp', provinsi: 'Riau', kabkota: 'Kota Pekanbaru' },
 ];
+
+/**
+ * Akun layanan pengirim broadcast otomatis BMKG (ACCESS_RULES A11): baris "User" TANPA "UserRole", aktif
+ * supaya resolver identitas menemukannya. Bukan pengguna demo (isDemo = false): di production baris yang
+ * sama dibuat pemilik lewat SQL di README, dan NIP-nya harus sama dengan `Bmkg:NipLayanan`. Hanya untuk unit
+ * akar Kemenkeu; tidak pernah dihitung sebagai pegawai (penyebut rekap membaca "UserRole" PEGAWAI).
+ */
+export const AKUN_LAYANAN_BMKG = { id: 'user-layanan-bmkg', nip: 'SISTEM-BMKG', nama: 'Sistem BMKG (akun layanan)', unitKode: 'kemenkeu' };
 
 const idUnitOtk = (unitKey) => `otk-${unitKey}`;
 
@@ -74,6 +82,7 @@ export function bangunUnitOtk(bundle) {
       tingkat: PETA_TINGKAT[u.jenis] ?? 'NON_ESELON',
       eselonIKey: eselonIDari(u, indeks),
       provinsi: null,
+      kabkota: null,
       parentUnitId: induk && induk.level <= LEVEL_TERDALAM ? idUnitOtk(induk.unit_key) : null,
       isDemo: false,
     };
@@ -112,5 +121,8 @@ export function bangunSemua(bundle, realm) {
   const perKode = new Map(unit.map((u) => [u.kode, u]));
   const akun = bangunAkunUji(realm, perKode);
   const pelengkap = bangunPegawaiPelengkap(perKode.get('DEMO-KPP-MADYA-PKU').id);
-  return { unit, pengguna: [...akun, ...pelengkap] };
+  const unitLayanan = perKode.get(AKUN_LAYANAN_BMKG.unitKode);
+  if (!unitLayanan) throw new Error(`Unit akar "${AKUN_LAYANAN_BMKG.unitKode}" untuk akun layanan tidak ada di OTK.`);
+  const layanan = { id: AKUN_LAYANAN_BMKG.id, nip: AKUN_LAYANAN_BMKG.nip, nama: AKUN_LAYANAN_BMKG.nama, unitId: unitLayanan.id };
+  return { unit, pengguna: [...akun, ...pelengkap], layanan };
 }
