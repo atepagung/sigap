@@ -46,6 +46,28 @@ internal sealed class CurrentUserContext(IamPolicy policy) : ICurrentUserContext
         return new DataScope(permission, grants);
     }
 
+    /// <summary>
+    /// Proses latar berjalan atas nama akun layanan (<see cref="IServiceIdentity"/>): identitas
+    /// terisi dari data organisasi, tanpa peran dan tanpa permission, sehingga <see cref="GetScope"/>
+    /// selalu kosong. Akun yang tidak ditemukan atau nonaktif membuat konteks tetap tidak terautentikasi.
+    /// </summary>
+    internal async Task<bool> LoadServiceAsync(string nip, IOrganizationResolver resolver, CancellationToken cancellationToken)
+    {
+        IsLoaded = true;
+        if (await resolver.FindByNipAsync(nip, cancellationToken) is not { } organization)
+        {
+            return false;
+        }
+
+        IsAuthenticated = true;
+        Nip = nip;
+        UserId = organization.UserId;
+        UnitId = organization.UnitId;
+        Provinsi = organization.Provinsi;
+        EselonIKey = organization.EselonIKey;
+        return true;
+    }
+
     public async Task LoadAsync(ClaimsPrincipal principal, IOrganizationResolver resolver, CancellationToken cancellationToken)
     {
         IsLoaded = true;

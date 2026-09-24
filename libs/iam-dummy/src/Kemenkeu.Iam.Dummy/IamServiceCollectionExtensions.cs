@@ -52,6 +52,7 @@ public static class IamServiceCollectionExtensions
 
         services.AddScoped<CurrentUserContext>();
         services.AddScoped<ICurrentUserContext>(sp => sp.GetRequiredService<CurrentUserContext>());
+        services.AddScoped<IServiceIdentity, ServiceIdentity>();
         services.AddScoped<IClaimsTransformation, IamClaimsTransformation>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, ProblemDetailsAuthorizationResultHandler>();
