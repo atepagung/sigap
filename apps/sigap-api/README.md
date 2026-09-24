@@ -377,6 +377,32 @@ adalah yang asli. Akun uji ada di `Basisdata/DatabaseUji.cs` (`Data`), NIP-nya d
 | --- | --- |
 | `ConnectionStrings:Sigap` | Wajib; proses menolak mulai bila kosong. Production: `ConnectionStrings__Sigap` dari vault |
 | `Lampiran:Folder` | Wajib, sama. Folder penyimpanan lampiran; path relatif dihitung dari folder keluaran. Production: `Lampiran__Folder` ke volume yang bertahan antar restart. Driver disk ini padanan `local` di prototipe; object storage MinIO/S3 (P5.2) cukup menjadi implementasi `IPenyimpanLampiran` lain |
+| `Bmkg:Aktif` | Pemicu Safety Check otomatis dari BMKG (P5.1). **Mati bawaan** (`false`): pegawai menerima pemberitahuan genting darinya, jadi menyalakannya keputusan penempatan. Production: `Bmkg__Aktif=true` |
+| `Bmkg:NipLayanan` | Wajib bila `Aktif`; proses menolak mulai bila kosong. NIP akun layanan (baris `"User"` tanpa peran), bawaan `SISTEM-BMKG`. Lihat SQL di bawah |
+| `Bmkg:AmbangMmi` | Kosong atau di luar 1–12 = MMI V (aturan prototipe `AmbangDariTeks`) |
+| `Bmkg:JendelaMenit` / `IntervalMenit` | Bawaan 180 / 5. Gempa yang lebih tua dari jendela tidak memicu; batas BMKG 60 permintaan per menit per IP, satu putaran memakai dua |
+| `Bmkg:UrlAutogempa`, `UrlGempaDirasakan`, `UrlDasarGambar`, `TimeoutDetik` | Bawaan data terbuka BMKG; diganti hanya untuk peragaan lewat server lokal |
+
+### Pemicu otomatis BMKG (P5.1, putaran 1)
+
+`PemantauBmkg` (worker) memanggil `PicuBroadcastOtomatis` tiap `IntervalMenit` atas nama akun layanan
+(`IServiceIdentity`, DUMMY_REGISTRY butir 102): ambil `autogempa.json` + `gempadirasakan.json`, pilih gempa ber-MMI ≥ ambang
+yang masih dalam jendela dan belum pernah memicu (`"sumberKejadian"`), cocokkan wilayah berguncang dengan `"Unit"."kabkota"`
+(`NamaWilayah`), lalu `store.PicuAsync` yang sama dengan trigger manual (unit yang sudah dipegang broadcast aktif untuk jenis
+yang sama dilewati). BMKG mati: hasil sah terakhir dipakai; keduanya mati tanpa cadangan = `BmkgTidakTersediaException`, tidak
+pernah daftar kosong yang menyerupai "tidak ada gempa". Asumsi dan keterbatasan: DUMMY_REGISTRY bagian 9 butir 18.
+
+**Akun layanan di production** (baris ini dibuat pemilik setelah OTK dimuat; di dev sudah dibuat `infra/organisasi-seed`).
+NIP harus sama dengan `Bmkg:NipLayanan`, tanpa `"UserRole"`:
+
+```sql
+INSERT INTO "User" ("id","isDemo","nip","nama","aktif","unitId","updatedAt")
+SELECT 'user-layanan-bmkg', false, 'SISTEM-BMKG', 'Sistem BMKG (akun layanan)', true, "id", now()
+FROM "Unit" WHERE "kode" = 'kemenkeu'
+ON CONFLICT ("nip") DO NOTHING;
+```
+
+**Data BMKG** dipakai sesuai ketentuan data terbuka mereka: sumber wajib disebut (teks pesan broadcast menyebut "data BMKG").
 
 ## Keadaan sekarang
 
@@ -385,10 +411,9 @@ Yang sudah berjalan: perakitan, keamanan, galat, OpenAPI, `GET /me/konteks` (#36
 endpoint kontrak** (Laporan/Lampiran/Verifikasi, Referensi, Asesmen/Layanan Kritis/Tanggap Darurat,
 Broadcast/Trigger Safety Check, Safety Check/SOS, Monitor SC & Sumber Daya, Notifikasi; tabel di atas).
 
-- **Data organisasi kini dibaca dari `"User"`/`"Unit"`** — tetapi kedua tabel itu masih
-  **kosong** di database dev, jadi lingkup data akun uji Keycloak tetap kosong (fail-closed)
-  sampai datanya diisi dari `otk_bundle.json` prototipe. Pengguna ber-`aktif = false`
-  diperlakukan sama dengan tidak dikenal.
+- **Data organisasi dibaca dari `"User"`/`"Unit"`**; di database dev keduanya diisi `infra/organisasi-seed`
+  (444 unit OTK asli + 5 demo, sepuluh akun uji, akun layanan BMKG). Data organisasi yang kosong tetap membuat lingkup
+  kosong (fail-closed). Pengguna ber-`aktif = false` diperlakukan sama dengan tidak dikenal.
 - Nama pengguna dan rincian unit di `/me/konteks` masih `null`, dan bentuk `UnitDto`/`PenggunaDto` di
   sana belum sama dengan `RingkasUnit`/`RingkasPengguna` di kontrak (mis. `kabupatenKota`, `eselonI`,
   `jabatan`); dirapikan bersama domain Auth.

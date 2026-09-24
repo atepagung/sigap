@@ -182,6 +182,18 @@ bertentangan dengan API_CONTRACT 1.2 (`"User"` = profil rujukan dari HRIS/SSO). 
 BaTII: apakah platform menyediakan identitas layanan, dan bagaimana ia dipetakan ke kolom
 `dikirimOlehId` (FK `NOT NULL` ke `"User"`) tanpa mengubah skema.
 
+**Diputuskan pemilik proyek 24 Sep 2026 (P5.1), `[ASUMSI]`: akun layanan sebagai baris `"User"`.** Pilihan yang
+sama dengan prototipe, dengan pengaman yang tidak ada di prototipe: akun ber-NIP `SISTEM-BMKG` (dari
+`Bmkg:NipLayanan`), **aktif** (resolver identitas hanya menemukan pengguna aktif), **tanpa satu pun
+`"UserRole"`**, `isDemo = false`, di unit akar `kemenkeu`. Karena tanpa peran, ia tidak pernah muncul sebagai
+pegawai: penyebut rekap dan penerima pemberitahuan membaca `"UserRole"`, jadi pengecualiannya tidak bergantung
+pada ingatan siapa pun (tes `Akun_layanan_tidak_dihitung_sebagai_pegawai_penyebut_rekap`, mutasi tertangkap).
+Ia masuk ke `ICurrentUserContext` lewat `IServiceIdentity.AssumeAsync(nip)` (dummy `Kemenkeu.Iam`, DUMMY_REGISTRY
+butir 102), sehingga jejak audit dan `dikirimOlehId` terisi dari jalur yang sama dengan permintaan HTTP. Lingkup
+datanya selalu kosong. Peran dan profil yang dititipkan di jejak audit pemicu: `SISTEM|BMKG|<unit akar>`.
+Pertanyaan ke BaTII di atas **tetap terbuka**; bila platform menyediakan identitas layanan, cukup
+`IServiceIdentity` yang diganti dan baris `"User"`-nya dihapus.
+
 ---
 
 ## Status penerapan di endpoint (diperbarui 23 Sep 2026, P4.5 putaran 5)
@@ -201,7 +213,7 @@ Keputusan pemilik proyek 21 Sep 2026: butir ⚖ diterapkan mengikuti usulan, ber
 | S5 | **Diterapkan** | Pasangan dua separuh asesmen `(unitId, submittedById, createdAt)` di `AsesmenStore`; kedua separuh ditulis dalam satu `SaveChanges` dengan `createdAt` sama persis. Uji mutasi: pasangan tanpa waktu dan penyimpanan dua tahap sama-sama tertangkap |
 | A8 | **Diterapkan (#43), dipersempit.** | Hanya lima jenis peringatan Fase 1 yang diporting (bukan seluruh `peringatan.ts` — Fase 2 dan kabar BMKG/MAGMA dibuang). Temuan ⚖ `picu-belum` **diselesaikan**: kini dihitung dalam Scope `sigap:broadcast:trigger` pemanggil, bukan seluruh Kemenkeu. Lihat DUMMY_REGISTRY butir 17 |
 | A9, A10 | Tidak berlaku di sigap-api | A9 urusan Angular; A10 sudah kebijakan sejak P3.3 |
-| A11 | Menunggu BaTII | Identitas layanan untuk pemicu otomatis BMKG. Sekarang juga **memblokir penulisan oleh proses latar**: interseptor audit menolak penyimpanan tanpa identitas pelaku, jadi worker P5.1 tidak dapat menulis sebelum identitas layanan ada |
+| A11 | **Diterapkan sebagai `[ASUMSI]` (keputusan pemilik 24 Sep 2026, P5.1); pertanyaan ke BaTII tetap terbuka.** | Akun layanan `SISTEM-BMKG` = baris `"User"` aktif tanpa `"UserRole"`, masuk lewat `IServiceIdentity` (DUMMY_REGISTRY butir 102). Membuka blokir penulisan oleh proses latar. Detail di bagian A11 di atas |
 
 Aturan akses baru yang muncul saat menerjemahkan endpoint (bukan berasal dari prototipe):
 
