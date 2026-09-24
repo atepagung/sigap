@@ -5,6 +5,7 @@ setiap remote MFE). Manusia juga boleh membacanya: ini ringkasan aturan yang pal
 dilanggar. Detail dan alasan ada di dokumen yang ditautkan.
 
 - Bekerja di `apps/sigap-web`? Baca juga [apps/sigap-web/AGENTS.md](apps/sigap-web/AGENTS.md).
+- **Awal sesi:** baca [MIGRATION_NOTES.md](MIGRATION_NOTES.md) bagian 0 (status berjalan; pesan "lanjutkan" berarti mengerjakan putaran P4.5 berikutnya di sana).
 - Bekerja di `apps/sigap-api`? Baca [apps/sigap-api/README.md](apps/sigap-api/README.md).
 - Bahasa dokumen, komentar, dan pesan commit: **Indonesia**. Nama kode: kosakata domain
   berbahasa Indonesia (`KirimAsesmen`, `AspekSdm`), kata teknis tetap Inggris.
