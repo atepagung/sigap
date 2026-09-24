@@ -51,121 +51,119 @@ const CATATAN: Record<(typeof ASPEK)[number], readonly string[]> = {
       </div>
     </header>
 
-    <div class="table-card">
-      <div class="table-card__header">
-        <h2 class="table-card__title">Kondisi Bencana</h2>
-      </div>
-      <div class="lapor-bencana__isi">
-        <div class="form-field">
-          <label class="form-field__label" for="jenis"
-            >Jenis Bencana<span class="form-field__required">*</span></label
-          >
-          <select id="jenis" name="jenis" [(ngModel)]="jenisBencana">
-            <option value="">— Pilih —</option>
-            @for (k of kelompok(); track k.kategori) {
-              @for (j of k.jenis; track j) {
-                <option [value]="j">{{ j }}</option>
-              }
-            }
-          </select>
-        </div>
-        <div class="form-field">
-          <label class="form-field__label" for="kondisi-fisik"
-            >Kondisi Fisik<span class="form-field__required">*</span></label
-          >
-          <select id="kondisi-fisik" name="kondisiFisik" [(ngModel)]="kondisiFisik">
-            <option value="">— Pilih —</option>
-            @for (o of opsi()['kondisiBencana.kondisiFisik']; track o.kode) {
-              <option [value]="o.kode">{{ o.label }}</option>
-            }
-          </select>
-        </div>
-        <div class="form-field">
-          <label class="form-field__label" for="uraian">Uraian</label>
-          <textarea id="uraian" name="uraian" [(ngModel)]="uraian"></textarea>
-        </div>
-      </div>
-    </div>
-
-    @for (aspek of aspekDaftar; track aspek) {
+    <ng-container
+      *hasPermission="asesmenIdSedangDiubah() ? 'sigap:asesmen:update' : 'sigap:asesmen:create'"
+    >
       <div class="table-card">
         <div class="table-card__header">
-          <h2 class="table-card__title">Aspek {{ labelAspek(aspek) }}</h2>
+          <h2 class="table-card__title">Kondisi Bencana</h2>
         </div>
         <div class="lapor-bencana__isi">
-          @for (kunci of kunciPerAspek(aspek); track kunci) {
-            <div class="form-field">
-              <label class="form-field__label" [attr.for]="kunci"
-                >{{ labelField(kunci) }}<span class="form-field__required">*</span></label
-              >
-              <select [id]="kunci" [name]="kunci" [(ngModel)]="model[kunci]">
-                <option value="">— Pilih —</option>
-                @for (o of opsi()[kunci]; track o.kode) {
-                  <option [value]="o.kode">{{ o.label }}</option>
+          <div class="form-field">
+            <label class="form-field__label" for="jenis"
+              >Jenis Bencana<span class="form-field__required">*</span></label
+            >
+            <select id="jenis" name="jenis" [(ngModel)]="jenisBencana">
+              <option value="">— Pilih —</option>
+              @for (k of kelompok(); track k.kategori) {
+                @for (j of k.jenis; track j) {
+                  <option [value]="j">{{ j }}</option>
                 }
-              </select>
-            </div>
-          }
-          @for (kunciCatatan of catatanPerAspek(aspek); track kunciCatatan) {
-            <div class="form-field">
-              <label class="form-field__label" [attr.for]="kunciCatatan">{{
-                labelField(kunciCatatan)
-              }}</label>
-              <textarea
-                [id]="kunciCatatan"
-                [name]="kunciCatatan"
-                [(ngModel)]="model[kunciCatatan]"
-              ></textarea>
-            </div>
-          }
+              }
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="kondisi-fisik"
+              >Kondisi Fisik<span class="form-field__required">*</span></label
+            >
+            <select id="kondisi-fisik" name="kondisiFisik" [(ngModel)]="kondisiFisik">
+              <option value="">— Pilih —</option>
+              @for (o of opsi()['kondisiBencana.kondisiFisik']; track o.kode) {
+                <option [value]="o.kode">{{ o.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="uraian">Uraian</label>
+            <textarea id="uraian" name="uraian" [(ngModel)]="uraian"></textarea>
+          </div>
         </div>
       </div>
-    }
 
-    <div class="table-card">
-      <div class="table-card__header">
-        <h2 class="table-card__title">Aspek Layanan</h2>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Layanan</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (b of barisLayanan(); track b.layananId) {
-            <tr>
-              <td>{{ b.nama }}</td>
-              <td>
-                <select [name]="'layanan-' + b.layananId" [(ngModel)]="b.status">
-                  @for (o of opsi()['layanan.status']; track o.kode) {
+      @for (aspek of aspekDaftar; track aspek) {
+        <div class="table-card">
+          <div class="table-card__header">
+            <h2 class="table-card__title">Aspek {{ labelAspek(aspek) }}</h2>
+          </div>
+          <div class="lapor-bencana__isi">
+            @for (kunci of kunciPerAspek(aspek); track kunci) {
+              <div class="form-field">
+                <label class="form-field__label" [attr.for]="kunci"
+                  >{{ labelField(kunci) }}<span class="form-field__required">*</span></label
+                >
+                <select [id]="kunci" [name]="kunci" [(ngModel)]="model[kunci]">
+                  <option value="">— Pilih —</option>
+                  @for (o of opsi()[kunci]; track o.kode) {
                     <option [value]="o.kode">{{ o.label }}</option>
                   }
                 </select>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="2" class="table-card__empty">
-                Belum ada layanan kritis terdaftar — daftarkan dulu di halaman Layanan Kritis.
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+              </div>
+            }
+            @for (kunciCatatan of catatanPerAspek(aspek); track kunciCatatan) {
+              <div class="form-field">
+                <label class="form-field__label" [attr.for]="kunciCatatan">{{
+                  labelField(kunciCatatan)
+                }}</label>
+                <textarea
+                  [id]="kunciCatatan"
+                  [name]="kunciCatatan"
+                  [(ngModel)]="model[kunciCatatan]"
+                ></textarea>
+              </div>
+            }
+          </div>
+        </div>
+      }
 
-    <app-pesan-galat [pesan]="galat.pesanAksi()" />
-    <button
-      *hasPermission="asesmenIdSedangDiubah() ? 'sigap:asesmen:update' : 'sigap:asesmen:create'"
-      type="button"
-      class="button"
-      (click)="kirimAsync()"
-      [disabled]="!sah() || mengirim()"
-    >
-      {{ asesmenIdSedangDiubah() ? 'Update Asesmen' : 'Kirim' }}
-    </button>
+      <div class="table-card">
+        <div class="table-card__header">
+          <h2 class="table-card__title">Aspek Layanan</h2>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Layanan</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of barisLayanan(); track b.layananId) {
+              <tr>
+                <td>{{ b.nama }}</td>
+                <td>
+                  <select [name]="'layanan-' + b.layananId" [(ngModel)]="b.status">
+                    @for (o of opsi()['layanan.status']; track o.kode) {
+                      <option [value]="o.kode">{{ o.label }}</option>
+                    }
+                  </select>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="2" class="table-card__empty">
+                  Belum ada layanan kritis terdaftar — daftarkan dulu di halaman Layanan Kritis.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pesan-galat [pesan]="galat.pesanAksi()" />
+      <button type="button" class="button" (click)="kirimAsync()" [disabled]="!sah() || mengirim()">
+        {{ asesmenIdSedangDiubah() ? 'Update Asesmen' : 'Kirim' }}
+      </button>
+    </ng-container>
   `,
 })
 export class FormAsesmen implements OnInit {

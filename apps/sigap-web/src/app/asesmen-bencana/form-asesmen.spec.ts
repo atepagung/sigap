@@ -22,6 +22,7 @@ const OPSI = {
 
 async function render(
   terkini: { asesmen: unknown; urutanBerikutnya: number } = { asesmen: null, urutanBerikutnya: 1 },
+  permissions: readonly string[] = ['sigap:asesmen:create', 'sigap:asesmen:update'],
 ) {
   const referensi = {
     jenisBencanaAsync: vi.fn().mockResolvedValue({
@@ -46,9 +47,7 @@ async function render(
       provideRouter([{ path: 'detail-asesmen/:id', component: HalamanKosong }]),
       { provide: ReferensiService, useValue: referensi },
       { provide: AsesmenService, useValue: asesmen },
-      provideIamPermissions(() =>
-        Promise.resolve(['sigap:asesmen:create', 'sigap:asesmen:update']),
-      ),
+      provideIamPermissions(() => Promise.resolve(permissions)),
     ],
   });
 
@@ -69,6 +68,59 @@ function pilih(
   el.dispatchEvent(new Event('change'));
   fixture.detectChanges();
 }
+
+const ASESMEN_BERJALAN = {
+  id: 'as-1',
+  unit: { id: 'u1', nama: 'Unit A', provinsi: null, kabupatenKota: null, eselonI: null },
+  dikirimOleh: { id: 'p1', nama: 'Satgas A', nip: null, jabatan: null },
+  dikirimPada: '2026-09-20T00:00:00Z',
+  urutan: 1,
+  kondisiBencana: {
+    kategoriBencana: 'ALAM',
+    jenisBencana: 'Gempa Bumi',
+    waktuKejadian: null,
+    kondisiFisik: 'BERAT',
+    uraian: null,
+  },
+  aspek: {
+    sdm: {
+      kelengkapanHadir: 'PENUH_100',
+      korbanJiwa: null,
+      kondisiFisik: null,
+      kondisiPsikis: null,
+      catatanKondisiPegawai: null,
+      catatanTambahan: null,
+    },
+    aset: {
+      konstruksiBangunan: 'KOKOH',
+      aksesLokasi: null,
+      kondisiPeralatan: null,
+      jumlahPeralatan: null,
+      kondisiPerlengkapan: null,
+      jumlahPerlengkapan: null,
+      kendaraanLaikOperasi: null,
+      jumlahKendaraan: null,
+      catatan: null,
+    },
+    tik: {
+      kondisiPerangkat: 'NORMAL',
+      jumlahPerangkat: null,
+      aksesJaringan: null,
+      kelistrikan: null,
+      aplikasiUtama: null,
+      catatan: null,
+    },
+    arsip: { arsipVital: 'AMAN', arsipPenting: null, evakuasiFisik: null, catatan: null },
+    layanan: [],
+  },
+  persetujuan: {
+    status: 'MENUNGGU_PIMPINAN',
+    disetujuiOleh: null,
+    disetujuiPada: null,
+    tanggapDarurat: null,
+  },
+  lampiran: [],
+};
 
 describe('FormAsesmen', () => {
   it('tombol berlabel "Kirim" saat belum ada asesmen berjalan', async () => {
@@ -110,60 +162,7 @@ describe('FormAsesmen', () => {
   });
 
   it('berpindah ke "Update Asesmen" bila seri sudah berjalan', async () => {
-    const asesmenBerjalan = {
-      id: 'as-1',
-      unit: { id: 'u1', nama: 'Unit A', provinsi: null, kabupatenKota: null, eselonI: null },
-      dikirimOleh: { id: 'p1', nama: 'Satgas A', nip: null, jabatan: null },
-      dikirimPada: '2026-09-20T00:00:00Z',
-      urutan: 1,
-      kondisiBencana: {
-        kategoriBencana: 'ALAM',
-        jenisBencana: 'Gempa Bumi',
-        waktuKejadian: null,
-        kondisiFisik: 'BERAT',
-        uraian: null,
-      },
-      aspek: {
-        sdm: {
-          kelengkapanHadir: 'PENUH_100',
-          korbanJiwa: null,
-          kondisiFisik: null,
-          kondisiPsikis: null,
-          catatanKondisiPegawai: null,
-          catatanTambahan: null,
-        },
-        aset: {
-          konstruksiBangunan: 'KOKOH',
-          aksesLokasi: null,
-          kondisiPeralatan: null,
-          jumlahPeralatan: null,
-          kondisiPerlengkapan: null,
-          jumlahPerlengkapan: null,
-          kendaraanLaikOperasi: null,
-          jumlahKendaraan: null,
-          catatan: null,
-        },
-        tik: {
-          kondisiPerangkat: 'NORMAL',
-          jumlahPerangkat: null,
-          aksesJaringan: null,
-          kelistrikan: null,
-          aplikasiUtama: null,
-          catatan: null,
-        },
-        arsip: { arsipVital: 'AMAN', arsipPenting: null, evakuasiFisik: null, catatan: null },
-        layanan: [],
-      },
-      persetujuan: {
-        status: 'MENUNGGU_PIMPINAN',
-        disetujuiOleh: null,
-        disetujuiPada: null,
-        tanggapDarurat: null,
-      },
-      lampiran: [],
-    };
-
-    const { fixture, asesmen } = await render({ asesmen: asesmenBerjalan, urutanBerikutnya: 2 });
+    const { fixture, asesmen } = await render({ asesmen: ASESMEN_BERJALAN, urutanBerikutnya: 2 });
 
     expect(fixture.nativeElement.textContent).toContain('Memperbarui asesmen versi #2');
     const tombol = [...fixture.nativeElement.querySelectorAll('button')].find(
@@ -175,5 +174,33 @@ describe('FormAsesmen', () => {
     await flushAsync();
 
     expect(asesmen.revisiAsync).toHaveBeenCalledWith('as-1', expect.anything());
+  });
+
+  describe('izin dinamis: buat bila belum ada seri, ubah bila sudah ada', () => {
+    const semuaKosong = (el: HTMLElement) =>
+      el.querySelector('#jenis') === null &&
+      el.querySelectorAll('select, textarea, button').length === 0;
+
+    it('tanpa izin apa pun tidak ada kolom isian maupun tombol', async () => {
+      const { fixture } = await render(undefined, []);
+      expect(semuaKosong(fixture.nativeElement)).toBe(true);
+      expect(fixture.nativeElement.textContent).toContain('Asesmen Kondisi Bencana');
+    });
+
+    it('belum ada seri: izin update saja tidak cukup, izin create yang dibutuhkan', async () => {
+      const hanyaUpdate = await render(undefined, ['sigap:asesmen:update']);
+      expect(semuaKosong(hanyaUpdate.fixture.nativeElement)).toBe(true);
+    });
+
+    it('belum ada seri: izin create menampilkan formulir', async () => {
+      const { fixture } = await render(undefined, ['sigap:asesmen:create']);
+      expect(fixture.nativeElement.querySelectorAll('select').length).toBeGreaterThan(0);
+    });
+
+    it('seri sudah berjalan: izin create saja tidak cukup, izin update yang dibutuhkan', async () => {
+      const berjalan = { asesmen: ASESMEN_BERJALAN, urutanBerikutnya: 2 };
+      const hanyaCreate = await render(berjalan, ['sigap:asesmen:create']);
+      expect(semuaKosong(hanyaCreate.fixture.nativeElement)).toBe(true);
+    });
   });
 });
