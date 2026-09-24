@@ -226,7 +226,7 @@
     {
       "clientId": "sigap-uji-lokal",
       "name": "HANYA LOKAL — pengambil token untuk tes",
-      "description": "BUKAN bagian permintaan ke BaTII. Mengizinkan password grant agar skrip dan tes bisa mengambil token akun uji tanpa browser.",
+      "description": "BUKAN bagian permintaan ke BaTII. Mengizinkan password grant agar skrip, tes, dan halaman masuk dev sigap-web (mode mandiri, DUMMY_REGISTRY 3.3 butir 51) bisa mengambil token akun uji.",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,
@@ -234,6 +234,8 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4299/*", "http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4299", "http://localhost:4200"],
       "protocolMappers": [
         {
           "name": "nip",
