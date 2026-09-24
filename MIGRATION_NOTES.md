@@ -396,11 +396,17 @@ repo prototipe dibetulkan; dokumen di repo ini di-commit dan di-push. Branch
    dengan `--ignore-scripts` dan hook hanya diuji langsung (lint-staged atas berkas yang
    di-stage). Jalankan `npm install` (atau `npx husky`) sekali. Di Linux/macOS, hook perlu bit
    eksekusi: `git update-index --chmod=+x .husky/pre-commit .husky/commit-msg`.
-7. **Workflow CI belum pernah berjalan di GitHub.** Sintaksnya divalidasi `actionlint` dan setiap
-   langkahnya dijalankan di container Linux, tetapi hal yang hanya ada di GitHub (service
-   container, cache, filter path, izin) baru terbukti pada run pertama. Periksa hasilnya saat
-   pertama kali di-push, dan aktifkan branch protection agar `sigap-web`, `sigap-api`, dan `repo`
-   menjadi syarat merge.
+7. **CI GitHub tidak berjalan dan tidak akan dipulihkan (keputusan pemilik, 24 Sep 2026).** Ketiga
+   workflow (`sigap-web`, `sigap-api`, `repo`) gagal dalam ~6 detik tanpa runner: "The job was not
+   started because your account is locked due to a billing issue" (akun `atepagung`; repo publik
+   pun terdampak). Pemilik memutuskan tidak memulihkan billing. Gerbang verifikasi kini
+   `node scripts/verifikasi-linux.mjs semua` (pipeline yang sama di container Linux, PostgreSQL
+   sementara, snapshot persis dari yang di-commit): lulus untuk `bf5b986` (repo OK; web 105 tes
+   + build produksi; api `dotnet format` bersih, 1.563 tes + 101 tes library, build Release,
+   `dotnet publish` gagal via `SIGAP001` sesuai aturan dummy #4). Yang hanya ada di GitHub (cache,
+   izin, filter path, service container) tetap **belum terbukti**. Folder `.github/workflows/`
+   dibiarkan apa adanya; pematokan runner (`ubuntu-latest` -> Ubuntu 26 pada 19 Okt 2026) dan
+   branch protection tidak dikerjakan selama CI tidak dipakai.
 8. **Angka baris aturan bisnis yang sebenarnya (dihitung 21 Sep 2026):** `src/logic/` prototipe
    berisi **4.284** baris, bukan ~3.700 seperti di PLAYBOOK P4.1. Yang benar-benar diporting ke
    C# di Fase 1 **2.789** baris; 603 baris sengaja tidak diporting — termasuk `wewenang.ts`
