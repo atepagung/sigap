@@ -841,6 +841,9 @@ Peringatan yang **dihitung saat diminta** untuk pemanggil. Contohnya: safety che
 dijawab, laporan masuk (Satgas), asesmen menunggu persetujuan (Pimpinan), asesmen masuk
 (pemantau), gempa terkini. Tidak ada status "sudah dibaca", karena skema tidak punya
 tabelnya. Sekaligus menjadi saluran *in-app polling* cadangan (P3.6).
+`GEMPA_KUAT_TANPA_KANTOR` (`PERINGATAN`, **[asumsi]**, P5.1): hanya bagi pemegang `sigap:monitor:read` berlingkup nasional
+(Koordinator MKB, Sekretaris Jenderal). BMKG mencatat guncangan ≥ ambang MMI dalam jendela waktu di wilayah yang tidak punya unit
+Kemenkeu, jadi tidak ada broadcast otomatis; peringatan menyarankan memicu safety check manual. Kosong bila pemicu otomatis mati.
 ```json
 { "data": [ { "kode": "SC_BELUM_DIJAWAB", "tingkat": "GENTING", "judul": "…", "pesan": "…",
               "terkait": { "jenis": "BROADCAST", "id": "…" } } ] }

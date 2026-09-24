@@ -392,6 +392,10 @@ yang masih dalam jendela dan belum pernah memicu (`"sumberKejadian"`), cocokkan 
 yang sama dilewati). BMKG mati: hasil sah terakhir dipakai; keduanya mati tanpa cadangan = `BmkgTidakTersediaException`, tidak
 pernah daftar kosong yang menyerupai "tidak ada gempa". Asumsi dan keterbatasan: DUMMY_REGISTRY bagian 9 butir 18.
 
+**Wilayah berguncang tanpa unit** tidak menghasilkan broadcast. Pemantau nasional (Koordinator MKB, Sekretaris Jenderal) menerima
+peringatan #43 `GEMPA_KUAT_TANPA_KANTOR` yang dihitung dari cadangan hasil BMKG (tanpa tabel baru), dan dapat memicu safety check manual.
+Penilaian "memenuhi ambang, dalam jendela, wilayah mana yang punya unit" satu untuk worker dan #43 (`PenilaiKejadianBmkg`).
+
 **Akun layanan di production** (baris ini dibuat pemilik setelah OTK dimuat; di dev sudah dibuat `infra/organisasi-seed`).
 NIP harus sama dengan `Bmkg:NipLayanan`, tanpa `"UserRole"`:
 
