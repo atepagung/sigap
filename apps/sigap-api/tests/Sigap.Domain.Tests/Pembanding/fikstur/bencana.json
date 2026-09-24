@@ -1,0 +1,493 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/bencana.ts"
+  },
+  "kasus": {
+    "JENIS_BENCANA": [
+      {
+        "masukan": {},
+        "keluaran": {
+          "ALAM": [
+            "Gempa Bumi",
+            "Tsunami",
+            "Erupsi Gunung Berapi",
+            "Banjir",
+            "Banjir Bandang",
+            "Tanah Longsor",
+            "Angin Puting Beliung",
+            "Angin Topan",
+            "Kekeringan",
+            "Gelombang Pasang dan Abrasi",
+            "Kebakaran Hutan dan Lahan"
+          ],
+          "NONALAM": [
+            "Kebakaran Gedung",
+            "Bangunan Runtuh",
+            "Kabut Asap",
+            "Kegagalan Teknologi",
+            "Kegagalan Sistem TIK",
+            "Kegagalan Pasokan Listrik",
+            "Epidemi dan Wabah Penyakit",
+            "Pandemi",
+            "Kecelakaan Industri",
+            "Pencemaran Lingkungan"
+          ],
+          "SOSIAL": [
+            "Konflik Sosial Antarkelompok",
+            "Kerusuhan Massa",
+            "Teror dan Terorisme",
+            "Ancaman Bom",
+            "Sabotase",
+            "Penjarahan"
+          ]
+        }
+      }
+    ],
+    "KATEGORI_LABEL": [
+      {
+        "masukan": {},
+        "keluaran": {
+          "ALAM": "Bencana Alam",
+          "NONALAM": "Bencana Non-alam",
+          "SOSIAL": "Bencana Sosial"
+        }
+      }
+    ],
+    "SEMUA_JENIS": [
+      {
+        "masukan": {},
+        "keluaran": [
+          "Gempa Bumi",
+          "Tsunami",
+          "Erupsi Gunung Berapi",
+          "Banjir",
+          "Banjir Bandang",
+          "Tanah Longsor",
+          "Angin Puting Beliung",
+          "Angin Topan",
+          "Kekeringan",
+          "Gelombang Pasang dan Abrasi",
+          "Kebakaran Hutan dan Lahan",
+          "Kebakaran Gedung",
+          "Bangunan Runtuh",
+          "Kabut Asap",
+          "Kegagalan Teknologi",
+          "Kegagalan Sistem TIK",
+          "Kegagalan Pasokan Listrik",
+          "Epidemi dan Wabah Penyakit",
+          "Pandemi",
+          "Kecelakaan Industri",
+          "Pencemaran Lingkungan",
+          "Konflik Sosial Antarkelompok",
+          "Kerusuhan Massa",
+          "Teror dan Terorisme",
+          "Ancaman Bom",
+          "Sabotase",
+          "Penjarahan"
+        ]
+      }
+    ],
+    "LEVEL_KEPARAHAN": [
+      {
+        "masukan": {},
+        "keluaran": [
+          "Sangat Ringan",
+          "Ringan",
+          "Sedang",
+          "Berat",
+          "Sangat Berat"
+        ]
+      }
+    ],
+    "kategoriDari": [
+      {
+        "masukan": {
+          "jenis": "Gempa Bumi"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Tsunami"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Erupsi Gunung Berapi"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Banjir"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Banjir Bandang"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Tanah Longsor"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Angin Puting Beliung"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Angin Topan"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kekeringan"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Gelombang Pasang dan Abrasi"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kebakaran Hutan dan Lahan"
+        },
+        "keluaran": "ALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kebakaran Gedung"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Bangunan Runtuh"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kabut Asap"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kegagalan Teknologi"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kegagalan Sistem TIK"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kegagalan Pasokan Listrik"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Epidemi dan Wabah Penyakit"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Pandemi"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Kecelakaan Industri"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Pencemaran Lingkungan"
+        },
+        "keluaran": "NONALAM"
+      },
+      {
+        "masukan": {
+          "jenis": "Konflik Sosial Antarkelompok"
+        },
+        "keluaran": "SOSIAL"
+      },
+      {
+        "masukan": {
+          "jenis": "Kerusuhan Massa"
+        },
+        "keluaran": "SOSIAL"
+      },
+      {
+        "masukan": {
+          "jenis": "Teror dan Terorisme"
+        },
+        "keluaran": "SOSIAL"
+      },
+      {
+        "masukan": {
+          "jenis": "Ancaman Bom"
+        },
+        "keluaran": "SOSIAL"
+      },
+      {
+        "masukan": {
+          "jenis": "Sabotase"
+        },
+        "keluaran": "SOSIAL"
+      },
+      {
+        "masukan": {
+          "jenis": "Penjarahan"
+        },
+        "keluaran": "SOSIAL"
+      },
+      {
+        "masukan": {
+          "jenis": "gempa bumi"
+        },
+        "keluaran": null
+      },
+      {
+        "masukan": {
+          "jenis": "Gempa Bumi "
+        },
+        "keluaran": null
+      },
+      {
+        "masukan": {
+          "jenis": ""
+        },
+        "keluaran": null
+      },
+      {
+        "masukan": {
+          "jenis": "Kebakaran"
+        },
+        "keluaran": null
+      },
+      {
+        "masukan": {
+          "jenis": "Ancaman Bom"
+        },
+        "keluaran": "SOSIAL"
+      }
+    ],
+    "labelKategoriDari": [
+      {
+        "masukan": {
+          "jenis": "Gempa Bumi"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Tsunami"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Erupsi Gunung Berapi"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Banjir"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Banjir Bandang"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Tanah Longsor"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Angin Puting Beliung"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Angin Topan"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kekeringan"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Gelombang Pasang dan Abrasi"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kebakaran Hutan dan Lahan"
+        },
+        "keluaran": "Bencana Alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kebakaran Gedung"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Bangunan Runtuh"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kabut Asap"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kegagalan Teknologi"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kegagalan Sistem TIK"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kegagalan Pasokan Listrik"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Epidemi dan Wabah Penyakit"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Pandemi"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Kecelakaan Industri"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Pencemaran Lingkungan"
+        },
+        "keluaran": "Bencana Non-alam"
+      },
+      {
+        "masukan": {
+          "jenis": "Konflik Sosial Antarkelompok"
+        },
+        "keluaran": "Bencana Sosial"
+      },
+      {
+        "masukan": {
+          "jenis": "Kerusuhan Massa"
+        },
+        "keluaran": "Bencana Sosial"
+      },
+      {
+        "masukan": {
+          "jenis": "Teror dan Terorisme"
+        },
+        "keluaran": "Bencana Sosial"
+      },
+      {
+        "masukan": {
+          "jenis": "Ancaman Bom"
+        },
+        "keluaran": "Bencana Sosial"
+      },
+      {
+        "masukan": {
+          "jenis": "Sabotase"
+        },
+        "keluaran": "Bencana Sosial"
+      },
+      {
+        "masukan": {
+          "jenis": "Penjarahan"
+        },
+        "keluaran": "Bencana Sosial"
+      },
+      {
+        "masukan": {
+          "jenis": "gempa bumi"
+        },
+        "keluaran": "Tidak Terkategori"
+      },
+      {
+        "masukan": {
+          "jenis": "Gempa Bumi "
+        },
+        "keluaran": "Tidak Terkategori"
+      },
+      {
+        "masukan": {
+          "jenis": ""
+        },
+        "keluaran": "Tidak Terkategori"
+      },
+      {
+        "masukan": {
+          "jenis": "Kebakaran"
+        },
+        "keluaran": "Tidak Terkategori"
+      },
+      {
+        "masukan": {
+          "jenis": "Ancaman Bom"
+        },
+        "keluaran": "Bencana Sosial"
+      }
+    ]
+  }
+}

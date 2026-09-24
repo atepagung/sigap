@@ -14,4 +14,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Fikstur emas dari prototipe (tests/pembanding-prototipe/buat-fikstur.mjs). -->
+    <None Include="Pembanding/fikstur/*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

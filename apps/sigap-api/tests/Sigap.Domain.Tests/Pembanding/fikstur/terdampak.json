@@ -1,0 +1,1980 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/terdampak.ts"
+  },
+  "kasus": {
+    "uraiDirasakan": [
+      {
+        "masukan": {
+          "teks": "III-IV Cianjur, II-III Kota Sukabumi"
+        },
+        "keluaran": [
+          {
+            "mmi": "III-IV",
+            "nama": "Cianjur"
+          },
+          {
+            "mmi": "II-III",
+            "nama": "Kota Sukabumi"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "II-III Jayapura, II-III Wamena, II Yakuhimo"
+        },
+        "keluaran": [
+          {
+            "mmi": "II-III",
+            "nama": "Jayapura"
+          },
+          {
+            "mmi": "II-III",
+            "nama": "Wamena"
+          },
+          {
+            "mmi": "II",
+            "nama": "Yakuhimo"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": null
+        },
+        "keluaran": []
+      },
+      {
+        "masukan": {
+          "teks": ""
+        },
+        "keluaran": []
+      },
+      {
+        "masukan": {
+          "teks": "Cianjur"
+        },
+        "keluaran": [
+          {
+            "mmi": "",
+            "nama": "Cianjur"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "IV  Kab. Garut"
+        },
+        "keluaran": [
+          {
+            "mmi": "IV",
+            "nama": "Kab. Garut"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "II - III Padang"
+        },
+        "keluaran": [
+          {
+            "mmi": "II-III",
+            "nama": "Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "ab"
+        },
+        "keluaran": []
+      },
+      {
+        "masukan": {
+          "teks": "V Ab"
+        },
+        "keluaran": []
+      },
+      {
+        "masukan": {
+          "teks": "IIIX Foo"
+        },
+        "keluaran": [
+          {
+            "mmi": "IIIX",
+            "nama": "Foo"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "iv Padang"
+        },
+        "keluaran": [
+          {
+            "mmi": "",
+            "nama": "iv Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "V Padang,"
+        },
+        "keluaran": [
+          {
+            "mmi": "V",
+            "nama": "Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": " , ,V Padang"
+        },
+        "keluaran": [
+          {
+            "mmi": "V",
+            "nama": "Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "V Padang\rKota"
+        },
+        "keluaran": [
+          {
+            "mmi": "",
+            "nama": "V Padang\rKota"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "\u00a0V Padang"
+        },
+        "keluaran": [
+          {
+            "mmi": "V",
+            "nama": "Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "V\u0085Padang"
+        },
+        "keluaran": [
+          {
+            "mmi": "",
+            "nama": "V\u0085Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "\ufeffV Padang"
+        },
+        "keluaran": [
+          {
+            "mmi": "V",
+            "nama": "Padang"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "V Padang\u2028x"
+        },
+        "keluaran": [
+          {
+            "mmi": "",
+            "nama": "V Padang\u2028x"
+          }
+        ]
+      },
+      {
+        "masukan": {
+          "teks": "XII Banda Aceh, I Sabang"
+        },
+        "keluaran": [
+          {
+            "mmi": "XII",
+            "nama": "Banda Aceh"
+          },
+          {
+            "mmi": "I",
+            "nama": "Sabang"
+          }
+        ]
+      }
+    ],
+    "jarakKm": [
+      {
+        "masukan": {
+          "aLat": -0.95,
+          "aLng": 100.354,
+          "bLat": -0.95,
+          "bLng": 100.354
+        },
+        "keluaran": 0
+      },
+      {
+        "masukan": {
+          "aLat": -0.95,
+          "aLng": 100.354,
+          "bLat": -0.93,
+          "bLng": 100.36
+        },
+        "keluaran": 2.3217924337123406
+      },
+      {
+        "masukan": {
+          "aLat": -6.2,
+          "aLng": 106.8,
+          "bLat": -2.53,
+          "bLng": 140.72
+        },
+        "keluaran": 3781.8855662450605
+      },
+      {
+        "masukan": {
+          "aLat": 0,
+          "aLng": 0,
+          "bLat": 0,
+          "bLng": 180
+        },
+        "keluaran": 20015.086796020572
+      },
+      {
+        "masukan": {
+          "aLat": 89.9,
+          "aLng": 0,
+          "bLat": -89.9,
+          "bLng": 180
+        },
+        "keluaran": 20015.086796020572
+      },
+      {
+        "masukan": {
+          "aLat": -0.95,
+          "aLng": 100.354,
+          "bLat": -0.860067898736454,
+          "bLng": 100.354
+        },
+        "keluaran": 9.999993402991025
+      }
+    ],
+    "gedungTerdampak": [
+      {
+        "masukan": {
+          "nama": "tanpa koordinat dan tanpa Dirasakan",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": null,
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "tidak-dapat-diperiksa",
+          "gedung": [],
+          "kotaDirasakan": [],
+          "alasan": "Gedung kantor belum memiliki titik koordinat, dan BMKG tidak menyebutkan kota yang merasakan guncangan pada kejadian ini. Keterdampakan belum dapat diperiksa, bukan berarti tidak ada."
+        }
+      },
+      {
+        "masukan": {
+          "nama": "Padang tidak menarik Padang Panjang maupun Padangsidimpuan",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "III-IV Padang",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "k02",
+              "nama": "KPP Pratama Padang Dua",
+              "alamat": "Jl. Contoh No. 3",
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Berat",
+              "jumlahBangunan": 3,
+              "jarakKm": null,
+              "mmi": "III-IV"
+            },
+            {
+              "id": "k05",
+              "nama": "KPP Pratama Padang Satu",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "III-IV"
+            },
+            {
+              "id": "k08",
+              "nama": "Kanwil DJP Sumatera Barat dan Jambi",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "III-IV"
+            },
+            {
+              "id": "k10",
+              "nama": "KPPN Padang",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "III-IV"
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "III-IV",
+              "nama": "Padang"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "Wamena lewat akhiran nama satker, Papua dirapikan",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "II-III Jayapura, II-III Wamena",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "k11",
+              "nama": "GKN Jayapura",
+              "alamat": null,
+              "kabkota": "Kota Jayapura",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "II-III"
+            },
+            {
+              "id": "k12",
+              "nama": "KP2KP Wamena",
+              "alamat": null,
+              "kabkota": "Kab. Jayawijaya",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "II-III"
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "II-III",
+              "nama": "Jayapura"
+            },
+            {
+              "mmi": "II-III",
+              "nama": "Wamena"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "Kab. dan Kota Sukabumi sama-sama cocok",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "III Kab. Cianjur, II Sukabumi",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "k17",
+              "nama": "KPP Pratama Cianjur",
+              "alamat": null,
+              "kabkota": "Kab. Cianjur",
+              "provinsi": "Jawa Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 2,
+              "jarakKm": null,
+              "mmi": "III"
+            },
+            {
+              "id": "k14",
+              "nama": "KPP Pratama Sukabumi",
+              "alamat": null,
+              "kabkota": "Kota Sukabumi",
+              "provinsi": "Jawa Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "II"
+            },
+            {
+              "id": "k15",
+              "nama": "KPP Pratama Sukabumi",
+              "alamat": null,
+              "kabkota": "Kab. Sukabumi",
+              "provinsi": "Jawa Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "II"
+            },
+            {
+              "id": "k16",
+              "nama": "KP2KP Pelabuhan Ratu",
+              "alamat": null,
+              "kabkota": "Kab. Sukabumi",
+              "provinsi": "Jawa Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "II"
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "III",
+              "nama": "Kab. Cianjur"
+            },
+            {
+              "mmi": "II",
+              "nama": "Sukabumi"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "nama pendek dilewati, kota tanpa MMI",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "V Abc, Pekanbaru",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "k19",
+              "nama": "Kantor Wilayah DJP Riau",
+              "alamat": null,
+              "kabkota": "Kota Pekanbaru",
+              "provinsi": "Riau",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": null
+            },
+            {
+              "id": "k20",
+              "nama": "Kantor tanpa nama",
+              "alamat": null,
+              "kabkota": "Kota Pekanbaru",
+              "provinsi": "Riau",
+              "kondisi": "Rusak Sedang",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": null
+            },
+            {
+              "id": "k21",
+              "nama": "Kanwil DJBC Riau",
+              "alamat": null,
+              "kabkota": "Kota Adm. Pekanbaru",
+              "provinsi": "Riau",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": null
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "V",
+              "nama": "Abc"
+            },
+            {
+              "mmi": "",
+              "nama": "Pekanbaru"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "lebih dari 30 kantor dipotong",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "IV Mimika",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "m00",
+              "nama": "Satker Uji 0",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m01",
+              "nama": "Satker Uji 1",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m02",
+              "nama": "Satker Uji 2",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m03",
+              "nama": "Satker Uji 3",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m04",
+              "nama": "Satker Uji 4",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m05",
+              "nama": "Satker Uji 5",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m06",
+              "nama": "Satker Uji 6",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m07",
+              "nama": "Satker Uji 7",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m08",
+              "nama": "Satker Uji 8",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m09",
+              "nama": "Satker Uji 9",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m10",
+              "nama": "Satker Uji 10",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m11",
+              "nama": "Satker Uji 11",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m12",
+              "nama": "Satker Uji 12",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m13",
+              "nama": "Satker Uji 13",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m14",
+              "nama": "Satker Uji 14",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m15",
+              "nama": "Satker Uji 15",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m16",
+              "nama": "Satker Uji 16",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m17",
+              "nama": "Satker Uji 17",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m18",
+              "nama": "Satker Uji 18",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m19",
+              "nama": "Satker Uji 19",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m20",
+              "nama": "Satker Uji 20",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m21",
+              "nama": "Satker Uji 21",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m22",
+              "nama": "Satker Uji 22",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m23",
+              "nama": "Satker Uji 23",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m24",
+              "nama": "Satker Uji 24",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m25",
+              "nama": "Satker Uji 25",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m26",
+              "nama": "Satker Uji 26",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m27",
+              "nama": "Satker Uji 27",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m28",
+              "nama": "Satker Uji 28",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            },
+            {
+              "id": "m29",
+              "nama": "Satker Uji 29",
+              "alamat": null,
+              "kabkota": "Kab. Mimika",
+              "provinsi": "Papua",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "IV"
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "IV",
+              "nama": "Mimika"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "satu gedung tertarik dua kota hanya sekali",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": null,
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "III Padang, IV Kota Padang",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "k02",
+              "nama": "KPP Pratama Padang Dua",
+              "alamat": "Jl. Contoh No. 3",
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Berat",
+              "jumlahBangunan": 3,
+              "jarakKm": null,
+              "mmi": "III"
+            },
+            {
+              "id": "k05",
+              "nama": "KPP Pratama Padang Satu",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "III"
+            },
+            {
+              "id": "k08",
+              "nama": "Kanwil DJP Sumatera Barat dan Jambi",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "III"
+            },
+            {
+              "id": "k10",
+              "nama": "KPPN Padang",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "III"
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "III",
+              "nama": "Padang"
+            },
+            {
+              "mmi": "IV",
+              "nama": "Kota Padang"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "berkoordinat: radius 10 km, gudang dikeluarkan",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": {
+              "lat": -0.95,
+              "lng": 100.354
+            },
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "V Padang",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG_BERKOORDINAT",
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "radius",
+          "kotaDirasakan": [
+            {
+              "mmi": "V",
+              "nama": "Padang"
+            }
+          ],
+          "alasan": null,
+          "gedung": [
+            {
+              "id": "r01",
+              "nama": "KPP Pratama Padang Satu",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Berat",
+              "jumlahBangunan": 2,
+              "jarakKm": 0,
+              "mmi": null
+            },
+            {
+              "id": "r03",
+              "nama": "KPPN Padang",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": 7.6,
+              "mmi": null
+            },
+            {
+              "id": "r06",
+              "nama": "Kantor Tepi Radius",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": 10,
+              "mmi": null
+            }
+          ]
+        }
+      },
+      {
+        "masukan": {
+          "nama": "berkoordinat tetapi tidak ada yang dalam radius",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": {
+              "lat": -6.2,
+              "lng": 106.8
+            },
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "V Padang",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG_BERKOORDINAT",
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "radius",
+          "kotaDirasakan": [
+            {
+              "mmi": "V",
+              "nama": "Padang"
+            }
+          ],
+          "alasan": null,
+          "gedung": []
+        }
+      },
+      {
+        "masukan": {
+          "nama": "gempa berkoordinat, gedung belum: jatuh ke cara kota",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": {
+              "lat": -0.95,
+              "lng": 100.354
+            },
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": "V Padang",
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "kota",
+          "gedung": [
+            {
+              "id": "k02",
+              "nama": "KPP Pratama Padang Dua",
+              "alamat": "Jl. Contoh No. 3",
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Berat",
+              "jumlahBangunan": 3,
+              "jarakKm": null,
+              "mmi": "V"
+            },
+            {
+              "id": "k05",
+              "nama": "KPP Pratama Padang Satu",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "V"
+            },
+            {
+              "id": "k08",
+              "nama": "Kanwil DJP Sumatera Barat dan Jambi",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Baik",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "V"
+            },
+            {
+              "id": "k10",
+              "nama": "KPPN Padang",
+              "alamat": null,
+              "kabkota": "Kota Padang",
+              "provinsi": "Sumatera Barat",
+              "kondisi": "Rusak Ringan",
+              "jumlahBangunan": 1,
+              "jarakKm": null,
+              "mmi": "V"
+            }
+          ],
+          "kotaDirasakan": [
+            {
+              "mmi": "V",
+              "nama": "Padang"
+            }
+          ],
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "gempa berkoordinat tanpa Dirasakan, gedung belum",
+          "gempa": {
+            "tanggal": "18 Sep 2026",
+            "jam": "09:40:15 WIB",
+            "waktu": "2026-09-18T02:40:15+00:00",
+            "magnitudo": "5.6",
+            "kedalaman": "10 km",
+            "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "lintang": "6.84 LS",
+            "bujur": "107.05 BT",
+            "koordinat": {
+              "lat": -0.95,
+              "lng": 100.354
+            },
+            "potensi": "Tidak berpotensi tsunami",
+            "dirasakan": null,
+            "shakemap": null
+          },
+          "gedung": [
+            "GEDUNG"
+          ]
+        },
+        "keluaran": {
+          "cara": "tidak-dapat-diperiksa",
+          "gedung": [],
+          "kotaDirasakan": [],
+          "alasan": "Gedung kantor belum memiliki titik koordinat, dan BMKG tidak menyebutkan kota yang merasakan guncangan pada kejadian ini. Keterdampakan belum dapat diperiksa, bukan berarti tidak ada."
+        }
+      }
+    ]
+  },
+  "data": {
+    "GEDUNG": [
+      {
+        "id": "k01",
+        "namaSatker": "KPP Pratama Padang Sidempuan",
+        "namaGedung": null,
+        "alamat": null,
+        "kabkota": "Kota Padangsidimpuan",
+        "provinsi": "Sumatera Utara",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k02",
+        "namaSatker": "KPP Pratama Padang Dua",
+        "namaGedung": "Bangunan Gedung Utama",
+        "alamat": "",
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Rusak Ringan",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k03",
+        "namaSatker": "KPP Pratama Padang Dua",
+        "namaGedung": "Bangunan Gedung Kantor Permanen",
+        "alamat": "Jl. Contoh No. 3",
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k04",
+        "namaSatker": "KPP Pratama Padang Dua",
+        "namaGedung": "Bangun Gedung Kantor Permanen",
+        "alamat": "Jl. Contoh No. 4",
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Rusak Berat",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k05",
+        "namaSatker": "KPP Pratama Padang Satu",
+        "namaGedung": null,
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Rusak Ringan",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k06",
+        "namaSatker": "KP2KP Padang Panjang",
+        "namaGedung": "Gedung KP2KP Padang Panjang",
+        "alamat": null,
+        "kabkota": "Kota Padang Panjang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k07",
+        "namaSatker": "KP2KP Padang Panjang",
+        "namaGedung": "Gudang KP2KP Padang Panjang",
+        "alamat": null,
+        "kabkota": "Kota Padang Panjang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Rusak Ringan",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k08",
+        "namaSatker": "Kanwil DJP Sumatera Barat dan Jambi",
+        "namaGedung": "-",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k09",
+        "namaSatker": "KPPN Padang",
+        "namaGedung": "Gudang Arsip KPPN Padang",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k10",
+        "namaSatker": "KPPN Padang",
+        "namaGedung": "Gedung Kantor untuk Layanan",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Rusak Ringan",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k11",
+        "namaSatker": "GKN Jayapura",
+        "namaGedung": "Gedung Keuangan Negara Jayapura",
+        "alamat": null,
+        "kabkota": "Kota Jayapura",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k12",
+        "namaSatker": "KP2KP Wamena",
+        "namaGedung": "Bangunan Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Jayawijaya",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k13",
+        "namaSatker": "KPPBC Tmp C Jayapura",
+        "namaGedung": "Tanah Bangunan Rumah Negara Dalam Proses Penggolongan",
+        "alamat": null,
+        "kabkota": "Kab. Sarmi",
+        "provinsi": "P A P U A",
+        "kondisi": "Rusak Berat",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k14",
+        "namaSatker": "KPP Pratama Sukabumi",
+        "namaGedung": "Bangunan Gedung Kantor Permanen",
+        "alamat": null,
+        "kabkota": "Kota Sukabumi",
+        "provinsi": "Jawa Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k15",
+        "namaSatker": "KPP Pratama Sukabumi",
+        "namaGedung": "Bangunan Gedung Pos Pelayanan Pajak",
+        "alamat": null,
+        "kabkota": "Kab. Sukabumi",
+        "provinsi": "Jawa Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k16",
+        "namaSatker": "KP2KP Pelabuhan Ratu",
+        "namaGedung": "-",
+        "alamat": null,
+        "kabkota": "Kab. Sukabumi",
+        "provinsi": "Jawa Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k17",
+        "namaSatker": "KPP Pratama Cianjur",
+        "namaGedung": "Gedung Kantor Utama",
+        "alamat": null,
+        "kabkota": "Kab. Cianjur",
+        "provinsi": "Jawa Barat",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k18",
+        "namaSatker": "KPP Pratama Cianjur",
+        "namaGedung": "Pos Pelayanan Pajak Cipanas",
+        "alamat": null,
+        "kabkota": "Kab. Cianjur",
+        "provinsi": "Jawa Barat",
+        "kondisi": "Rusak Ringan",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k19",
+        "namaSatker": "Kantor Wilayah DJP Riau",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kota Pekanbaru",
+        "provinsi": "Riau",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k20",
+        "namaSatker": null,
+        "namaGedung": null,
+        "alamat": null,
+        "kabkota": "Kota Pekanbaru",
+        "provinsi": " Riau ",
+        "kondisi": "Rusak Sedang",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k21",
+        "namaSatker": "Kanwil DJBC Riau",
+        "namaGedung": "Gedung Utama",
+        "alamat": null,
+        "kabkota": "Kota Adm. Pekanbaru",
+        "provinsi": "Riau",
+        "kondisi": "Rusak Ringan",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k22",
+        "namaSatker": "KPPN Tanpa Kota",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": null,
+        "provinsi": "Aceh",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "k23",
+        "namaSatker": "Kantor Kosong",
+        "namaGedung": "Gedung",
+        "alamat": null,
+        "kabkota": "Kab.",
+        "provinsi": "Aceh",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m00",
+        "namaSatker": "Satker Uji 0",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m01",
+        "namaSatker": "Satker Uji 1",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m02",
+        "namaSatker": "Satker Uji 2",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m03",
+        "namaSatker": "Satker Uji 3",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m04",
+        "namaSatker": "Satker Uji 4",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m05",
+        "namaSatker": "Satker Uji 5",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m06",
+        "namaSatker": "Satker Uji 6",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m07",
+        "namaSatker": "Satker Uji 7",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m08",
+        "namaSatker": "Satker Uji 8",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m09",
+        "namaSatker": "Satker Uji 9",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m10",
+        "namaSatker": "Satker Uji 10",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m11",
+        "namaSatker": "Satker Uji 11",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m12",
+        "namaSatker": "Satker Uji 12",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m13",
+        "namaSatker": "Satker Uji 13",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m14",
+        "namaSatker": "Satker Uji 14",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m15",
+        "namaSatker": "Satker Uji 15",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m16",
+        "namaSatker": "Satker Uji 16",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m17",
+        "namaSatker": "Satker Uji 17",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m18",
+        "namaSatker": "Satker Uji 18",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m19",
+        "namaSatker": "Satker Uji 19",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m20",
+        "namaSatker": "Satker Uji 20",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m21",
+        "namaSatker": "Satker Uji 21",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m22",
+        "namaSatker": "Satker Uji 22",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m23",
+        "namaSatker": "Satker Uji 23",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m24",
+        "namaSatker": "Satker Uji 24",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m25",
+        "namaSatker": "Satker Uji 25",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m26",
+        "namaSatker": "Satker Uji 26",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m27",
+        "namaSatker": "Satker Uji 27",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m28",
+        "namaSatker": "Satker Uji 28",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m29",
+        "namaSatker": "Satker Uji 29",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m30",
+        "namaSatker": "Satker Uji 30",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m31",
+        "namaSatker": "Satker Uji 31",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m32",
+        "namaSatker": "Satker Uji 32",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m33",
+        "namaSatker": "Satker Uji 33",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      },
+      {
+        "id": "m34",
+        "namaSatker": "Satker Uji 34",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kab. Mimika",
+        "provinsi": "P A P U A",
+        "kondisi": "Baik",
+        "lintang": null,
+        "bujur": null
+      }
+    ],
+    "GEDUNG_BERKOORDINAT": [
+      {
+        "id": "r01",
+        "namaSatker": "KPP Pratama Padang Satu",
+        "namaGedung": "Gedung A",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": -0.95,
+        "bujur": 100.354
+      },
+      {
+        "id": "r02",
+        "namaSatker": "KPP Pratama Padang Satu",
+        "namaGedung": "Gedung B",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Rusak Berat",
+        "lintang": -0.93,
+        "bujur": 100.36
+      },
+      {
+        "id": "r03",
+        "namaSatker": "KPPN Padang",
+        "namaGedung": "Gedung Kantor",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": -0.9,
+        "bujur": 100.4
+      },
+      {
+        "id": "r04",
+        "namaSatker": "KP2KP Padang Panjang",
+        "namaGedung": "Gedung",
+        "alamat": null,
+        "kabkota": "Kota Padang Panjang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": -0.46,
+        "bujur": 100.4
+      },
+      {
+        "id": "r05",
+        "namaSatker": "KPP Pratama Padang Dua",
+        "namaGedung": "Gudang",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": -0.951,
+        "bujur": 100.355
+      },
+      {
+        "id": "r06",
+        "namaSatker": "Kantor Tepi Radius",
+        "namaGedung": "Gedung",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": -0.860067898736454,
+        "bujur": 100.354
+      },
+      {
+        "id": "r07",
+        "namaSatker": "Kantor Tanpa Bujur",
+        "namaGedung": "Gedung",
+        "alamat": null,
+        "kabkota": "Kota Padang",
+        "provinsi": "Sumatera Barat",
+        "kondisi": "Baik",
+        "lintang": -0.95,
+        "bujur": null
+      }
+    ]
+  }
+}

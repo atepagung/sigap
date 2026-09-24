@@ -1,0 +1,256 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/safety-check.ts"
+  },
+  "kasus": {
+    "bentukJawabanSafetyCheck": [
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": null
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": null,
+          "lat": null,
+          "lng": null
+        }
+      },
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": {
+            "lat": -0.5071,
+            "lng": 101.4478
+          }
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": null,
+          "lat": -0.5071,
+          "lng": 101.4478
+        }
+      },
+      {
+        "masukan": {
+          "status": "BUTUH_BANTUAN",
+          "opsi": {
+            "lat": 90,
+            "lng": -180
+          }
+        },
+        "keluaran": {
+          "status": "BUTUH_BANTUAN",
+          "kehadiran": null,
+          "lat": 90,
+          "lng": -180
+        }
+      },
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": {
+            "lat": 90.0001,
+            "lng": 180.0001
+          }
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": null,
+          "lat": null,
+          "lng": null
+        }
+      },
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": {
+            "lat": -90.5,
+            "lng": 12
+          }
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": null,
+          "lat": null,
+          "lng": 12
+        }
+      },
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": {
+            "lat": "NaN",
+            "lng": "Infinity"
+          }
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": null,
+          "lat": null,
+          "lng": null
+        }
+      },
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": {
+            "lat": null,
+            "lng": null
+          }
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": null,
+          "lat": null,
+          "lng": null
+        }
+      },
+      {
+        "masukan": {
+          "status": "AMAN",
+          "opsi": {
+            "lat": 0,
+            "lng": 0,
+            "kehadiran": "WFO"
+          }
+        },
+        "keluaran": {
+          "status": "AMAN",
+          "kehadiran": "WFO",
+          "lat": 0,
+          "lng": 0
+        }
+      },
+      {
+        "masukan": {
+          "status": "BUTUH_BANTUAN",
+          "opsi": {
+            "kehadiran": "LIBUR"
+          }
+        },
+        "keluaran": {
+          "status": "BUTUH_BANTUAN",
+          "kehadiran": null,
+          "lat": null,
+          "lng": null
+        }
+      }
+    ],
+    "validasiAlasanCatatan": [
+      {
+        "masukan": {
+          "alasan": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sebutkan dari mana keadaan ini diketahui, minimal lima huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "    "
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sebutkan dari mana keadaan ini diketahui, minimal lima huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "abcd"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sebutkan dari mana keadaan ini diketahui, minimal lima huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "abcde"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "  abcd  "
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sebutkan dari mana keadaan ini diketahui, minimal lima huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": " abcde "
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "\ufeffabcd\ufeff"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sebutkan dari mana keadaan ini diketahui, minimal lima huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "\u0085abcd"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "\u00a0abcd\u00a0"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sebutkan dari mana keadaan ini diketahui, minimal lima huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Keterangan terlalu panjang, maksimal 300 huruf."
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  "
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "alasan": "Dihubungi lewat telepon oleh Satgas pukul 10.12"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      }
+    ]
+  }
+}

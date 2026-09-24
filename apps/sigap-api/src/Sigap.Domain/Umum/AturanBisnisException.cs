@@ -30,7 +30,49 @@ public class AturanBisnisException(string kode, string judul, string pesan, int 
     /// yang sudah dipegang broadcast lain.
     /// </summary>
     public IReadOnlyDictionary<string, object?>? Rincian { get; init; }
+
+    /// <summary>
+    /// Pesan per field untuk field <c>errors</c> — hanya ada pada 400 (API_CONTRACT bagian 1.5).
+    /// </summary>
+    public IReadOnlyDictionary<string, string[]>? Kesalahan { get; init; }
 }
+
+/// <summary>Angka status HTTP yang dipakai aturan bisnis, supaya tidak menjadi angka gaib di kode.</summary>
+public static class StatusHttp
+{
+    public const int PermintaanTidakSah = 400;
+    public const int TidakBerwenang = 403;
+    public const int MuatanTerlaluBesar = 413;
+    public const int TipeMediaTidakDidukung = 415;
+    public const int LayananTidakTersedia = 503;
+}
+
+/// <summary>Masukan tidak sah — 400 <c>VALIDASI_GAGAL</c> beserta <c>errors</c> per field.</summary>
+public sealed class ValidasiGagalException : AturanBisnisException
+{
+    public ValidasiGagalException(string bidang, string pesan)
+        : this(new Dictionary<string, string[]> { [bidang] = [pesan] }, pesan)
+    {
+    }
+
+    public ValidasiGagalException(IReadOnlyDictionary<string, string[]> kesalahan, string? pesan = null)
+        : base(
+            KodeGalat.ValidasiGagal,
+            "Masukan tidak sah",
+            pesan ?? kesalahan.Values.SelectMany(v => v).FirstOrDefault() ?? "Masukan tidak sah.",
+            StatusHttp.PermintaanTidakSah)
+    {
+        Kesalahan = kesalahan;
+    }
+}
+
+/// <summary>
+/// Peran pemanggil tidak memegang permission, atau identitasnya belum dapat dikaitkan dengan
+/// pengguna dan unit — 403 <c>TIDAK_BERWENANG</c>. Untuk data di luar Scope, pakai
+/// <see cref="TidakDitemukanException"/> (404), bukan ini.
+/// </summary>
+public sealed class TidakBerwenangException(string pesan)
+    : AturanBisnisException(KodeGalat.TidakBerwenang, "Tidak berwenang", pesan, StatusHttp.TidakBerwenang);
 
 /// <summary>
 /// Benturan keadaan — 409. Dipisahkan supaya pemanggil tidak perlu mengingat angka statusnya.

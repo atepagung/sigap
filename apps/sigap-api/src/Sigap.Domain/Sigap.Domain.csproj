@@ -10,4 +10,9 @@
     <RootNamespace>Sigap.Domain</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- SemantikJs (peniru trim/regex/pembulatan JavaScript) diuji langsung. -->
+    <InternalsVisibleTo Include="Sigap.Domain.Tests" />
+  </ItemGroup>
+
 </Project>
