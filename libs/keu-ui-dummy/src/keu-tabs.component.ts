@@ -5,6 +5,7 @@ import {
   ContentChildren,
   Input,
   QueryList,
+  signal,
 } from '@angular/core';
 
 /**
@@ -18,7 +19,7 @@ import {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="tabs__panel" *ngIf="active">
+    <div class="tabs__panel" *ngIf="active()">
       <ng-content></ng-content>
     </div>
   `,
@@ -29,7 +30,9 @@ export class KeuTabComponent {
   /** Angka opsional di samping label, mis. jumlah pegawai per kondisi. */
   @Input() count?: number;
 
-  active = false;
+  // Signal, bukan properti biasa: aplikasi berjalan zoneless, dan perubahan properti biasa yang dibaca
+  // template panel ini tidak memicu render ulang (header tab berganti, isi panel tidak).
+  readonly active = signal(false);
 }
 
 /**
@@ -51,8 +54,8 @@ export class KeuTabComponent {
           type="button"
           role="tab"
           class="tabs__tab"
-          [class.tabs__tab--active]="tab.active"
-          [attr.aria-selected]="tab.active"
+          [class.tabs__tab--active]="tab.active()"
+          [attr.aria-selected]="tab.active()"
           (click)="select(i)"
         >
           {{ tab.label }}
@@ -75,6 +78,6 @@ export class KeuTabsComponent implements AfterContentInit {
   }
 
   select(index: number): void {
-    this.tabs.forEach((tab, i) => (tab.active = i === index));
+    this.tabs.forEach((tab, i) => tab.active.set(i === index));
   }
 }
