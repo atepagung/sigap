@@ -160,4 +160,48 @@ public class ScopeTests(SqliteDatabase database) : IClassFixture<SqliteDatabase>
         var query = sql[sql.IndexOf("SELECT", StringComparison.Ordinal)..];
         Assert.DoesNotContain("U-PKU", query);
     }
+
+    [Fact]
+    public async Task Terluas_memilih_NASIONAL_atas_lingkup_lain_walau_berperan_ganda()
+    {
+        var ganda = await Fixture.UserAsync("111", "sigap-satgas", "sigap-perwakilan", "sigap-koordinator");
+        var grant = ganda.GetScope("sigap:broadcast:trigger").Terluas();
+        Assert.Equal("KOORDINATOR", grant!.Role);
+        Assert.Equal("NASIONAL", grant.Profile);
+        Assert.True(grant.Area.IsNational);
+    }
+
+    [Fact]
+    public async Task Terluas_memilih_WILAYAH_atas_UNIT_tanpa_Koordinator()
+    {
+        var ganda = await Fixture.UserAsync("333", "sigap-satgas", "sigap-perwakilan");
+        var grant = ganda.GetScope("sigap:broadcast:trigger").Terluas();
+        Assert.Equal("PERWAKILAN", grant!.Role);
+        Assert.Equal("WILAYAH", grant.Profile);
+    }
+
+    [Fact]
+    public async Task Terluas_satu_peran_mengembalikan_grant_perannya_sendiri()
+    {
+        var satgas = await Fixture.UserAsync("111", "sigap-satgas");
+        var grant = satgas.GetScope("sigap:broadcast:trigger").Terluas();
+        Assert.Equal("SATGAS", grant!.Role);
+        Assert.Equal("UNIT", grant.Profile);
+        Assert.Equal(["U-PKU"], grant.Area.UnitIds);
+    }
+
+    [Fact]
+    public async Task Terluas_tanpa_grant_generik_null()
+    {
+        var pegawai = await Fixture.UserAsync("111", "sigap-pegawai");
+        Assert.Null(pegawai.GetScope("sigap:broadcast:trigger").Terluas());
+    }
+
+    [Fact]
+    public async Task Terluas_mengabaikan_profil_domain_yang_ikut_di_grant_yang_sama()
+    {
+        // sigap:broadcast:read pada SATGAS hanya TERSENTUH (domain) — tidak ada grant generik sama sekali.
+        var satgas = await Fixture.UserAsync("111", "sigap-satgas");
+        Assert.Null(satgas.GetScope("sigap:broadcast:read").Terluas());
+    }
 }
