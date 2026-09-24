@@ -1,9 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace Sigap.Application.Umum;
 
 /// <summary>
 /// Amplop koleksi berhalaman (API_CONTRACT bagian 1.4). <b>[asumsi — bentuk amplop]</b>
 /// </summary>
-public sealed record Halaman<T>(IReadOnlyList<T> Data, int NomorHalaman, int Ukuran, int Total);
+public sealed record Halaman<T>(
+    IReadOnlyList<T> Data,
+    [property: JsonPropertyName("halaman")] int NomorHalaman,
+    int Ukuran,
+    int Total);
 
 /// <summary>Parameter paginasi yang diterima seluruh endpoint koleksi.</summary>
 public sealed record PermintaanHalaman
