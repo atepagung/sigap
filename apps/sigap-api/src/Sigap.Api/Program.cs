@@ -57,13 +57,27 @@ if (builder.Environment.IsDevelopment())
 #endif
 
 // ── HTTP ─────────────────────────────────────────────────────────────────────
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = GalatModel.Buat);
 
 // Galat berbentuk application/problem+json (API_CONTRACT bagian 1.5).
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GalatAturanBisnisHandler>();
+builder.Services.AddExceptionHandler<PermintaanBurukHandler>();
 
 builder.Services.AddOpenApi();
+
+// ── CORS (khusus pengembangan) ─────────────────────────────────────────────
+// Di production, origin dikendalikan gateway ICS — mekanismenya belum diketahui (Lampiran E),
+// jadi tidak ditiru di sini. Untuk pengembangan lokal, remote sigap-web (mode mandiri, port 4299,
+// atau di dalam shell dummy, port 4200) memanggil API ini langsung dari peramban.
+const string KebijakanCorsDev = "sigap-web-dev";
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(o => o.AddPolicy(
+        KebijakanCorsDev,
+        p => p.WithOrigins("http://localhost:4299", "http://localhost:4200").AllowAnyHeader().AllowAnyMethod()));
+}
 
 builder.Services.AddHealthChecks()
     .AddCheck("proses", () => HealthCheckResult.Healthy("Proses hidup."), tags: ["live"])
@@ -73,6 +87,12 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 app.UseExceptionHandler();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors(KebijakanCorsDev);
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 

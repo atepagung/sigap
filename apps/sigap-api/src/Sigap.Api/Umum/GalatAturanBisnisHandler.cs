@@ -18,7 +18,7 @@ public sealed class GalatAturanBisnisHandler(
     ILogger<GalatAturanBisnisHandler> log) : IExceptionHandler
 {
     /// <summary>Awalan <c>type</c> pada respons galat. <b>[asumsi — menunggu standar ICS]</b></summary>
-    private const string AwalanType = "https://sigap.kemenkeu.go.id/galat/";
+    internal const string AwalanType = "https://sigap.kemenkeu.go.id/galat/";
 
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
@@ -49,6 +49,11 @@ public sealed class GalatAturanBisnisHandler(
         };
 
         masalah.Extensions["kode"] = galat.Kode;
+
+        if (galat.Kesalahan is { Count: > 0 })
+        {
+            masalah.Extensions["errors"] = galat.Kesalahan;
+        }
 
         if (galat.Rincian is { Count: > 0 })
         {

@@ -115,4 +115,28 @@ public class GalatAturanBisnisTests
 
         Assert.False(tertangani);
     }
+
+    [Fact]
+    public async Task Validasi_gagal_membawa_errors_per_field_dan_hanya_pada_400()
+    {
+        var (status, _, isi) = await TerjemahkanAsync(new ValidasiGagalException("lokasi", "Lokasi wajib diisi."));
+        var (statusLain, _, isiLain) = await TerjemahkanAsync(new AturanBisnisException(
+            KodeGalat.SasaranKosong, "Sasaran kosong", "Tidak ada unit yang cocok."));
+
+        Assert.Equal(400, status);
+        Assert.Equal("VALIDASI_GAGAL", isi.GetProperty("kode").GetString());
+        Assert.Equal("Lokasi wajib diisi.", isi.GetProperty("errors").GetProperty("lokasi")[0].GetString());
+        Assert.Equal("Lokasi wajib diisi.", isi.GetProperty("detail").GetString());
+        Assert.Equal(422, statusLain);
+        Assert.False(isiLain.TryGetProperty("errors", out _));
+    }
+
+    [Fact]
+    public async Task Tidak_berwenang_adalah_403_dengan_kode()
+    {
+        var (status, _, isi) = await TerjemahkanAsync(new TidakBerwenangException("Akun belum terdaftar."));
+
+        Assert.Equal(403, status);
+        Assert.Equal("TIDAK_BERWENANG", isi.GetProperty("kode").GetString());
+    }
 }

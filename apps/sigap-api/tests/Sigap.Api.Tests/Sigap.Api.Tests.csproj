@@ -17,6 +17,11 @@
     <None Include="../../iam-policy.sigap.json" Link="iam-policy.sigap.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- DDL yang asli: database uji dibuat dari berkas yang sama dengan database dev. -->
+  <ItemGroup>
+    <None Include="../../../../infra/skema/*.sql" LinkBase="skema" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>

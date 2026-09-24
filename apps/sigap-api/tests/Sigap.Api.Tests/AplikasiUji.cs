@@ -47,7 +47,7 @@ internal static class TokenUji
 /// menguji perakitannya, bukan tiruannya.
 /// </para>
 /// </summary>
-public sealed class AplikasiUji : WebApplicationFactory<Program>
+public class AplikasiUji : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

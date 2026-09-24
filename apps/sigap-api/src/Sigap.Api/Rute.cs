@@ -7,7 +7,7 @@ namespace Sigap.Api;
 /// </summary>
 public static class Rute
 {
-    public const string Awalan = "api/v1";
+    public const string Awalan = Sigap.Application.Umum.AlamatApi.Awalan;
 
     /// <summary>Health check berada di luar awalan dan tanpa autentikasi (#46–#47).</summary>
     public const string Hidup = "/health/live";
