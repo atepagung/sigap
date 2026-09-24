@@ -16,7 +16,7 @@ Arti "lanjutkan" = kerjakan **P4.5 putaran berikutnya** sesuai daftar di bawah, 
 sudah diputuskan (lihat `AGENTS.md`, `ACCESS_RULES.md`, `DUMMY_REGISTRY.md` bagian 9).
 
 **Posisi terakhir (23 Sep 2026):** **P4.5 selesai — seluruh 47 endpoint kontrak sudah dibangun**, lulus
-verifikasi Linux, **belum di-commit** (commit hanya bila pemilik meminta). Tujuh putaran: Laporan/Lampiran/
+verifikasi Linux, **sudah di-commit lokal (24 Sep 2026, belum di-push)** per lapisan — bukan per domain, karena domain saling merujuk (Asesmen, Referensi, Laporan, Notifikasi, SafetyCheck, Broadcast) dan satu commit per domain tidak dapat dikompilasi sendiri. Tiap lapisan terbukti mandiri di checkout bersih (Domain 449 tes, Application 24, Infrastructure terbangun tanpa peringatan), dan HEAD bersih menjalankan 1.563 tes solusi + 43 `iam-dummy`, 0 gagal. Tujuh putaran: Laporan/Lampiran/
 Verifikasi (#7-#11, #17, #18), Referensi (#37-#42), Asesmen/Layanan Kritis/Tanggap Darurat (#19-#29),
 Broadcast/Trigger Safety Check (#12-#16), Safety Check/SOS (#1-#6), Monitor SC & Sumber Daya (#30-#35),
 Notifikasi (#43-#45), ditambah #36 (P4.2) dan #46-#47 (health, sudah sejak P4.1).
