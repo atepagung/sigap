@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LayananGangguan } from './monitor.model';
 import { MonitorService } from './monitor.service';
+import { KeuPaginationComponent } from '@danarakca/keu-ui';
 import { PenampungGalat } from '../core/galat/penampung-galat';
 import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
 
 /** "Lihat Detail" aspek Layanan — gangguan yang masih berjalan di lingkup (#34). */
 @Component({
   selector: 'app-dashboard-layanan',
-  imports: [PesanGalat, DatePipe, DecimalPipe, FormsModule, RouterLink],
+  imports: [PesanGalat, KeuPaginationComponent, DatePipe, DecimalPipe, FormsModule, RouterLink],
   providers: [PenampungGalat],
   template: `
     <app-pesan-galat [pesan]="galat.pesan()" />
@@ -24,7 +25,7 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
       <div class="table-card__header">
         <h2 class="table-card__title">Filter</h2>
         <div class="table-card__toolbar">
-          <select name="status" [(ngModel)]="status" (ngModelChange)="muatAsync()">
+          <select name="status" [(ngModel)]="status" (ngModelChange)="muatAsync(1)">
             <option value="">Semua</option>
             <option value="TERGANGGU">Terganggu</option>
             <option value="BERHENTI_TOTAL">Berhenti Total</option>
@@ -69,6 +70,12 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
           }
         </tbody>
       </table>
+      <keu-pagination
+        [halaman]="halaman()"
+        [ukuran]="ukuran()"
+        [total]="total()"
+        (halamanBerubah)="muatAsync($event)"
+      />
     </div>
   `,
 })
@@ -76,20 +83,26 @@ export class DashboardLayanan implements OnInit {
   private readonly monitor = inject(MonitorService);
 
   protected readonly daftar = signal<readonly LayananGangguan[]>([]);
+  protected readonly halaman = signal(1);
+  protected readonly ukuran = signal(50);
+  protected readonly total = signal(0);
   protected status = '';
 
   protected readonly galat = inject(PenampungGalat);
 
   async ngOnInit(): Promise<void> {
-    await this.muatAsync();
+    await this.muatAsync(1);
   }
 
-  protected async muatAsync(): Promise<void> {
-    const halaman = await this.galat.jalankanAsync(() =>
-      this.monitor.layananAsync(this.status || undefined),
+  protected async muatAsync(nomor: number): Promise<void> {
+    const hasil = await this.galat.jalankanAsync(() =>
+      this.monitor.layananAsync(this.status || undefined, nomor),
     );
-    if (halaman) {
-      this.daftar.set(halaman.data);
+    if (hasil) {
+      this.daftar.set(hasil.data);
+      this.halaman.set(hasil.halaman);
+      this.ukuran.set(hasil.ukuran);
+      this.total.set(hasil.total);
     }
   }
 }

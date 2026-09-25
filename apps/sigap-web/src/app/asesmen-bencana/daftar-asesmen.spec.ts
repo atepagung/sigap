@@ -15,6 +15,13 @@ const RINGKAS: AsesmenRingkas = {
   statusPersetujuan: 'MENUNGGU_PIMPINAN',
 };
 
+function tombolHalaman(fixture: { nativeElement: unknown }, teks: string): HTMLButtonElement {
+  const semua = [
+    ...(fixture.nativeElement as HTMLElement).querySelectorAll('keu-pagination button'),
+  ];
+  return semua.find((b) => b.textContent?.trim() === teks) as HTMLButtonElement;
+}
+
 describe('DaftarAsesmen', () => {
   it('menampilkan daftar asesmen dalam lingkup', async () => {
     const service = {
@@ -32,5 +39,29 @@ describe('DaftarAsesmen', () => {
     const teks = fixture.nativeElement.textContent as string;
     expect(teks).toContain('Unit A');
     expect(teks).toContain('MENUNGGU_PIMPINAN');
+  });
+
+  it('halaman berikutnya meminta halaman 2 dan menampilkan isinya, bukan berhenti di halaman pertama', async () => {
+    const kedua = { ...RINGKAS, id: 'as-2', unit: { ...RINGKAS.unit, nama: 'Unit Dua' } };
+    const daftarAsync = vi
+      .fn()
+      .mockResolvedValueOnce({ data: [RINGKAS], halaman: 1, ukuran: 20, total: 45 })
+      .mockResolvedValueOnce({ data: [kedua], halaman: 2, ukuran: 20, total: 45 });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), { provide: AsesmenService, useValue: { daftarAsync } }],
+    });
+    const fixture = TestBed.createComponent(DaftarAsesmen);
+    fixture.detectChanges();
+    await flushAsync();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Halaman 1 dari 3');
+
+    tombolHalaman(fixture, 'Berikutnya').click();
+    await flushAsync();
+    fixture.detectChanges();
+
+    expect(daftarAsync).toHaveBeenLastCalledWith(undefined, undefined, 2);
+    expect(fixture.nativeElement.textContent).toContain('Unit Dua');
+    expect(fixture.nativeElement.textContent).toContain('Halaman 2 dari 3');
   });
 });

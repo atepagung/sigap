@@ -27,7 +27,7 @@ const ASPEK: AspekAgregat = {
 };
 
 describe('DashboardAspek', () => {
-  it('menampilkan histogram sebagai tabel kode → jumlah', async () => {
+  it('menampilkan histogram sebagai diagram batang, satu per field, dengan angka tetap terbaca', async () => {
     const service = { aspekAsync: vi.fn().mockResolvedValue(ASPEK) };
     TestBed.configureTestingModule({ providers: [{ provide: MonitorService, useValue: service }] });
 
@@ -41,5 +41,11 @@ describe('DashboardAspek', () => {
     expect(teks).toContain('PENUH_100');
     expect(teks).toContain('3');
     expect(teks).toContain('1'); // unitAdaKorbanJiwa
+    expect(fixture.nativeElement.querySelectorAll('keu-bar-chart').length).toBe(9);
+    const batang = [
+      ...fixture.nativeElement.querySelectorAll('.bar-chart__batang'),
+    ] as HTMLElement[];
+    expect(batang[0].style.width).toBe('100%');
+    expect(parseFloat(batang[1].style.width)).toBeCloseTo(66.667, 2);
   });
 });

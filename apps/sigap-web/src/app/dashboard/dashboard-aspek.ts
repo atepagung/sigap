@@ -2,18 +2,18 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { AspekAgregat, Histogram } from './monitor.model';
 import { MonitorService } from './monitor.service';
 import { PenampungGalat } from '../core/galat/penampung-galat';
+import { KeuBarChartComponent, type KeuBarChartItem } from '@danarakca/keu-ui';
 import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
 
 /**
  * Agregat lima aspek atas versi terkini tiap seri di lingkup (#33, 2.6.2).
  *
- * [ASUMSI] Katalog belum punya komponen grafik, jadi histogram tiap field ditampilkan sebagai
- * tabel kode → jumlah, bukan diagram batang/lingkaran — dilaporkan sebagai kebutuhan katalog,
- * bukan dibangun sendiri di sini.
+ * [ASUMSI] Histogram tiap field tampil sebagai diagram batang lewat `keu-bar-chart`, komponen dummy
+ * yang menunggu jawaban BaTII soal grafik (DUMMY_REGISTRY 2.8). Aplikasi tidak menggambar sendiri.
  */
 @Component({
   selector: 'app-dashboard-aspek',
-  imports: [PesanGalat],
+  imports: [PesanGalat, KeuBarChartComponent],
   providers: [PenampungGalat],
   template: `
     <app-pesan-galat [pesan]="galat.pesan()" />
@@ -55,91 +55,31 @@ import { PesanGalat } from '../shared/pesan-galat/pesan-galat';
       </div>
 
       <div class="table-card">
-        <div class="table-card__header">
-          <h2 class="table-card__title">SDM — Kelengkapan Hadir</h2>
-        </div>
-        <table>
-          <tbody>
-            @for (e of entries(a.sdm.kelengkapanHadir); track e[0]) {
-              <tr>
-                <th>{{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+        <div class="table-card__header"><h2 class="table-card__title">SDM</h2></div>
+        <keu-bar-chart judul="Kelengkapan hadir" [data]="batang(a.sdm.kelengkapanHadir)" />
       </div>
 
       <div class="table-card">
         <div class="table-card__header"><h2 class="table-card__title">Aset</h2></div>
-        <table>
-          <tbody>
-            @for (e of entries(a.aset.konstruksiBangunan); track e[0]) {
-              <tr>
-                <th>Konstruksi: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-            @for (e of entries(a.aset.aksesLokasi); track e[0]) {
-              <tr>
-                <th>Akses Lokasi: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-            @for (e of entries(a.aset.kendaraanLaikOperasi); track e[0]) {
-              <tr>
-                <th>Kendaraan: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+        <keu-bar-chart judul="Konstruksi bangunan" [data]="batang(a.aset.konstruksiBangunan)" />
+        <keu-bar-chart judul="Akses lokasi" [data]="batang(a.aset.aksesLokasi)" />
+        <keu-bar-chart
+          judul="Kendaraan laik operasi"
+          [data]="batang(a.aset.kendaraanLaikOperasi)"
+        />
       </div>
 
       <div class="table-card">
         <div class="table-card__header"><h2 class="table-card__title">TIK</h2></div>
-        <table>
-          <tbody>
-            @for (e of entries(a.tik.aksesJaringan); track e[0]) {
-              <tr>
-                <th>Akses Jaringan: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-            @for (e of entries(a.tik.kelistrikan); track e[0]) {
-              <tr>
-                <th>Kelistrikan: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-            @for (e of entries(a.tik.aplikasiUtama); track e[0]) {
-              <tr>
-                <th>Aplikasi Utama: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+        <keu-bar-chart judul="Akses jaringan" [data]="batang(a.tik.aksesJaringan)" />
+        <keu-bar-chart judul="Kelistrikan" [data]="batang(a.tik.kelistrikan)" />
+        <keu-bar-chart judul="Aplikasi utama" [data]="batang(a.tik.aplikasiUtama)" />
       </div>
 
       <div class="table-card">
         <div class="table-card__header"><h2 class="table-card__title">Arsip</h2></div>
-        <table>
-          <tbody>
-            @for (e of entries(a.arsip.arsipVital); track e[0]) {
-              <tr>
-                <th>Arsip Vital: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-            @for (e of entries(a.arsip.evakuasiFisik); track e[0]) {
-              <tr>
-                <th>Evakuasi Fisik: {{ e[0] }}</th>
-                <td>{{ e[1] }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+        <keu-bar-chart judul="Arsip vital" [data]="batang(a.arsip.arsipVital)" />
+        <keu-bar-chart judul="Evakuasi fisik" [data]="batang(a.arsip.evakuasiFisik)" />
       </div>
     }
   `,
@@ -155,7 +95,7 @@ export class DashboardAspek implements OnInit {
     this.aspek.set(await this.galat.jalankanAsync(() => this.monitor.aspekAsync()));
   }
 
-  protected entries(h: Histogram): readonly (readonly [string, number])[] {
-    return Object.entries(h);
+  protected batang(h: Histogram): readonly KeuBarChartItem[] {
+    return Object.entries(h).map(([label, nilai]) => ({ label, nilai }));
   }
 }
