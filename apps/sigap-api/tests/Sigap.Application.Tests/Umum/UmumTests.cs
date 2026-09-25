@@ -32,6 +32,29 @@ public class UmumTests
         Assert.Equal((halamanHarap - 1) * ukuranHarap, p.Lewati);
     }
 
+    [Theory]
+    [InlineData(int.MaxValue, 100)]
+    [InlineData(int.MaxValue, 1)]
+    [InlineData(1_000_000_000, 100)]
+    public void Lewati_tidak_meluap_menjadi_negatif_untuk_halaman_yang_sangat_jauh(int halaman, int ukuran)
+    {
+        var p = new PermintaanHalaman { Halaman = halaman, Ukuran = ukuran };
+
+        // Meluap = offset negatif (PostgreSQL menolak kueri, 500; Skip() di memori menganggapnya 0 = halaman pertama)
+        // atau angka positif yang keliru. Yang benar: hasil kali sebenarnya, dijepit ke int.MaxValue.
+        long semestinya = Math.Min(int.MaxValue, (long)(halaman - 1) * ukuran);
+        Assert.Equal((int)semestinya, p.Lewati);
+        Assert.Equal(halaman, p.Halaman);
+    }
+
+    [Fact]
+    public void Lewati_pada_halaman_wajar_tetap_tepat()
+    {
+        Assert.Equal(0, new PermintaanHalaman().Lewati);
+        Assert.Equal(40, new PermintaanHalaman { Halaman = 3, Ukuran = 20 }.Lewati);
+        Assert.Equal(99 * 100, new PermintaanHalaman { Halaman = 100, Ukuran = 100 }.Lewati);
+    }
+
     [Fact]
     public void Wib_menambah_tujuh_jam_dan_melewati_pergantian_hari_tahun()
     {

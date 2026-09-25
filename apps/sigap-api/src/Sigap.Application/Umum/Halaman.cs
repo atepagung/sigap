@@ -38,5 +38,10 @@ public sealed record PermintaanHalaman
         };
     }
 
-    public int Lewati => (Halaman - 1) * Ukuran;
+    /// <summary>
+    /// Jumlah baris yang dilewati. Dihitung dalam <see cref="long"/> lalu dijepit: <c>halaman=2147483647</c> membuat
+    /// hasil kali <see cref="int"/> meluap menjadi negatif, dan offset negatif ditolak PostgreSQL (500) atau
+    /// dibaca 0 oleh <c>Skip()</c> di memori (halaman pertama muncul sebagai halaman terakhir).
+    /// </summary>
+    public int Lewati => (int)Math.Min(int.MaxValue, (long)(Halaman - 1) * Ukuran);
 }
