@@ -63,7 +63,7 @@ benar, dibuktikan `Terluas_memilih_NASIONAL_atas_lingkup_lain_walau_berperan_gan
 
 **Terjemahan.** `sigap:broadcast:close` dengan profil `PEMICU_ATAU_MENCAKUP(<lingkup>)` (kebijakan
 baris `sigap:broadcast:close`): pemicunya, atau lingkup pengakhir mencakup **seluruh** unit
-`DISASAR`. Terlihat tetapi tidak berhak → 403 `TIDAK_BERWENANG_MENGAKHIRI` (#16). Ini selisih
+`DISASAR`. Terlihat tetapi tidak berhak → 403 `TIDAK_BERWENANG_MENGAKHIRI` (#16); **di luar lingkup baca → 404**, sama seperti id yang tidak ada (ditegakkan 25 Sep 2026, P4.7: sebelumnya 403 membocorkan keberadaan broadcast). Ini selisih
 disengaja API_CONTRACT bagian 6 butir 12. Profil ini bertanda `domain` (disusun kode aplikasi),
 jadi saat #16 dibangun predikatnya ditulis di kueri Infrastructure, bukan sebagai `if` di use case.
 

@@ -29,6 +29,14 @@ public sealed class AkhiriBroadcast(ICurrentUserContext pengguna, IBroadcastStor
         {
             var b = await store.UntukTutupAsync(id, token) ?? throw new TidakDitemukanException("Broadcast tidak ditemukan.");
 
+            // 403 hanya untuk broadcast yang TERLIHAT pemanggil (ACCESS_RULES A2). Yang di luar lingkup baca dijawab 404
+            // seperti yang tidak ada; tanpa ini, pemegang broadcast:close di unit mana pun dapat membedakan id yang
+            // ada (403) dari yang tidak ada (404) — membocorkan keberadaan data lintas Scope.
+            if (await store.BacaAsync(id, pengguna.GetScope(Izin.BroadcastRead), userId, token) is null)
+            {
+                throw new TidakDitemukanException("Broadcast tidak ditemukan.");
+            }
+
             var scope = pengguna.GetScope(Izin.BroadcastClose);
             bool berwenang = userId == b.DikirimOlehId
                 || scope.Grants.Any(g => g.Area.IsNational || b.UnitDisasarAktif.All(g.Area.UnitIds.Contains));

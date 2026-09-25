@@ -50,15 +50,41 @@ public sealed class AkhiriBroadcastTests(AplikasiUjiDb app) : TesBroadcast(app)
     }
 
     [FaktaDb]
-    public async Task Perwakilan_yang_tidak_mencakup_seluruh_sasaran_ditolak_403()
+    public async Task Perwakilan_yang_melihat_tetapi_tidak_mencakup_seluruh_sasaran_ditolak_403()
     {
+        // Subkoordinator memicu seluruh Eselon I: sasarannya mencakup unit di provinsi Perwakilan DAN satu unit di provinsi lain.
+        // Perwakilan melihat broadcast ini (menyentuh unitnya) tetapi tidak mencakup seluruh sasaran -> 403, bukan 404.
         var w = await WilayahBaruAsync(2);
-        string id = await PicuSahAsync(w.Perwakilan, "Gempa Bumi"); // dua unit disasar sekaligus
-        var w2 = await WilayahBaruAsync(1);
+        string kode = Guid.NewGuid().ToString("N")[..8];
+        string unitLuar = "uji-bc-luar-" + kode;
+        UnitDibuat.Add(unitLuar);
+        await App.Database.JalankanAsync(
+            """INSERT INTO "Unit" ("id","nama","tipe","provinsi","kabkota","eselonIKey","updatedAt") VALUES (@id,@nama,'KPP',@prov,'Kota Luar',@es,CURRENT_TIMESTAMP)""",
+            ("id", unitLuar), ("nama", "Unit Provinsi Lain " + kode), ("prov", "Uji Provinsi Lain " + kode), ("es", w.Eselon));
+        string id = await PicuSahAsync(w.Subkoordinator, "Gempa Bumi");
+        Assert.Equal(HttpStatusCode.OK, (await AmbilAsync(w.Perwakilan, $"{Broadcast}/{id}")).Respons.StatusCode);
 
-        var (respons, isi) = await SelesaiAsync(w2.Perwakilan, id);
+        var (respons, isi) = await SelesaiAsync(w.Perwakilan, id);
 
         AssertGalat(respons, isi, HttpStatusCode.Forbidden, "TIDAK_BERWENANG_MENGAKHIRI");
+        Assert.Equal(0, await HitungAsync(
+            """SELECT count(*) FROM "ActiveBroadcast" WHERE "id" = @id AND "selesaiPada" IS NOT NULL""", ("id", id)));
+    }
+
+    [FaktaDb]
+    public async Task Broadcast_yang_tidak_terlihat_pemanggil_dijawab_404_bukan_403_supaya_keberadaannya_tidak_bocor()
+    {
+        var w = await WilayahBaruAsync(2);
+        string id = await PicuSahAsync(w.Perwakilan, "Gempa Bumi");
+        var w2 = await WilayahBaruAsync(1); // provinsi dan Eselon I lain: broadcast ini di luar lingkup baca w2
+
+        var (respons, isi) = await SelesaiAsync(w2.Perwakilan, id);
+        var (tidakAda, isiTidakAda) = await SelesaiAsync(w2.Perwakilan, "cuid-yang-tidak-ada");
+
+        Assert.True(respons.StatusCode == HttpStatusCode.NotFound, $"{(int)respons.StatusCode} {isi}");
+        Assert.Equal(HttpStatusCode.NotFound, tidakAda.StatusCode);
+        // Tidak dapat dibedakan dari id yang memang tidak ada: kode dan judul galat identik.
+        Assert.Equal(isiTidakAda.Teks("kode"), isi.Teks("kode"));
         Assert.Equal(0, await HitungAsync(
             """SELECT count(*) FROM "ActiveBroadcast" WHERE "id" = @id AND "selesaiPada" IS NOT NULL""", ("id", id)));
     }
