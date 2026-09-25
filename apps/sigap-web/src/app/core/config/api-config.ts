@@ -25,3 +25,14 @@ export const KEYCLOAK_DEV_CLIENT_ID = new InjectionToken<string>('KEYCLOAK_DEV_C
   providedIn: 'root',
   factory: () => 'sigap-uji-lokal',
 });
+
+/**
+ * Kunci publik VAPID (base64url) untuk `pushManager.subscribe`. Kosong = Web Push belum diaktifkan dan
+ * UI langganan menampilkan keadaan itu apa adanya. Kunci publik bukan rahasia; yang rahasia (kunci
+ * privat) tinggal di sisi API. [ASUMSI] cara platform menyerahkan nilai ini ke remote belum diketahui
+ * (DUMMY_REGISTRY bagian 6.2 butir 103); ganti lewat provider ini saja.
+ */
+export const VAPID_PUBLIC_KEY = new InjectionToken<string>('VAPID_PUBLIC_KEY', {
+  providedIn: 'root',
+  factory: () => '',
+});

@@ -6,9 +6,8 @@ import { Daftar } from '../core/models/umum.model';
 import { Peringatan } from './notifikasi.model';
 
 /**
- * Peringatan (#43) dan langganan Web Push (#44, #45). Langganan push butuh service worker + kunci
- * VAPID yang belum disiapkan di remote ini (DUMMY_REGISTRY 6.2 butir 90/99) — method di sini
- * tersedia untuk dipakai begitu infrastrukturnya ada, belum dipanggil UI mana pun.
+ * Peringatan (#43) dan langganan Web Push (#44, #45). Alur peramban-nya (izin, service worker, kunci
+ * VAPID) ada di `LanggananPush`; berkas ini hanya memanggil API.
  */
 @Injectable({ providedIn: 'root' })
 export class NotifikasiService {
