@@ -12,10 +12,31 @@ mockup HTML, referensi visual saja).
 ## 0. Status berjalan dan arti "lanjutkan" (baca ini dulu)
 
 Sesi baru cukup dibuka dengan prompt **P0 (Onboarding)** dari `docs/PLAYBOOK.md`, lalu pesan **"lanjutkan"**.
-Arti "lanjutkan" = kerjakan **P4.5 putaran berikutnya** sesuai daftar di bawah, tanpa bertanya ulang hal yang
-sudah diputuskan (lihat `AGENTS.md`, `ACCESS_RULES.md`, `DUMMY_REGISTRY.md` bagian 9).
+P4.5 dan P4.6 sudah selesai, jadi "lanjutkan" **bukan lagi** berarti putaran P4.5. Pada 25 Sep 2026 pekerjaan terakhir adalah
+**P5.1 (pemicu Safety Check otomatis dari BMKG)**; "lanjutkan" berarti membaca daftar **keputusan yang menunggu pemilik** di
+bawah, **menanyakan yang mana dulu** (jangan memilih sendiri), lalu mengerjakannya tanpa bertanya ulang hal yang sudah
+diputuskan (lihat `AGENTS.md`, `ACCESS_RULES.md`, `DUMMY_REGISTRY.md` bagian 9).
 
-**Posisi terakhir (23 Sep 2026):** **P4.5 selesai — seluruh 47 endpoint kontrak sudah dibangun**, lulus
+**Keputusan yang menunggu pemilik (per 25 Sep 2026):**
+1. **Tautan kantor ke unit / perluasan pencocokan wilayah BMKG.** `"KantorBmn"."unitId"` kosong di 1.431 baris dan tabel `"Unit"`
+   belum memuat KPP/KPPN/KPPBC, jadi di data nyata pemicu otomatis hampir pasti belum menjangkau unit mana pun (contoh: "IV-V Luwuk"
+   dibaca MMI V tetapi "Luwuk" bukan kabupaten/kota; "KPP Pratama Luwuk" ada di `"KantorBmn"`). Usulan: kantor terdampak lewat
+   `GedungTerdampak`, sasaran = unit yang tertaut, tautan diisi skrip dry-run yang melaporkan yang ambigu. Koordinat kantor 100% dummy,
+   jadi cara radius terlarang. Wilayah tanpa kantor sudah diputuskan: peringatan ke pemantau nasional (sudah dibangun).
+2. **Peragaan peringatan `GEMPA_KUAT_TANPA_KANTOR` di peramban** dengan BMKG asli (butuh pemilik login sebagai Koordinator; ambang
+   diturunkan lewat env `Bmkg__Aktif=true`, `Bmkg__AmbangMmi=2`, `Bmkg__JendelaMenit=100000`; bersihkan datanya sesudahnya).
+3. **Dua tes lama yang flaky** (`PersetujuanTests`: persetujuan serentak dan tanggap darurat pulih) gagal sekali pada run solusi
+   penuh, lulus pada empat run berikutnya; belum diselidiki.
+4. Sisa P5: cache Redis (PLAYBOOK meminta, kini memori proses), Web Push (UI langganan + service worker + VAPID), peringatan cuaca CAP
+   dan BNPB, P5.2 object storage lampiran, P5.3 dedup notifikasi. Butir ⚖ ACCESS_RULES yang terbuka: V1, V4, A9.
+
+**Gerbang verifikasi (CI GitHub tidak dipakai, akun terkunci billing, pemilik tidak akan memulihkannya):**
+`node scripts/verifikasi-linux.mjs web|api|repo|semua` (satu target per pemanggilan), plus `dotnet format apps/sigap-api/sigap-api.slnx
+--verify-no-changes` dan `npm run check:web`. Bangun ulang .NET gagal bila API dev (`dotnet run`, port 5299) masih hidup karena
+mengunci DLL: hentikan dulu proses `Sigap.Api.exe` beserta induknya. Login peramban dilakukan pemilik (kata sandi akun uji di `.env`,
+NIP di `infra/organisasi-seed/README.md`); token hanya di memori, jadi memuat ulang halaman = login ulang.
+
+**Posisi P4.5 (23 Sep 2026):** **P4.5 selesai — seluruh 47 endpoint kontrak sudah dibangun**, lulus
 verifikasi Linux, **sudah di-commit lokal (24 Sep 2026, belum di-push)** per lapisan — bukan per domain, karena domain saling merujuk (Asesmen, Referensi, Laporan, Notifikasi, SafetyCheck, Broadcast) dan satu commit per domain tidak dapat dikompilasi sendiri. Tiap lapisan terbukti mandiri di checkout bersih (Domain 449 tes, Application 24, Infrastructure terbangun tanpa peringatan), dan HEAD bersih menjalankan 1.563 tes solusi + 43 `iam-dummy`, 0 gagal. Tujuh putaran: Laporan/Lampiran/
 Verifikasi (#7-#11, #17, #18), Referensi (#37-#42), Asesmen/Layanan Kritis/Tanggap Darurat (#19-#29),
 Broadcast/Trigger Safety Check (#12-#16), Safety Check/SOS (#1-#6), Monitor SC & Sumber Daya (#30-#35),
