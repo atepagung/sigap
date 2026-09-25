@@ -1,4 +1,6 @@
 using System.Net;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -45,7 +47,7 @@ public class KlienBmkgTests
             UrlDasarGambar = FiksturBmkg.UrlGambar,
             TimeoutDetik = timeoutDetik
         });
-        var klien = new KlienBmkg(new HttpClient(server), opsi, new CadanganBmkg(), TimeProvider.System, NullLogger<KlienBmkg>.Instance);
+        var klien = new KlienBmkg(new HttpClient(server), opsi, new CadanganBmkg(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())), NullLogger<CadanganBmkg>.Instance), TimeProvider.System, NullLogger<KlienBmkg>.Instance);
         return (klien, server);
     }
 

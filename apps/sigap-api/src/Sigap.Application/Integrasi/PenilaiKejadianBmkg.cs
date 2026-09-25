@@ -12,7 +12,7 @@ namespace Sigap.Application.Integrasi;
 public interface ICadanganGempa
 {
     /// <summary>Gempa terbaru lebih dulu, lalu gempa dirasakan, seperti <see cref="IKlienBmkg"/>.</summary>
-    IReadOnlyList<Gempa> Terakhir();
+    Task<IReadOnlyList<Gempa>> TerakhirAsync(CancellationToken ct);
 }
 
 /// <summary>

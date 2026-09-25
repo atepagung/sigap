@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sigap.Application.Integrasi;
@@ -24,6 +25,7 @@ internal static class BmkgServiceCollectionExtensions
         }
 
         services.AddOptions<BmkgOptions>().Bind(bagian);
+        services.AddCacheData(configuration);
         services.AddSingleton<CadanganBmkg>();
         services.AddSingleton<ICadanganGempa>(sp => sp.GetRequiredService<CadanganBmkg>());
         services.AddSingleton(sp =>
@@ -38,5 +40,25 @@ internal static class BmkgServiceCollectionExtensions
         services.AddHttpClient<IKlienBmkg, KlienBmkg>(klien => klien.DefaultRequestHeaders.UserAgent.ParseAdd("SIGAP-MKB/1.0 (Kemenkeu)"));
         services.AddHostedService<PemantauBmkg>();
         return services;
+    }
+
+    /// <summary>
+    /// <see cref="IDistributedCache"/> untuk data publik BMKG/BNPB: Redis berawalan <c>sigap:</c> bila
+    /// <c>ConnectionStrings:Redis</c> terisi (production: <c>ConnectionStrings__Redis</c> dari vault), selain itu
+    /// cache di memori proses (pengembangan tanpa Redis). Kunci dan nilai tidak pernah memuat data pengguna.
+    /// </summary>
+    private static IServiceCollection AddCacheData(this IServiceCollection services, IConfiguration configuration)
+    {
+        string? redis = configuration.GetConnectionString("Redis");
+        if (string.IsNullOrWhiteSpace(redis))
+        {
+            return services.AddDistributedMemoryCache();
+        }
+
+        return services.AddStackExchangeRedisCache(o =>
+        {
+            o.Configuration = redis;
+            o.InstanceName = "sigap:";
+        });
     }
 }

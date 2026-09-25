@@ -376,6 +376,7 @@ adalah yang asli. Akun uji ada di `Basisdata/DatabaseUji.cs` (`Data`), NIP-nya d
 | Kunci | Keterangan |
 | --- | --- |
 | `ConnectionStrings:Sigap` | Wajib; proses menolak mulai bila kosong. Production: `ConnectionStrings__Sigap` dari vault |
+| `ConnectionStrings:Redis` | Opsional. Bila terisi, cadangan hasil BMKG disimpan di Redis berawalan `sigap:` (kunci `sigap:bmkg:{sumber}`, kedaluwarsa 7 hari) sehingga dibagi antarinstans dan selamat dari restart; kosong = cache memori proses. Redis yang mati tidak menjatuhkan apa pun: galatnya dicatat sebagai peringatan dan salinan memori proses dipakai. Hanya data publik BMKG/BNPB, tidak pernah data pengguna. Production: `ConnectionStrings__Redis` dari vault. Pengembangan: `localhost:6379` (docker compose) |
 | `Lampiran:Folder` | Wajib, sama. Folder penyimpanan lampiran; path relatif dihitung dari folder keluaran. Production: `Lampiran__Folder` ke volume yang bertahan antar restart. Driver disk ini padanan `local` di prototipe; object storage MinIO/S3 (P5.2) cukup menjadi implementasi `IPenyimpanLampiran` lain |
 | `Bmkg:Aktif` | Pemicu Safety Check otomatis dari BMKG (P5.1). **Mati bawaan** (`false`): pegawai menerima pemberitahuan genting darinya, jadi menyalakannya keputusan penempatan. Production: `Bmkg__Aktif=true` |
 | `Bmkg:NipLayanan` | Wajib bila `Aktif`; proses menolak mulai bila kosong. NIP akun layanan (baris `"User"` tanpa peran), bawaan `SISTEM-BMKG`. Lihat SQL di bawah |

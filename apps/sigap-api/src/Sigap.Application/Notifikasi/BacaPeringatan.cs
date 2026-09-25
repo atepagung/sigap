@@ -220,7 +220,7 @@ public sealed class BacaPeringatan(
             return;
         }
 
-        var gempa = cadanganGempa.Terakhir();
+        var gempa = await cadanganGempa.TerakhirAsync(ct);
         if (gempa.Count == 0)
         {
             return;

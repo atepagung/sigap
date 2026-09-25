@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,32 +8,6 @@ namespace Sigap.Infrastructure.Integrasi;
 
 /// <summary>Kedua sumber BMKG tidak terjangkau dan belum ada cadangan hasil sebelumnya.</summary>
 public sealed class BmkgTidakTersediaException(string pesan, Exception? inner = null) : Exception(pesan, inner);
-
-/// <summary>
-/// Hasil terakhir yang berhasil dibaca per sumber, dipakai bila BMKG sedang tidak terjangkau. Hanya data
-/// publik BMKG; tidak pernah data pengguna. Singleton, jadi bertahan antarputaran selama proses hidup.
-/// </summary>
-/// <remarks>
-/// <b>[ASUMSI]</b> PLAYBOOK P5.1 meminta cache di Redis berawalan <c>sigap:</c>. Putaran pertama memakai
-/// memori proses; cadangan hilang bila proses dimulai ulang, dan tidak dibagi antarinstans. Aman karena
-/// gempa lama tidak pernah memicu (jendela waktu) dan satu kejadian hanya memicu sekali (penanda kejadian).
-/// </remarks>
-internal sealed class CadanganBmkg : ICadanganGempa
-{
-    private readonly ConcurrentDictionary<string, (IReadOnlyList<Gempa> Data, DateTimeOffset Kapan)> _isi = new(StringComparer.Ordinal);
-
-    public void Simpan(string sumber, IReadOnlyList<Gempa> data, DateTimeOffset kapan) => _isi[sumber] = (data, kapan);
-
-    public (IReadOnlyList<Gempa> Data, DateTimeOffset Kapan)? Ambil(string sumber) =>
-        _isi.TryGetValue(sumber, out var nilai) ? nilai : null;
-
-    /// <summary>Gempa terbaru lebih dulu, lalu gempa dirasakan, seperti urutan <see cref="KlienBmkg"/>.</summary>
-    public IReadOnlyList<Gempa> Terakhir() =>
-    [
-        .. Ambil(KlienBmkg.SumberTerbaru)?.Data ?? [],
-        .. Ambil(KlienBmkg.SumberDirasakan)?.Data ?? []
-    ];
-}
 
 /// <summary>
 /// Mengambil <c>autogempa.json</c> dan <c>gempadirasakan.json</c> dari data terbuka BMKG. Sumber yang gagal
@@ -82,13 +55,13 @@ internal sealed class KlienBmkg(
 
             string isi = await http.GetStringAsync(url, batas.Token);
             var hasil = PenguraiBmkg.Urai(isi, o.UrlDasarGambar);
-            cadangan.Simpan(sumber, hasil, waktu.GetUtcNow());
+            await cadangan.SimpanAsync(sumber, hasil, waktu.GetUtcNow(), ct);
             return hasil;
         }
         catch (Exception e) when (!ct.IsCancellationRequested
             && e is HttpRequestException or OperationCanceledException or JsonException)
         {
-            if (cadangan.Ambil(sumber) is { } simpanan)
+            if (await cadangan.AmbilAsync(sumber, ct) is { } simpanan)
             {
                 log.LogWarning(e, "Sumber BMKG {Sumber} gagal dibaca; memakai hasil sah terakhir dari {Kapan}.", sumber, simpanan.Kapan);
                 return simpanan.Data;

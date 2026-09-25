@@ -210,7 +210,7 @@ public sealed class CadanganGempaUji : ICadanganGempa
 {
     public IReadOnlyList<Gempa> Isi { get; set; } = [];
 
-    public IReadOnlyList<Gempa> Terakhir() => Isi;
+    public Task<IReadOnlyList<Gempa>> TerakhirAsync(CancellationToken ct) => Task.FromResult(Isi);
 }
 
 /// <summary>Meneruskan ke identitas asli, kecuali <see cref="AplikasiUjiDb.AkunSementara"/> terisi.</summary>
