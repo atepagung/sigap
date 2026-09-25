@@ -10,7 +10,7 @@
 // berkas katalog milik paket resmi. Lihat DUMMY_REGISTRY.md.
 //
 // [RESMI] .page-header, .stats-row, .table-card  (disebut di slide arsitektur)
-// [ASUMSI] .form-field, .button, .status-badge, .modal, .tabs dan SELURUH
+// [ASUMSI] .form-field, .button, .status-badge, .modal, .tabs, .pagination, .bar-chart dan SELURUH
 //          struktur anak/varian dari kelima class resmi maupun asumsi.
 // =============================================================================
 
@@ -22,3 +22,5 @@
 @use 'catalog/status-badge';
 @use 'catalog/tabs';
 @use 'catalog/modal';
+@use 'catalog/pagination';
+@use 'catalog/bar-chart';

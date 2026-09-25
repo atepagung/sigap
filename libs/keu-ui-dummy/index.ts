@@ -14,3 +14,5 @@
  */
 export { KeuModalComponent } from './src/keu-modal.component';
 export { KeuTabsComponent, KeuTabComponent } from './src/keu-tabs.component';
+export { KeuPaginationComponent } from './src/keu-pagination.component';
+export { KeuBarChartComponent, type KeuBarChartItem } from './src/keu-bar-chart.component';
