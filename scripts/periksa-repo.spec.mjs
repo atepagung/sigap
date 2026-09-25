@@ -7,6 +7,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  imporKapitalisasiSalah,
   indeksBukanLf,
   masalahPathCsharp,
   masalahSkripNpm,
@@ -95,4 +96,65 @@ test('path C#: Path.Combine, regex, escape biasa, dan komentar tidak ikut ditang
 
 test('path C#: pengecualian eksplisit dihormati', () => {
   assert.deepEqual(cs('var p = a + "/" + b; // periksa-repo: izinkan URL, bukan path berkas'), []);
+});
+
+// ── impor relatif yang kapitalisasinya tidak cocok dengan berkas ────────────────────────────
+
+const BERKAS = [
+  'src/app/app.routes.ts',
+  'src/app/notifikasi/notifikasi.ts',
+  'src/app/beranda/beranda.ts',
+  'src/app/shared/index.ts',
+  'src/app/data.json',
+];
+
+const baris = (...b) => b.join('\n');
+
+test('impor: kapitalisasi salah ditangkap untuk from, import() dinamis, dan side-effect', () => {
+  const teks = baris(
+    "import { A } from './notifikasi/Notifikasi';",
+    "const x = () => import('./Beranda/beranda');",
+    "import './Notifikasi/notifikasi';",
+  );
+
+  const hasil = imporKapitalisasiSalah('src/app/app.routes.ts', teks, BERKAS);
+
+  assert.equal(hasil.length, 3);
+  assert.deepEqual(
+    hasil.map((h) => h.baris),
+    [1, 2, 3],
+  );
+  assert.match(hasil[0].cocok, /notifikasi\/notifikasi\.ts$/);
+});
+
+test('impor: yang persis sama, berekstensi, ke index, atau ke json tidak ikut ditangkap', () => {
+  const teks = baris(
+    "import { A } from './notifikasi/notifikasi';",
+    "import { B } from './beranda/beranda.ts';",
+    "import { C } from './shared';",
+    "import d from './data.json';",
+    "import { E } from '../app/notifikasi/notifikasi';",
+  );
+
+  assert.deepEqual(imporKapitalisasiSalah('src/app/app.routes.ts', teks, BERKAS), []);
+});
+
+test('impor: paket, alias, berkas yang memang tidak ada, dan komentar tidak ditangkap', () => {
+  const teks = baris(
+    "import { X } from '@angular/core';",
+    "import { Y } from '@danarakca/keu-ui';",
+    "import { Z } from './tidak-ada';",
+    "// import { K } from './Notifikasi/notifikasi';",
+  );
+
+  assert.deepEqual(imporKapitalisasiSalah('src/app/app.routes.ts', teks, BERKAS), []);
+});
+
+test('impor: naik ke folder induk dihitung dari lokasi berkas pengimpor', () => {
+  const teks = "import { A } from '../Notifikasi/notifikasi';";
+
+  const hasil = imporKapitalisasiSalah('src/app/beranda/beranda.ts', teks, BERKAS);
+
+  assert.equal(hasil.length, 1);
+  assert.match(hasil[0].cocok, /src\/app\/notifikasi\/notifikasi\.ts$/);
 });

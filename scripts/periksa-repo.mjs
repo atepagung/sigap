@@ -2,7 +2,8 @@
 // Linux; empat hal di bawah ini lolos begitu saja di Windows lalu meledak di Linux:
 //
 //   1. Akhir baris CRLF di INDEX git.            (yang di-checkout Linux; folder kerja tidak dihitung)
-//   2. Dua berkas yang beda hanya kapitalisasi.  (Windows: satu berkas; Linux: dua berkas)
+//   2. Dua berkas yang beda hanya kapitalisasi, ATAU impor relatif yang huruf besar/kecilnya tidak
+//      cocok dengan nama berkas.                (Windows: jalan; Linux: "Cannot find module")
 //   3. Skrip npm yang hanya jalan di satu shell. (`rm -rf`, `NODE_ENV=x cmd`, path berlawanan arah)
 //   4. Path C# digabung dengan string manual.    (pemisah `\` vs `/`; pakai Path.Combine())
 //
@@ -14,7 +15,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const AKAR = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -59,6 +60,62 @@ export function tabrakanKapitalisasi(daftarPath) {
   return [...kelompok.values()]
     .filter((g) => new Set(g).size > 1)
     .map((g) => [...new Set(g)].join('  ≠  '));
+}
+
+const EKSTENSI_IMPOR = [
+  '',
+  '.ts',
+  '.tsx',
+  '.mts',
+  '.js',
+  '.mjs',
+  '.json',
+  '/index.ts',
+  '/index.js',
+];
+
+// `from './x'`, `import('./x')`, `import './x'`, `require('./x')`. Hanya spesifier relatif: paket dan alias
+// tsconfig (mis. @danarakca/keu-ui) diselesaikan resolver lain dan bukan urusan kapitalisasi berkas.
+const POLA_IMPOR =
+  /(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s+|\brequire\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\1/g;
+
+const indeksHuruf = new WeakMap();
+
+/**
+ * Impor relatif yang hanya cocok dengan sebuah berkas bila huruf besar/kecil diabaikan.
+ *
+ * Inilah kegagalan lintas platform yang paling khas: `import './Beranda'` untuk `beranda.ts` jalan di
+ * Windows (sistem berkas tidak membedakan huruf) dan gagal di Linux. Yang dilaporkan hanya yang cocok
+ * KALAU huruf diabaikan; impor ke berkas yang memang tidak ada bukan urusan pemeriksa ini.
+ *
+ * @param {string} path  lokasi berkas pengimpor (relatif terhadap akar repo, pemisah `/`)
+ * @param {string} teks  isi berkas itu
+ * @param {string[]} daftarPath  seluruh berkas repo (relatif terhadap akar)
+ * @returns {{ baris: number, spesifier: string, cocok: string }[]}
+ */
+export function imporKapitalisasiSalah(path, teks, daftarPath) {
+  let indeks = indeksHuruf.get(daftarPath);
+  if (!indeks) {
+    indeks = {
+      tepat: new Set(daftarPath),
+      huruf: new Map(daftarPath.map((p) => [p.toLowerCase(), p])),
+    };
+    indeksHuruf.set(daftarPath, indeks);
+  }
+
+  const hasil = [];
+  teks.split('\n').forEach((baris, i) => {
+    const b = baris.trim();
+    if (b.startsWith('//') || b.startsWith('*') || b.startsWith('/*')) return;
+    for (const m of baris.matchAll(POLA_IMPOR)) {
+      const dasar = posix.normalize(posix.join(posix.dirname(path), m[2]));
+      const kandidat = EKSTENSI_IMPOR.map((e) => dasar + e);
+      if (kandidat.some((k) => indeks.tepat.has(k))) continue;
+      const cocok = kandidat.map((k) => indeks.huruf.get(k.toLowerCase())).find(Boolean);
+      if (cocok) hasil.push({ baris: i + 1, spesifier: m[2], cocok });
+    }
+  });
+  return hasil;
 }
 
 /** Pola pada NILAI skrip npm yang hanya berjalan di sebagian shell, beserta pengganti yang benar. */
@@ -159,6 +216,17 @@ function main() {
     masalah.push(
       `[kapitalisasi] berkas hanya berbeda huruf besar/kecil: ${g}. Linux menganggapnya dua berkas, Windows satu.`,
     );
+  }
+
+  // 2b. Impor relatif yang kapitalisasinya salah
+  for (const p of berkas.filter((x) => /\.(ts|tsx|mts|js|mjs)$/.test(x))) {
+    const teks = bacaTeks(p);
+    if (teks === null) continue;
+    for (const m of imporKapitalisasiSalah(p, teks, berkas)) {
+      masalah.push(
+        `[impor] ${p}:${m.baris}: '${m.spesifier}' hanya cocok dengan ${m.cocok} bila huruf besar/kecil diabaikan (Windows lolos, Linux gagal). Samakan hurufnya.`,
+      );
+    }
   }
 
   // 3. Skrip npm
