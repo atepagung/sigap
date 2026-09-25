@@ -1,0 +1,11 @@
+# Untuk `docker build .` manual. scripts/verifikasi-container.mjs memakai snapshot git (arsip berkas
+# yang dilacak, akhir baris LF), jadi berkas ini hanya menjaga build manual tetap kecil dan bersih.
+.git
+.claude
+**/node_modules
+**/bin
+**/obj
+**/dist
+**/.angular
+.env
+docs

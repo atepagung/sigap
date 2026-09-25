@@ -153,7 +153,8 @@ dotnet test apps/sigap-api/sigap-api.slnx           # backend: tes + analyzer
 dotnet format apps/sigap-api/sigap-api.slnx --verify-no-changes
 
 npm run check:web                                   # frontend: lint + stylelint + prettier + tes
-npm run periksa:repo                                # aturan lintas platform
+npm run periksa:repo                                # aturan lintas platform (termasuk kapitalisasi impor)
+npm run verifikasi:container                        # bangun image sigap-api + sigap-web, jalankan di Linux, periksa
 npm run test:skrip                                  # tes pemeriksa repo
 ```
 

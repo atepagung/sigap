@@ -18,7 +18,8 @@
     "check:web": "npm run check --workspace apps/sigap-web",
     "periksa:repo": "node scripts/periksa-repo.mjs",
     "test:skrip": "node --test \"scripts/**/*.spec.mjs\"",
-    "verifikasi:linux": "node scripts/verifikasi-linux.mjs"
+    "verifikasi:linux": "node scripts/verifikasi-linux.mjs",
+    "verifikasi:container": "node scripts/verifikasi-container.mjs"
   },
   "dependencies": {
     "pg": "^8.23.0"

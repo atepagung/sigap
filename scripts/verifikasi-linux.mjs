@@ -14,16 +14,11 @@
 //
 // Butuh Docker. Tidak menyentuh database dev: target `api` memakai PostgreSQL sementara.
 
-import { execFileSync, spawn, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
+import { AKAR, buatSnapshot, dockerBerjalan, git, mulaiPostgres } from './lib/wadah.mjs';
 
-const AKAR = join(dirname(fileURLToPath(import.meta.url)), '..');
 const IMG_NODE = 'node:24';
 const IMG_DOTNET = 'mcr.microsoft.com/dotnet/sdk:10.0';
-const IMG_PG = 'postgres:16';
 
 const SKRIP_WEB = `
 set -e
@@ -68,34 +63,6 @@ echo "OK: sigap-api lulus di Linux"
 
 // ── Pembantu ───────────────────────────────────────────────────────────────────────────────
 
-function git(argumen, env = process.env) {
-  // stderr ditangkap, bukan dicetak: `git add -A` menulis peringatan "CRLF will be replaced by LF"
-  // untuk berkas scaffold di folder kerja Windows. Itu justru yang diharapkan (dinormalkan).
-  return execFileSync('git', argumen, {
-    cwd: AKAR,
-    env,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  }).trim();
-}
-
-/** Snapshot dari HEAD + seluruh perubahan folder kerja, tanpa menyentuh index asli. */
-function buatSnapshot() {
-  const folder = mkdtempSync(join(tmpdir(), 'sigap-verif-'));
-  const env = { ...process.env, GIT_INDEX_FILE: join(folder, 'index') };
-  try {
-    git(['read-tree', 'HEAD'], env);
-    git(['add', '-A'], env);
-    return git(['write-tree'], env);
-  } finally {
-    rmSync(folder, { recursive: true, force: true });
-  }
-}
-
-function docker(argumen, opsi = {}) {
-  return spawnSync('docker', argumen, { encoding: 'utf8', ...opsi });
-}
-
 /** Menyalurkan arsip snapshot ke stdin container, lalu menunggu container selesai. */
 function jalankan(tree, image, skrip, argumenDocker = []) {
   return new Promise((selesai) => {
@@ -117,73 +84,13 @@ function jalankan(tree, image, skrip, argumenDocker = []) {
 }
 
 async function targetApi(tree) {
-  const id = process.pid;
-  const jaringan = `sigap-verif-${id}`;
-  const pg = `sigap-verif-pg-${id}`;
-  const bersihkan = () => {
-    docker(['stop', pg], { stdio: 'ignore' });
-    docker(['network', 'rm', jaringan], { stdio: 'ignore' });
-  };
+  const { jaringan, pg, bersihkan } = await mulaiPostgres('sigap-verif');
   process.once('SIGINT', () => {
     bersihkan();
     process.exit(130);
   });
 
   try {
-    console.log('→ PostgreSQL sementara (meniru service container CI)');
-    docker(['network', 'create', jaringan], { stdio: 'ignore' });
-    const mulai = docker([
-      'run',
-      '-d',
-      '--rm',
-      '--name',
-      pg,
-      '--network',
-      jaringan,
-      '-e',
-      'POSTGRES_USER=sigap_app',
-      '-e',
-      'POSTGRES_PASSWORD=sigap_password',
-      '-e',
-      'POSTGRES_DB=sigap_ci',
-      IMG_PG,
-    ]);
-    if (mulai.status !== 0) throw new Error(`Gagal memulai PostgreSQL: ${mulai.stderr}`);
-
-    // TCP (-h 127.0.0.1): server sementara saat inisialisasi hanya mendengarkan di socket.
-    let siap = false;
-    for (let i = 0; i < 60 && !siap; i++) {
-      siap =
-        docker(['exec', pg, 'pg_isready', '-h', '127.0.0.1', '-U', 'sigap_app', '-d', 'sigap_ci'])
-          .status === 0;
-      if (!siap) await new Promise((r) => setTimeout(r, 1000));
-    }
-    if (!siap) throw new Error('PostgreSQL sementara tidak kunjung siap.');
-
-    const berkasSkema = readdirSync(join(AKAR, 'infra', 'skema'))
-      .filter((f) => /^(00|10|11)-.*\.sql$/.test(f))
-      .sort();
-    for (const f of berkasSkema) {
-      const hasil = docker(
-        [
-          'exec',
-          '-i',
-          pg,
-          'psql',
-          '-U',
-          'sigap_app',
-          '-d',
-          'sigap_ci',
-          '-v',
-          'ON_ERROR_STOP=1',
-          '-q',
-        ],
-        { input: readFileSync(join(AKAR, 'infra', 'skema', f)) },
-      );
-      if (hasil.status !== 0) throw new Error(`Skema ${f} gagal dipasang:\n${hasil.stderr}`);
-    }
-    console.log(`→ skema terpasang (${berkasSkema.join(', ')})\n`);
-
     return await jalankan(tree, IMG_DOTNET, SKRIP_API, [
       '--network',
       jaringan,
@@ -209,7 +116,7 @@ if (!DAFTAR[pilihan]) {
   console.error('Pemakaian: node scripts/verifikasi-linux.mjs web|api|repo|semua');
   process.exit(2);
 }
-if (docker(['info'], { stdio: 'ignore' }).status !== 0) {
+if (!dockerBerjalan()) {
   console.error(
     'Docker tidak berjalan atau tidak terpasang. Nyalakan Docker Desktop, lalu ulangi.',
   );
