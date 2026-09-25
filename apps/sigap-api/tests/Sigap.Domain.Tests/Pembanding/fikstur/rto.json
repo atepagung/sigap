@@ -1,0 +1,311 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/rto.ts"
+  },
+  "kasus": {
+    "hitungRto": [
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-18T00:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 0,
+          "jamTersisa": 24,
+          "status": "AMAN",
+          "persen": 0,
+          "label": "1 hari"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-18T12:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 12,
+          "jamTersisa": 12,
+          "status": "AMAN",
+          "persen": 50,
+          "label": "12 jam"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-18T17:59:56.400Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 17.999,
+          "jamTersisa": 6.001000000000001,
+          "status": "AMAN",
+          "persen": 74.99583333333332,
+          "label": "6 jam"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-18T18:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 18,
+          "jamTersisa": 6,
+          "status": "MENDEKATI",
+          "persen": 75,
+          "label": "6 jam"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-18T23:30:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 23.5,
+          "jamTersisa": 0.5,
+          "status": "MENDEKATI",
+          "persen": 97.91666666666666,
+          "label": "30 menit"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-19T00:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 24,
+          "jamTersisa": 0,
+          "status": "MELANGGAR",
+          "persen": 100,
+          "label": "1 menit"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-19T06:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 30,
+          "jamTersisa": -6,
+          "status": "MELANGGAR",
+          "persen": 100,
+          "label": "6 jam"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 24,
+          "sekarang": "2026-09-17T22:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 0,
+          "jamTersisa": 24,
+          "status": "AMAN",
+          "persen": 0,
+          "label": "1 hari"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 1,
+          "sekarang": "2026-09-18T00:30:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 0.5,
+          "jamTersisa": 0.5,
+          "status": "AMAN",
+          "persen": 50,
+          "label": "30 menit"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 1,
+          "sekarang": "2026-09-18T00:45:36.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 0.76,
+          "jamTersisa": 0.24,
+          "status": "MENDEKATI",
+          "persen": 76,
+          "label": "14 menit"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 0,
+          "sekarang": "2026-09-18T00:30:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 0.5,
+          "jamTersisa": 0.5,
+          "status": "AMAN",
+          "persen": 50,
+          "label": "30 menit"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": -5,
+          "sekarang": "2026-09-18T03:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 3,
+          "jamTersisa": -2,
+          "status": "MELANGGAR",
+          "persen": 100,
+          "label": "2 jam"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 168,
+          "sekarang": "2026-09-22T04:15:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 100.25,
+          "jamTersisa": 67.75,
+          "status": "AMAN",
+          "persen": 59.672619047619044,
+          "label": "2 hari 20 jam"
+        }
+      },
+      {
+        "masukan": {
+          "mulai": "2026-09-18T00:00:00.000Z",
+          "rtoJam": 192,
+          "sekarang": "2026-10-08T20:00:00.000Z"
+        },
+        "keluaran": {
+          "jamBerjalan": 500,
+          "jamTersisa": -308,
+          "status": "MELANGGAR",
+          "persen": 100,
+          "label": "12 hari 20 jam"
+        }
+      }
+    ],
+    "labelDurasi": [
+      {
+        "masukan": {
+          "jam": 0
+        },
+        "keluaran": "1 menit"
+      },
+      {
+        "masukan": {
+          "jam": 0.001
+        },
+        "keluaran": "1 menit"
+      },
+      {
+        "masukan": {
+          "jam": 0.5
+        },
+        "keluaran": "30 menit"
+      },
+      {
+        "masukan": {
+          "jam": 0.9917
+        },
+        "keluaran": "60 menit"
+      },
+      {
+        "masukan": {
+          "jam": 0.99999
+        },
+        "keluaran": "60 menit"
+      },
+      {
+        "masukan": {
+          "jam": 1
+        },
+        "keluaran": "1 jam"
+      },
+      {
+        "masukan": {
+          "jam": 1.5
+        },
+        "keluaran": "1 jam 30 menit"
+      },
+      {
+        "masukan": {
+          "jam": 1.999
+        },
+        "keluaran": "1 jam 60 menit"
+      },
+      {
+        "masukan": {
+          "jam": 2.25
+        },
+        "keluaran": "2 jam 15 menit"
+      },
+      {
+        "masukan": {
+          "jam": 23.99
+        },
+        "keluaran": "23 jam 59 menit"
+      },
+      {
+        "masukan": {
+          "jam": 24
+        },
+        "keluaran": "1 hari"
+      },
+      {
+        "masukan": {
+          "jam": 25
+        },
+        "keluaran": "1 hari 1 jam"
+      },
+      {
+        "masukan": {
+          "jam": 36.5
+        },
+        "keluaran": "1 hari 13 jam"
+      },
+      {
+        "masukan": {
+          "jam": 47.6
+        },
+        "keluaran": "1 hari 24 jam"
+      },
+      {
+        "masukan": {
+          "jam": 48
+        },
+        "keluaran": "2 hari"
+      },
+      {
+        "masukan": {
+          "jam": 100.5
+        },
+        "keluaran": "4 hari 5 jam"
+      },
+      {
+        "masukan": {
+          "jam": -1
+        },
+        "keluaran": "1 menit"
+      }
+    ]
+  }
+}

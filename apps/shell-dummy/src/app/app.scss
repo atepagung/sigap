@@ -1,0 +1,72 @@
+@use 'index' as *;
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  font-family: $font-family-base;
+  color: $color-text;
+  background: $color-surface-muted;
+
+  &__sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: $color-navy;
+    color: $color-text-inverse;
+  }
+
+  &__brand {
+    padding: $space-lg $space-md;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    border-bottom: 1px solid $color-navy-dark;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    padding: $space-sm 0;
+  }
+
+  &__link {
+    padding: $space-sm $space-md;
+    border-left: 3px solid transparent;
+    color: $color-text-inverse;
+    text-decoration: none;
+
+    &:hover {
+      background: $color-navy-dark;
+    }
+
+    &--active {
+      border-left-color: $color-gold;
+      background: $color-navy-dark;
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
+    padding: $space-sm $space-lg;
+    border-bottom: 1px solid $color-border;
+    background: $color-surface;
+    font-size: $font-size-sm;
+  }
+
+  &__muted {
+    color: $color-text-muted;
+  }
+
+  &__content {
+    flex: 1;
+    padding: 0 $space-lg $space-lg;
+  }
+}

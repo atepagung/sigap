@@ -5,7 +5,10 @@ services:
       POSTGRES_DB: sigap_dev
       POSTGRES_USER: sigap_app
       POSTGRES_PASSWORD: sigap_password
-    ports: ["5432:5432"]
+    # Port host 5433 (bukan 5432 standar): laptop ini punya Postgres native Windows yang juga
+    # mendengarkan di 5432, bentrok dengan pemetaan port Docker. Dalam jaringan Docker sendiri
+    # (antar container) portnya tetap 5432 seperti biasa — hanya akses dari host yang berbeda.
+    ports: ["5433:5432"]
     volumes: ["pgdata:/var/lib/postgresql/data"]
   redis:
     image: redis:7
@@ -17,12 +20,17 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: miniopassword
     ports: ["9000:9000", "9001:9001"]
+  # DUMMY pengganti SSO Kemenkeu — lihat infra/keycloak/README.md dan DUMMY_REGISTRY.md.
+  # Kredensial dari .env (buat dengan: node infra/keycloak/buat-env.mjs).
+  # Realm diimpor hanya saat container baru dibuat; setelah mengubah realm JSON:
+  #   docker compose --profile sso up -d --force-recreate keycloak
   keycloak:
     image: quay.io/keycloak/keycloak:26.0
-    command: start-dev --http-port=8081
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: password
+    command: start-dev --http-port=8081 --import-realm
+    env_file:
+      - path: .env
+        required: true
+    volumes: ["./infra/keycloak/import:/opt/keycloak/data/import:ro"]
     ports: ["8081:8081"]
     profiles: ["sso"]
 volumes:

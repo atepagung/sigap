@@ -1,0 +1,57 @@
+name: repo
+
+# Pemeriksaan lintas platform atas seluruh repo. SENGAJA tanpa filter path: ini murah (Node
+# saja, tanpa dependensi) dan menangkap akhir baris CRLF, kapitalisasi nama berkas, skrip npm
+# yang tidak lintas platform, dan path C# yang digabung manual — apa pun area yang berubah.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: repo-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: '0'
+
+jobs:
+  lintas-platform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Tes pemeriksa
+        run: node --test "scripts/**/*.spec.mjs"
+
+      - name: Periksa repo
+        run: node scripts/periksa-repo.mjs
+
+  format-commit:
+    # Hook commit-msg bisa dilewati dengan --no-verify; ini penjaga di sisi server.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Conventional Commits
+        run: npx --no-install commitlint --from "${{ github.event.pull_request.base.sha }}" --to "${{ github.event.pull_request.head.sha }}" --verbose

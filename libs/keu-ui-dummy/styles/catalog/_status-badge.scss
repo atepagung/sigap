@@ -1,0 +1,48 @@
+// .status-badge — [ASUMSI] SELURUHNYA. Nama class dan nama varian tebakan kita.
+// Varian di bawah sengaja dinamai netral (success/warning/danger/neutral/info),
+// BUKAN nama status domain SIGAP (aman, terganggu, dst), supaya kalau platform
+// punya badge sendiri pemetaannya tinggal diganti di satu tempat.
+@use '../index' as *;
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: 2px $space-sm;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.6;
+  white-space: nowrap;
+
+  &--neutral {
+    background: $color-surface-muted;
+    border-color: $color-border;
+    color: $color-text-muted;
+  }
+
+  &--info {
+    background: $color-info-light;
+    border-color: $color-blue;
+    color: $color-blue;
+  }
+
+  &--success {
+    background: $color-success-light;
+    border-color: $color-success;
+    color: $color-success-dark;
+  }
+
+  &--warning {
+    background: $color-warning-light;
+    border-color: $color-warning;
+    color: $color-warning-dark;
+  }
+
+  &--danger {
+    background: $color-danger-light;
+    border-color: $color-danger;
+    color: $color-danger-dark;
+  }
+}

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Sigap.Api/Sigap.Api.csproj" />
+  </ItemGroup>
+
+  <!-- Keduanya yang asli, bukan salinan: penjaga membacanya langsung. -->
+  <ItemGroup>
+    <None Include="../../../../API_CONTRACT.md" Link="API_CONTRACT.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../iam-policy.sigap.json" Link="iam-policy.sigap.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- DDL yang asli: database uji dibuat dari berkas yang sama dengan database dev. -->
+  <ItemGroup>
+    <None Include="../../../../infra/skema/*.sql" LinkBase="skema" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

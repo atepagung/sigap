@@ -1,0 +1,70 @@
+name: sigap-web
+
+# Jalan HANYA bila ada perubahan yang dapat memengaruhi sigap-web. Selain apps/sigap-web/**,
+# yang ikut dihitung adalah hal-hal yang memang dibangun/diimpor olehnya: library design system
+# dan directive izin (dummy), tsconfig.base.json (alias paket), serta lockfile. Tanpa itu, ubahan
+# di libs/keu-ui-dummy yang merusak build sigap-web baru ketahuan setelah merge.
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/sigap-web/**'
+      - 'libs/keu-ui-dummy/**'
+      - 'libs/iam-dummy-web/**'
+      - 'tsconfig.base.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/sigap-web.yml'
+  pull_request:
+    paths:
+      - 'apps/sigap-web/**'
+      - 'libs/keu-ui-dummy/**'
+      - 'libs/iam-dummy-web/**'
+      - 'tsconfig.base.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/sigap-web.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: sigap-web-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: '0' # hook Git tidak dipasang di CI
+
+jobs:
+  verifikasi:
+    # Linux, bukan Windows: pengembangan di Windows (tidak membedakan huruf besar/kecil), produksi
+    # di container Linux (membedakan). Job ini sekaligus deteksi dini salah kapitalisasi nama
+    # berkas/impor dan akhir baris.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Pasang dependensi
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint --workspace apps/sigap-web
+
+      - name: Stylelint (termasuk larangan warna hardcode)
+        run: npm run lint:styles --workspace apps/sigap-web
+
+      - name: Prettier
+        run: npm run format:check --workspace apps/sigap-web
+
+      - name: Tes
+        run: npm test --workspace apps/sigap-web
+
+      - name: Build produksi
+        run: npm run build:prod --workspace apps/sigap-web

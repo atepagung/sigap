@@ -1,0 +1,24 @@
+// =============================================================================
+// KATALOG KOMPONEN SCSS — DUMMY pengganti @danarakca/keu-ui
+//
+// Berkas ini menghasilkan CSS dan HARUS dimuat SEKALI SAJA secara global,
+// lewat array `styles` di angular.json — bukan lewat `@use` dari komponen.
+// Komponen aplikasi cukup memakai nama class-nya (class="page-header"), dan
+// memanggil `@use 'index' as *` bila butuh token.
+//
+// Saat paket asli tiba: hapus baris ini dari angular.json dan ganti dengan
+// berkas katalog milik paket resmi. Lihat DUMMY_REGISTRY.md.
+//
+// [RESMI] .page-header, .stats-row, .table-card  (disebut di slide arsitektur)
+// [ASUMSI] .form-field, .button, .status-badge, .modal, .tabs dan SELURUH
+//          struktur anak/varian dari kelima class resmi maupun asumsi.
+// =============================================================================
+
+@use 'catalog/page-header';
+@use 'catalog/stats-row';
+@use 'catalog/table-card';
+@use 'catalog/form-field';
+@use 'catalog/button';
+@use 'catalog/status-badge';
+@use 'catalog/tabs';
+@use 'catalog/modal';

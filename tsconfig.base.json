@@ -1,0 +1,34 @@
+{
+  "//": [
+    "Basis TypeScript monorepo SIGAP.",
+    "",
+    "Di-extend oleh apps/sigap-web/tsconfig.json. Saat starter.mfe resmi",
+    "masuk (P7.2), gabungkan isi berkas ini dengan tsconfig bawaan template —",
+    "JANGAN menimpa milik template begitu saja.",
+    "compilerOptions di sini sengaja minimal: hanya yang dibutuhkan agar alias",
+    "paths bekerja. Tanpa baseUrl (deprecated di TypeScript 6): paths",
+    "di-resolve relatif terhadap berkas ini.",
+    "",
+    "=====================================================================",
+    "KUNCI PENUKARAN DUMMY — lihat DUMMY_REGISTRY.md",
+    "Entri \"@danarakca/keu-ui\" di compilerOptions.paths adalah SATU-SATUNYA",
+    "tempat yang tahu bahwa design system masih dummy.",
+    "",
+    "Cara menukar saat paket resmi tersedia:",
+    "  1. hapus entri \"@danarakca/keu-ui\" dari compilerOptions.paths",
+    "  2. npm install @danarakca/keu-ui",
+    "  3. ganti includePaths & styles SCSS di angular.json",
+    "     (langkahnya ada di libs/keu-ui-dummy/README.md)",
+    "Tidak ada satu pun import di kode aplikasi yang perlu diubah.",
+    "",
+    "Entri \"@danarakca/iam\" (directive *hasPermission) mengikuti pola yang",
+    "sama; nama paket aslinya masih [ASUMSI] — lihat DUMMY_REGISTRY.md.",
+    "====================================================================="
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@danarakca/keu-ui": ["./libs/keu-ui-dummy/index.ts"],
+      "@danarakca/iam": ["./libs/iam-dummy-web/index.ts"]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    DUMMY. Tercatat di DUMMY_REGISTRY.md bagian 1.8. Tidak boleh naik ke production.
+
+    Isinya hanya yang memang tidak punya padanan sungguhan selama pengembangan: kanal log,
+    serta implementasi dalam memori bagi port yang basis datanya baru ada di P4.2.
+    Abstraksi dan kanal nyata ada di libs/notifikasi, dan itu BUKAN dummy.
+
+    Aturan dummy #4 ditegakkan dengan Condition pada ProjectReference di sigap-api:
+
+      <ProjectReference Include="...Sigap.Notifikasi.Dummy.csproj"
+                        Condition="'$(Configuration)' == 'Debug'" />
+
+    sehingga build Release tidak ikut menyusun proyek ini sama sekali.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Sigap.Notifikasi.Dummy</RootNamespace>
+    <AssemblyName>Sigap.Notifikasi.Dummy</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../notifikasi/src/Sigap.Notifikasi/Sigap.Notifikasi.csproj" />
+  </ItemGroup>
+
+</Project>

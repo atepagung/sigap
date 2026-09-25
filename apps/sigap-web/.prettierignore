@@ -1,0 +1,15 @@
+# Keluaran build dan berkas yang di-generate — tidak disunting tangan.
+dist/
+.angular/
+coverage/
+src/federation/generated/
+package-lock.json
+
+# Konfigurasi bawaan scaffold — akan diganti/digabung saat starter.mfe resmi tersedia (P7.2),
+# jadi tidak diformat ulang supaya diff penggabungannya tetap kecil.
+.vscode/
+angular.json
+tsconfig*.json
+
+# Dokumen tulisan tangan (AGENTS.md, README.md): tata letak tabelnya disengaja.
+*.md

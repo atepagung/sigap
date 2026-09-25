@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Dunia luar: EF Core ke 33 tabel yang sudah ada (P4.2, schema-first dari infra/skema),
+    penyimpanan lampiran (P5.2),
+    klien BMKG/BNPB/MAGMA (P5.1), dan pengisi port notifikasi (P4.2/P5.3).
+
+    Di sinilah entitas EF yang mencerminkan kolom apa adanya tinggal, beserta pemetaannya
+    ke tipe Domain — nama kolomnya sendiri memang berbeda dari kosakata API
+    (mis. sdm.kelengkapanHadir ↔ Checklist.sdmJumlah, API_CONTRACT bagian 3.5.3).
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Sigap.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Sigap.Application/Sigap.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Sigap.Infrastructure.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

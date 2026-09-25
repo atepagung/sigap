@@ -7,11 +7,11 @@ Sumber, urut prioritas (PLAYBOOK Lampiran F): Standar Arsitektur ICS → koreksi
 (Lampiran C) → matriks `docs/Catatan-Masukan-Probis.xlsx` sheet "Fitur & Data per Role"
 butir 2.1–2.6 → Dokumen UR → `docs/desain-probis-v15.html` (rujukan tampilan saja).
 Skema data: 32 tabel prototipe `MKB APPS/App/prisma/schema.prisma` + satu tabel baru yang
-disetujui (§5).
+disetujui (bagian 5).
 
 Kontrak ini ditulis seolah platform asli sudah ada: autentikasi SSO Kemenkeu, otorisasi
 `iam.plugin` tiga lapis, gateway ICS. Bagian yang masih asumsi ditandai **[asumsi]** dan
-terkumpul di §9.
+terkumpul di bagian 9.
 
 ---
 
@@ -27,7 +27,7 @@ terkumpul di §9.
   audience `sigap-api`).
 - Klaim yang dipakai: `nip` (atau `preferred_username`), `kode_satker`, `kode_eselon1`,
   `groups`.
-- **Peran** diambil dari klaim `groups` (pemetaan grup→peran di PERMISSION_MAP §1), **bukan**
+- **Peran** diambil dari klaim `groups` (pemetaan grup→peran di PERMISSION_MAP bagian 1), **bukan**
   dari tabel `"UserRole"`.
 - **Pengguna dan unit** dicari lewat `nip` → `"User"."nip"` → `"User"."id"`, `"User"."unitId"`.
   Tabel `"User"` diperlakukan sebagai profil rujukan untuk kolom FK (mis. `submittedById`),
@@ -40,7 +40,7 @@ terkumpul di §9.
 - Waktu: ISO-8601 UTC (`2026-09-18T03:05:00Z`). Konversi ke WIB/WITA/WIT urusan tampilan.
 - ID: string (cuid, sesuai skema).
 - **Nilai berskala memakai kode**: opsi asesmen, level keparahan, kondisi fisik. Contohnya
-  `RUSAK_RINGAN`. Pemetaan kode ↔ nilai tersimpan di §3.5.3.
+  `RUSAK_RINGAN`. Pemetaan kode ↔ nilai tersimpan di bagian 3.5.3.
 - **Nama jenis bencana dipakai apa adanya**, misalnya `"Gempa Bumi"`, karena nama baku UU
   24/2007 itu sendiri pengenalnya dan tersimpan persis begitu. Daftar sahnya ada di
   `GET /referensi/jenis-bencana`.
@@ -82,7 +82,7 @@ stabil untuk dibaca mesin. **[asumsi — menunggu standar ICS]**
 Setiap endpoint mencantumkan **Permission** (lapis 1, `[KemenkeuAuthorize]`), **Scope**
 (lapis 2, klausa WHERE), dan **Sieve** (lapis 3, field di-null-kan). Definisi lengkap profil
 Scope (`SELF`, `UNIT`, `WILAYAH`, `ESELON_I`, `NASIONAL`, `SASARAN_SAYA`) dan aturan
-gabung multi-peran ada di PERMISSION_MAP §2. Ringkasnya:
+gabung multi-peran ada di PERMISSION_MAP bagian 2. Ringkasnya:
 - Scope ditentukan oleh **peran yang memberi permission endpoint itu**, bukan peran terluas
   pengguna.
 - Scope selalu diterapkan di query database, tidak pernah menyaring hasil di memori.
@@ -194,7 +194,7 @@ Path ditulis tanpa awalan `/api/v1`.
 
 **Aturan pokok.** Hanya peran Pegawai Umum yang menjawab (koreksi 1). Jawabannya cuma dua,
 `AMAN` atau `BUTUH_BANTUAN`, tanpa isian lain (koreksi 2). Tiap jawaban **terikat pada
-satu broadcast tertentu** (§6 butir 2). Seorang pegawai bisa sedang ditanya oleh
+satu broadcast tertentu** (bagian 6 butir 2). Seorang pegawai bisa sedang ditanya oleh
 lebih dari satu broadcast sekaligus bila jenis bencananya berbeda.
 
 #### 1. `GET /safety-check/aktif`
@@ -243,7 +243,7 @@ Riwayat safety check pemanggil (2.1.2), terbaru lebih dulu, berhalaman.
 Daftar keadaan per pegawai **untuk satu broadcast di unit pemanggil**. Melayani 2.1.3
 (Pegawai, Pimpinan) dan 2.5.2.1 (Tim Satgas, di dalam aspek SDM asesmen). Empat peran
 pemantau tidak memakai endpoint ini, sebab matriks 2.1.3 menyatakan rekap mereka "menjadi
-dashboard Monitor SC" (§3.6).
+dashboard Monitor SC" (bagian 3.6).
 - **Permission** `sigap:safety-check-rekap:read` · **Scope** PEGAWAI, PIMPINAN, SATGAS:
   `UNIT`, dan unit itu harus `DISASAR` pada broadcast yang diminta.
 - **Sieve**: `lokasiTerakhir` hanya SATGAS. `keterangan`, `dicatatOleh` hanya SATGAS dan
@@ -334,7 +334,7 @@ ponselnya mati, atau sedang dievakuasi ("Modify/Update" pada 2.5.2.1).
   selama status `MENUNGGU`.
 - Tipe: `image/jpeg`, `image/png` (FOTO); `video/mp4` (VIDEO); `audio/mpeg`, `audio/mp4`,
   `audio/ogg`, `audio/webm` (AUDIO, pesan suara). Maks 10 MB per berkas, maks 5 berkas per
-  laporan. **[asumsi — lihat §9]**
+  laporan. **[asumsi — lihat bagian 9]**
 - 201, isi `Lampiran`. Galat: 413 `LAMPIRAN_TERLALU_BESAR`, 415 `LAMPIRAN_TIPE_DITOLAK`,
   409 `BATAS_LAMPIRAN`, 409 `LAPORAN_SUDAH_DIVERIFIKASI`, 503 `LAMPIRAN_GAGAL_DISIMPAN`
   (laporannya tetap ada, boleh diulang).
@@ -377,7 +377,7 @@ Mengalirkan isi berkas. Header `Content-Type`, `Content-Disposition: inline`,
    trigger otomatis tidak menghalangi trigger manual).
 7. Setiap trigger menyimpan identitas lengkap: ID, pemicu, peran dan unit pemicu, lingkup,
    kriteria, dan waktu. Daftar unit disasar dan dilewati (beserta pemegangnya) tersimpan di
-   `"BroadcastSasaranUnit"` (§5). Peran dan unit pemicu pada saat memicu direkam di jejak
+   `"BroadcastSasaranUnit"` (bagian 5). Peran dan unit pemicu pada saat memicu direkam di jejak
    audit, sebab `"ActiveBroadcast"` hanya menyimpan `dikirimOlehId`.
 
 **Contoh.** Unit A (unit Afrizal) sudah dipegang trigger Gempa dari Satgas A. Kanwil Riau
@@ -404,7 +404,7 @@ sama dengan `lingkup.ts`).
 #### 12. `GET /safety-check/broadcast/pratinjau`
 Menghitung sasaran tanpa memicu, supaya pemicu tahu dampaknya lebih dulu. Pemicuan yang
 sunyi lebih berbahaya daripada penolakan yang terbaca.
-- **Permission** `sigap:broadcast:trigger` · **Scope**: kandidat menurut §3.3.2
+- **Permission** `sigap:broadcast:trigger` · **Scope**: kandidat menurut bagian 3.3.2
 - Query: `jenisBencana` (wajib), `unitId`, `provinsi`, `kabupatenKota`, `eselonI`
 ```json
 {
@@ -417,7 +417,7 @@ sunyi lebih berbahaya daripada penolakan yang terbaca.
 ```
 
 #### 13. `POST /safety-check/broadcast`
-- **Permission** `sigap:broadcast:trigger` · **Scope tulis**: §3.3.2
+- **Permission** `sigap:broadcast:trigger` · **Scope tulis**: bagian 3.3.2
 ```json
 {
   "kategoriBencana": "ALAM",
@@ -433,7 +433,7 @@ sunyi lebih berbahaya daripada penolakan yang terbaca.
   1. Buat `"ActiveBroadcast"`.
   2. Untuk tiap unit kandidat: bila ada baris `DISASAR` aktif untuk (unit, jenis bencana),
      sisipkan `DILEWATI` dengan `dilewatiKarenaBroadcastId` = pemegangnya. Selain itu
-     sisipkan `DISASAR`. Indeks unik parsial (§5) menahan dua trigger bersamaan. Bila
+     sisipkan `DISASAR`. Indeks unik parsial (bagian 5) menahan dua trigger bersamaan. Bila
      penyisipan `DISASAR` benturan, baca ulang pemegangnya dan catat `DILEWATI`.
   3. Rekam identitas pemicu ke jejak audit (aksi `DIPICU`).
 - Sesudah transaksi: notifikasi hanya ke pegawai aktif berperan Pegawai Umum di unit
@@ -634,7 +634,7 @@ Tersimpan dengan `kritis = true`. 201. Galat: 409 `LAYANAN_SUDAH_ADA`.
 #### 21. `POST /asesmen`
 Kiriman pertama dalam seri, atau kiriman lengkap baru.
 - **Permission** `sigap:asesmen:create` · **Scope** SATGAS: selalu atas nama unit sendiri
-- Body: bentuk `Asesmen` (§3.5.2) tanpa `id`, `unit`, `dikirim*`, `urutan`, `persetujuan`,
+- Body: bentuk `Asesmen` (bagian 3.5.2) tanpa `id`, `unit`, `dikirim*`, `urutan`, `persetujuan`,
   `lampiran`. Untuk `layanan` cukup `layananId` + `status`.
 - **Seluruh field berskala wajib diisi.** Field catatan opsional. `waktuKejadian` opsional
   dan tidak boleh lebih dari 1 menit di masa depan.
@@ -683,7 +683,7 @@ label "Kirim" atau "Update Asesmen".
 
 #### 26. `GET /asesmen/{id}`
 - **Permission** `sigap:asesmen:read` · **Scope** seperti #24. Pemantau memperoleh "Lihat
-  Detail" lewat 2.6.2 (PERMISSION_MAP §5.1, penafsiran 2).
+  Detail" lewat 2.6.2 (PERMISSION_MAP bagian 5.1, penafsiran 2).
 - **Sieve**: `aspek.sdm.catatanKondisiPegawai` dan `aspek.sdm.catatanTambahan` hanya
   SATGAS dan PIMPINAN. Keduanya dapat memuat nama dan keadaan medis pegawai. Pemantau
   memperoleh angka, bukan nama.
@@ -733,7 +733,7 @@ Keadaan unitnya sudah termuat di layar persetujuannya.
 - `sejak`: bawaan = waktu dipicunya broadcast aktif tertua di lingkup, atau 24 jam ke
   belakang bila tidak ada.
 - **Sieve**: tidak ada nama maupun koordinat pegawai di bagian ini. Pemantau memperoleh angka
-  agregat (PERMISSION_MAP §6; PLAYBOOK P6.3).
+  agregat (PERMISSION_MAP bagian 6; PLAYBOOK P6.3).
 
 #### 30. `GET /monitor/ringkasan`
 ```json
@@ -826,14 +826,14 @@ Taksonomi UU 24/2007. Tanpa Scope.
 ```
 
 #### 38. `GET /referensi/opsi-asesmen`
-Opsi setiap field berskala (§3.5.3) plus level keparahan laporan. Tanpa Scope.
+Opsi setiap field berskala (bagian 3.5.3) plus level keparahan laporan. Tanpa Scope.
 ```json
 { "sdm.kelengkapanHadir": [ { "kode": "PENUH_100", "label": "100% Lengkap" }, … ], "…": [ … ] }
 ```
 
 #### 39–42. `GET /referensi/provinsi` · `/kabupaten-kota?provinsi=` · `/eselon-1` · `/unit`
 Pilihan untuk penyempit trigger dan penyaring dashboard. **Scope**: hanya nilai di dalam
-lingkup baca pemanggil (profil per peran di PERMISSION_MAP §3). `/unit` menerima `provinsi`,
+lingkup baca pemanggil (profil per peran di PERMISSION_MAP bagian 3). `/unit` menerima `provinsi`,
 `kabupatenKota`, `eselonI`, `cari`, `halaman`.
 
 #### 43. `GET /notifikasi`
@@ -841,6 +841,9 @@ Peringatan yang **dihitung saat diminta** untuk pemanggil. Contohnya: safety che
 dijawab, laporan masuk (Satgas), asesmen menunggu persetujuan (Pimpinan), asesmen masuk
 (pemantau), gempa terkini. Tidak ada status "sudah dibaca", karena skema tidak punya
 tabelnya. Sekaligus menjadi saluran *in-app polling* cadangan (P3.6).
+`GEMPA_KUAT_TANPA_KANTOR` (`PERINGATAN`, **[asumsi]**, P5.1): hanya bagi pemegang `sigap:monitor:read` berlingkup nasional
+(Koordinator MKB, Sekretaris Jenderal). BMKG mencatat guncangan ≥ ambang MMI dalam jendela waktu di wilayah yang tidak punya unit
+Kemenkeu, jadi tidak ada broadcast otomatis; peringatan menyarankan memicu safety check manual. Kosong bila pemicu otomatis mati.
 ```json
 { "data": [ { "kode": "SC_BELUM_DIJAWAB", "tingkat": "GENTING", "judul": "…", "pesan": "…",
               "terkait": { "jenis": "BROADCAST", "id": "…" } } ] }
@@ -879,7 +882,7 @@ Tanggap darurat    (dibuat saat DISETUJUI) DARURAT ──(selesai)──▶ PULI
 ## 5. Perubahan skema yang disetujui: tabel ke-33
 
 Disetujui 18 September 2026 sebagai **pengecualian atas aturan "struktur 32 tabel tidak
-berubah"**. Aturan kepemilikan unit (§3.3.1) butuh daftar unit per trigger yang dikunci,
+berubah"**. Aturan kepemilikan unit (bagian 3.3.1) butuh daftar unit per trigger yang dikunci,
 sedangkan `"ActiveBroadcast"` hanya menyimpan kriteria. Tanpa tabel ini, sasaran harus
 dihitung ulang dari kriteria, dan hasilnya bergeser setiap kali data provinsi/kabupaten unit
 dilengkapi. Itu akan mengubah jejak audit "siapa ditanya oleh trigger mana" setelah
@@ -927,7 +930,7 @@ sigap-api dan sigap-web**, dan mengalahkan perilaku prototipe bila keduanya berb
 
 1. **Trigger kembar.** Prototipe (`trigger-actions.ts`) menolak trigger kedua **secara global**
    bila jenis bencananya sama, sehingga Satgas Jakarta memblokir kanwil Riau. Kontrak:
-   kepemilikan per unit (§3.3.1).
+   kepemilikan per unit (bagian 3.3.1).
 2. **Pengikatan jawaban.** Prototipe (`submitSafetyCheck`) mengikat jawaban ke broadcast aktif
    **terbaru di mana pun**, bukan yang menyasar unit pegawai. Kontrak: `broadcastId` eksplisit
    di path, divalidasi terhadap sasaran.
@@ -938,7 +941,7 @@ sigap-api dan sigap-web**, dan mengalahkan perilaku prototipe bila keduanya berb
    Kontrak: 404.
 5. **Scope multi-peran.** Prototipe (`hitungLingkup`) memakai peran terluas pengguna untuk
    semua tindakan. Contohnya, pengguna Satgas + Kepala Perwakilan memverifikasi laporan
-   se-provinsi. Kontrak: Scope dari peran yang memberi permission itu (PERMISSION_MAP §2.3).
+   se-provinsi. Kontrak: Scope dari peran yang memberi permission itu (PERMISSION_MAP bagian 2.3).
 6. **Administrator.** Prototipe mengizinkan ADMIN melakukan semua tindakan bisnis
    (`SELALU = ['ADMIN']`). ADMIN tidak ada di matriks, jadi kontrak tidak memberinya satu
    pun permission bisnis.
@@ -973,7 +976,7 @@ Tidak diubah (bukan bagian keputusan tabel ke-33), tetapi harus diketahui implem
   persetujuan seri diturunkan dari deklarasi unit yang sama, jenis bencana yang sama, dan
   `declaredAt` ≥ awal seri, yang tidak dibatalkan.
 - **Versi asesmen tanpa penanda.** Tidak ada kolom `urutan`/`seri`. Urutan dihitung dari
-  `createdAt` di dalam seri (§3.5.1).
+  `createdAt` di dalam seri (bagian 3.5.1).
 - **Jejak audit tanpa kolom nilai sebelum/sesudah.** Disimpan sebagai JSON di
   `"JejakPerubahan"."ringkasan"`.
 - **Notifikasi in-app tanpa status baca.** Lihat #43.
@@ -983,7 +986,7 @@ Tidak diubah (bukan bagian keputusan tabel ke-33), tetapi harus diketahui implem
 ## 8. Di luar kontrak ini
 
 - **Butir 1.1 Data Bencana Nasional.** Matriks memberi Koordinator MKB "Tambah, Modify",
-  sedangkan prototipe memindahkannya ke Sekretaris Jenderal. Menunggu keputusan (§9).
+  sedangkan prototipe memindahkannya ke Sekretaris Jenderal. Menunggu keputusan (bagian 9).
 - **Info Bencana Terkini BMKG/BNPB/MAGMA.** Dikontrak bersama service integrasi (P5.1).
 - **Alur request → approve broadcast** pada desain V15 (`"BroadcastRequest"`). Sudah
   digantikan trigger berjenjang langsung (koreksi 12, UAT T12). Tabelnya tetap ada tetapi
@@ -1000,7 +1003,7 @@ Tidak diubah (bukan bagian keputusan tabel ke-33), tetapi harus diketahui implem
 **Untuk BaTII**
 1. Format permission `sigap:resource:action` sesuai konvensi platform? (Lampiran E #5)
 2. Cara mendaftarkan Scope dan Sieve ke IAM: UI admin, berkas konfigurasi, atau API?
-   (Lampiran E #6). Draf datanya ada di PERMISSION_MAP §7.
+   (Lampiran E #6). Draf datanya ada di PERMISSION_MAP bagian 7.
 3. Awalan path (`/api/v1`), amplop koleksi, dan bentuk galat standar ICS?
 4. Bagaimana `iam.plugin` menggabungkan Scope pengguna berperan ganda: gabungan (usulan
    kontrak) atau prioritas?

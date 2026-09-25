@@ -1,0 +1,25 @@
+# Berlaku untuk berkas di root dan folder tanpa .editorconfig sendiri.
+# apps/sigap-api dan apps/sigap-web punya aturan sendiri (root = true) yang menimpa ini.
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+# Produksi berjalan di Linux; akhir baris wajib LF (AGENTS.md bagian Lintas platform).
+end_of_line = lf
+
+# C# di libs/ (iam-dummy, notifikasi) tidak punya .editorconfig sendiri dan memakai indentasi 4,
+# sama seperti apps/sigap-api. Tanpa ini, aturan indentasi 2 di atas menimpanya dan
+# `dotnet format` gagal atas seluruh kode library.
+[*.{cs,csx}]
+indent_size = 4
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[*.{cmd,ps1,bat}]
+end_of_line = crlf

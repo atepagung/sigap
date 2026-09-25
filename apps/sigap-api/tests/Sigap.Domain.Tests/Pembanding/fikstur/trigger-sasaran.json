@@ -1,0 +1,396 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/trigger-sasaran.ts"
+  },
+  "kasus": {
+    "sasaranUnit": [
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-kanwil-riau",
+            "nama": "Kanwil DJP Riau",
+            "provinsi": "Riau",
+            "eselonIKey": "djp"
+          }
+        },
+        "keluaran": {
+          "targetJenis": "UNIT",
+          "targetUnitId": "u-kanwil-riau",
+          "wilayah": null,
+          "kota": null,
+          "eselon": null,
+          "lokasi": "Kanwil DJP Riau"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-x",
+            "nama": "Unit Tanpa Eselon",
+            "provinsi": null,
+            "eselonIKey": null
+          }
+        },
+        "keluaran": {
+          "targetJenis": "UNIT",
+          "targetUnitId": "u-x",
+          "wilayah": null,
+          "kota": null,
+          "eselon": null,
+          "lokasi": "Unit Tanpa Eselon"
+        }
+      }
+    ],
+    "lokasiWilayahProvinsi": [
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": null,
+          "eselon": null
+        },
+        "keluaran": "Provinsi Riau"
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": null
+        },
+        "keluaran": "Kota Pekanbaru, Provinsi Riau"
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": null,
+          "eselon": "djp"
+        },
+        "keluaran": "unit DJP, Provinsi Riau"
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": "djbc"
+        },
+        "keluaran": "unit DJBC di Kota Pekanbaru, Provinsi Riau"
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "",
+          "eselon": ""
+        },
+        "keluaran": "Provinsi Riau"
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "  ",
+          "eselon": null
+        },
+        "keluaran": "  , Provinsi Riau"
+      }
+    ],
+    "sasaranEselonI": [
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-kanwil-riau",
+            "nama": "Kanwil DJP Riau",
+            "provinsi": "Riau",
+            "eselonIKey": "djp"
+          },
+          "provinsi": "",
+          "kota": ""
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": null,
+          "eselon": "djp",
+          "lokasi": "Lingkup DJP"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-kanwil-riau",
+            "nama": "Kanwil DJP Riau",
+            "provinsi": "Riau",
+            "eselonIKey": "djp"
+          },
+          "provinsi": "Riau",
+          "kota": ""
+        },
+        "keluaran": {
+          "targetJenis": "PROVINSI",
+          "targetUnitId": null,
+          "wilayah": "Riau",
+          "kota": null,
+          "eselon": "djp",
+          "lokasi": "Provinsi Riau"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-kanwil-riau",
+            "nama": "Kanwil DJP Riau",
+            "provinsi": "Riau",
+            "eselonIKey": "djp"
+          },
+          "provinsi": "Riau",
+          "kota": "Kota Pekanbaru"
+        },
+        "keluaran": {
+          "targetJenis": "PROVINSI",
+          "targetUnitId": null,
+          "wilayah": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": "djp",
+          "lokasi": "Kota Pekanbaru, Riau"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-kanwil-riau",
+            "nama": "Kanwil DJP Riau",
+            "provinsi": "Riau",
+            "eselonIKey": "djp"
+          },
+          "provinsi": "",
+          "kota": "Kota Pekanbaru"
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": "Kota Pekanbaru",
+          "eselon": "djp",
+          "lokasi": "Lingkup DJP"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-x",
+            "nama": "Unit Tanpa Eselon",
+            "provinsi": null,
+            "eselonIKey": null
+          },
+          "provinsi": "",
+          "kota": ""
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": null,
+          "eselon": null,
+          "lokasi": "Lingkup Eselon I"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-x",
+            "nama": "Unit Tanpa Eselon",
+            "provinsi": null,
+            "eselonIKey": null
+          },
+          "provinsi": "Aceh",
+          "kota": ""
+        },
+        "keluaran": {
+          "targetJenis": "PROVINSI",
+          "targetUnitId": null,
+          "wilayah": "Aceh",
+          "kota": null,
+          "eselon": null,
+          "lokasi": "Provinsi Aceh"
+        }
+      },
+      {
+        "masukan": {
+          "unit": {
+            "id": "u-y",
+            "nama": "Unit Eselon Kosong",
+            "provinsi": "Riau",
+            "eselonIKey": ""
+          },
+          "provinsi": "",
+          "kota": ""
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": null,
+          "eselon": "",
+          "lokasi": "Lingkup Eselon I"
+        }
+      }
+    ],
+    "sasaranNasional": [
+      {
+        "masukan": {
+          "provinsi": "",
+          "kota": "",
+          "eselon": ""
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": null,
+          "eselon": null,
+          "lokasi": "Seluruh Kemenkeu"
+        }
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "",
+          "eselon": ""
+        },
+        "keluaran": {
+          "targetJenis": "PROVINSI",
+          "targetUnitId": null,
+          "wilayah": "Riau",
+          "kota": null,
+          "eselon": null,
+          "lokasi": "Provinsi Riau"
+        }
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": ""
+        },
+        "keluaran": {
+          "targetJenis": "PROVINSI",
+          "targetUnitId": null,
+          "wilayah": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": null,
+          "lokasi": "Kota Pekanbaru, Riau"
+        }
+      },
+      {
+        "masukan": {
+          "provinsi": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": "djp"
+        },
+        "keluaran": {
+          "targetJenis": "PROVINSI",
+          "targetUnitId": null,
+          "wilayah": "Riau",
+          "kota": "Kota Pekanbaru",
+          "eselon": "djp",
+          "lokasi": "Kota Pekanbaru, Riau"
+        }
+      },
+      {
+        "masukan": {
+          "provinsi": "",
+          "kota": "",
+          "eselon": "djp"
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": null,
+          "eselon": "djp",
+          "lokasi": "Seluruh unit DJP"
+        }
+      },
+      {
+        "masukan": {
+          "provinsi": "",
+          "kota": "Kota Pekanbaru",
+          "eselon": ""
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": "Kota Pekanbaru",
+          "eselon": null,
+          "lokasi": "Seluruh Kemenkeu"
+        }
+      },
+      {
+        "masukan": {
+          "provinsi": "",
+          "kota": "Kota Pekanbaru",
+          "eselon": "djp"
+        },
+        "keluaran": {
+          "targetJenis": "NASIONAL",
+          "targetUnitId": null,
+          "wilayah": null,
+          "kota": "Kota Pekanbaru",
+          "eselon": "djp",
+          "lokasi": "Seluruh unit DJP"
+        }
+      }
+    ],
+    "validasiTriggerDasar": [
+      {
+        "masukan": {
+          "jenisBencana": "",
+          "pesan": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Jenis ancaman wajib dipilih."
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "pesan": ""
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "pesan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "pesan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Pesan terlalu panjang, maksimal 500 karakter."
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "",
+          "pesan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Jenis ancaman wajib dipilih."
+        }
+      }
+    ]
+  }
+}

@@ -1,15 +1,15 @@
 # PERMISSION_MAP — sigap-api, Fase 1 (Tanggap Darurat)
 
 Status: **disetujui untuk dibangun**, 18 September 2026. Pasangan dokumen ini:
-[API_CONTRACT.md](API_CONTRACT.md). Nomor endpoint `#n` merujuk API_CONTRACT §2.
+[API_CONTRACT.md](API_CONTRACT.md). Nomor endpoint `#n` merujuk API_CONTRACT bagian 2.
 
 Dokumen ini adalah bahan pendaftaran aturan IAM ke BaTII: peran ↔ grup SSO, 23 permission,
 profil Scope beserta predikat SQL terhadap kolom nyata, aturan Sieve, dan draf kebijakan
-sebagai data (§7). Sesuai standar ICS, kebijakan disimpan sebagai data, bukan hardcode. Sumber
+sebagai data (bagian 7). Sesuai standar ICS, kebijakan disimpan sebagai data, bukan hardcode. Sumber
 kebenarannya matriks `docs/Catatan-Masukan-Probis.xlsx` sheet "Fitur & Data per Role", butir
 2.1–2.6, dengan lingkup data per peran dari PLAYBOOK Lampiran B.
 
-Dua aturan dari matriks yang ditegakkan dan dibuktikan di §5:
+Dua aturan dari matriks yang ditegakkan dan dibuktikan di bagian 5:
 - Peran bertanda **"-"** pada sebuah fitur tidak memegang satu pun permission untuk fitur itu.
 - Peran bertanda **"Read Only"** tidak memegang permission tulis untuk fitur itu.
 
@@ -95,18 +95,18 @@ Ini sama dengan `lingkup.ts` prototipe.
   **diabaikan**.
 - Contoh: pengguna Satgas + Kepala Perwakilan. Verifikasi laporan (`sigap:laporan:verify`,
   hanya diberi SATGAS) → `UNIT`. Dashboard (`sigap:monitor:read`, hanya diberi PERWAKILAN) →
-  `WILAYAH`. Prototipe memakai peran terluas untuk semuanya (API_CONTRACT §6 butir 5).
+  `WILAYAH`. Prototipe memakai peran terluas untuk semuanya (API_CONTRACT bagian 6 butir 5).
 - Sieve mengikuti logika yang sama: field terlihat bila **salah satu** peran pemberi
   permission ada di daftar "terlihat untuk".
 - Pengecualian: **lingkup trigger** memakai urutan prioritas, karena satu broadcast hanya punya
-  satu lingkup (API_CONTRACT §3.3.2).
+  satu lingkup (API_CONTRACT bagian 3.3.2).
 
 ### 2.4 Scope tulis
 Selain filter baris, Scope juga membatasi apa yang boleh ditulis:
 - Laporan, asesmen, layanan kritis, dan jawaban safety check **selalu atas nama unit/pengguna
   pemanggil**. `unitId` dan `userId` diambil dari identitas, **tidak pernah dari body**.
 - Trigger: kandidat sasaran dibatasi per lingkup, dan provinsi/Eselon I diturunkan dari unit
-  pemicu (API_CONTRACT §3.3.2).
+  pemicu (API_CONTRACT bagian 3.3.2).
 - Pencatatan keadaan pegawai (#6): pegawai sasaran harus di `UNIT` Satgas dan unitnya
   `DISASAR` pada broadcast.
 - Persetujuan asesmen (#28) dan penutupan tanggap darurat (#29): `UNIT`.
@@ -118,7 +118,7 @@ Selain filter baris, Scope juga membatasi apa yang boleh ditulis:
 ## 3. Daftar permission (23)
 
 Tulis = mengubah data bisnis. `notifikasi:subscribe` hanya mendaftarkan perangkat milik sendiri
-dan tidak dihitung sebagai tulis bisnis (lihat §5.3).
+dan tidak dihitung sebagai tulis bisnis (lihat bagian 5.3).
 
 | # | Permission | Jenis | Endpoint | Pemegang → Scope |
 |---|---|---|---|---|
@@ -126,9 +126,9 @@ dan tidak dihitung sebagai tulis bisnis (lihat §5.3).
 | 2 | `sigap:safety-check:respond` | tulis | #2 | PEGAWAI → `SASARAN_SAYA` |
 | 3 | `sigap:safety-check:record` | tulis | #6 | SATGAS → `UNIT` |
 | 4 | `sigap:safety-check-rekap:read` | baca | #4, #5 | PEGAWAI, PIMPINAN, SATGAS → `UNIT` |
-| 5 | `sigap:broadcast:trigger` | tulis | #12, #13 | SATGAS, PERWAKILAN, SUBKOORDINATOR, KOORDINATOR → batas sasaran §2.4 |
+| 5 | `sigap:broadcast:trigger` | tulis | #12, #13 | SATGAS, PERWAKILAN, SUBKOORDINATOR, KOORDINATOR → batas sasaran bagian 2.4 |
 | 6 | `sigap:broadcast:read` | baca | #14, #15 | SATGAS `TERSENTUH(UNIT)`, PERWAKILAN `TERSENTUH(WILAYAH)`, SUBKOORDINATOR `TERSENTUH(ESELON_I)`, KOORDINATOR `NASIONAL` |
-| 7 | `sigap:broadcast:close` | tulis | #16 | keempat pemicu → §2.4 · *di luar matriks* |
+| 7 | `sigap:broadcast:close` | tulis | #16 | keempat pemicu → bagian 2.4 · *di luar matriks* |
 | 8 | `sigap:laporan:create` | tulis | #7 | PEGAWAI → atas nama unit sendiri |
 | 9 | `sigap:laporan:read` | baca | #9, #10, #17 | PEGAWAI → `SELF`; SATGAS → `UNIT` |
 | 10 | `sigap:laporan:verify` | tulis | #18 | SATGAS → `UNIT` |
@@ -162,7 +162,7 @@ dan tidak dihitung sebagai tulis bisnis (lihat §5.3).
 | `safety-check-rekap:read` | UNIT | UNIT | UNIT | — | — | — | — | — |
 | `broadcast:trigger` | — | UNIT | — | WILAYAH | ESELON_I | NASIONAL | — | — |
 | `broadcast:read` | — | TERSENTUH | — | TERSENTUH | TERSENTUH | NASIONAL | — | — |
-| `broadcast:close` | — | §2.4 | — | §2.4 | §2.4 | §2.4 | — | — |
+| `broadcast:close` | — | bagian 2.4 | — | bagian 2.4 | bagian 2.4 | bagian 2.4 | — | — |
 | `laporan:create` | unit sendiri | — | — | — | — | — | — | — |
 | `laporan:read` | SELF | UNIT | — | — | — | — | — | — |
 | `laporan:verify` | — | UNIT | — | — | — | — | — | — |
@@ -264,88 +264,39 @@ pelapor sendiri dan Tim Satgas yang memang harus menghubunginya).
 
 ---
 
-## 7. Draf kebijakan sebagai data
+## 7. Kebijakan sebagai data
+
+Kebijakan ini sekarang hidup sebagai berkas
+[apps/sigap-api/iam-policy.sigap.json](apps/sigap-api/iam-policy.sigap.json) (sejak P3.3, 18 Sep
+2026). **Berkas itulah sumber datanya**; draf JSON yang dulu ada di bagian ini dihapus supaya tidak
+ada dua salinan yang bisa berbeda. Isinya tetap sama persis dengan bagian 1–6 dan dibaca
+`libs/iam-dummy` selama `iam.plugin` asli belum tersedia.
 
 **[asumsi format]** Disesuaikan setelah BaTII menjawab cara pendaftaran Scope dan Sieve ke IAM
-(Lampiran E #6). Isinya sama persis dengan §1–§6. Di sistem baru berkas ini disimpan sebagai
-`iam-policy.sigap.json` dan tidak di-hardcode.
+(Lampiran E #6). Tiga penyempurnaan dari draf awal, tanpa mengubah maknanya:
+1. `PEMICU_ATAU_MENCAKUP` diberi argumen wilayah, mis. `PEMICU_ATAU_MENCAKUP(WILAYAH)`, sama seperti
+   `TERSENTUH(WILAYAH)`, karena pengakhir perlu tahu lingkup pembandingnya.
+2. Setiap profil di `profilLingkup` ditandai `generik` (SELF, UNIT, WILAYAH, ESELON_I, NASIONAL —
+   diterapkan plugin) atau `domain` (disusun kode aplikasi), dan profil domain tanpa argumen
+   menyebut `wilayahDasar`-nya.
+3. Sieve dikunci per kunci field (mis. `asesmen.sdm.catatanKondisiPegawai`). Dua aturan
+   `GET /monitor/unit/{unitId}` bertanda "terlihat untuk: kosong" digabung ke kunci yang sama:
+   karena Sieve hanya menghitung peran yang **memberi** permission endpoint (bagian 2.3), dan
+   `sigap:monitor:read` tidak diberikan SATGAS maupun PIMPINAN, field itu tetap selalu `null` di
+   endpoint tersebut. Dibuktikan oleh tes `Sieve_hanya_menghitung_peran_yang_memberi_permission_endpoint`.
 
-```json
-{
-  "aplikasi": "sigap",
-  "versiKebijakan": "2026-09-18",
-  "peran": {
-    "PEGAWAI":        { "grupSso": "sigap-pegawai" },
-    "SATGAS":         { "grupSso": "sigap-satgas" },
-    "PIMPINAN":       { "grupSso": "sigap-pimpinan" },
-    "PERWAKILAN":     { "grupSso": "sigap-perwakilan" },
-    "SUBKOORDINATOR": { "grupSso": "sigap-subkoordinator" },
-    "KOORDINATOR":    { "grupSso": "sigap-koordinator" },
-    "SEKJEN":         { "grupSso": "sigap-sekjen" },
-    "ADMIN":          { "grupSso": "sigap-admin" },
-    "PENGEMBANG":     { "grupSso": "sigap-pengembang", "fase": 2 },
-    "IMPL_RKB":       { "grupSso": "sigap-impl-rkb", "fase": 2 }
-  },
-  "profilLingkup": {
-    "SELF":     { "predikat": "{pemilik} = @penggunaId" },
-    "UNIT":     { "predikat": "{unit} = @unitId" },
-    "WILAYAH":  { "predikat": "{unit} IN (SELECT \"id\" FROM \"Unit\" WHERE \"provinsi\" = @provinsi)",     "bilaParameterKosong": "UNIT" },
-    "ESELON_I": { "predikat": "{unit} IN (SELECT \"id\" FROM \"Unit\" WHERE \"eselonIKey\" = @eselonIKey)", "bilaParameterKosong": "UNIT" },
-    "NASIONAL": { "predikat": null },
-    "SASARAN_SAYA": { "predikat": "b.\"selesaiPada\" IS NULL AND EXISTS (SELECT 1 FROM \"BroadcastSasaranUnit\" s WHERE s.\"broadcastId\" = b.\"id\" AND s.\"unitId\" = @unitId AND s.\"status\" = 'DISASAR')" },
-    "TERSENTUH":    { "predikat": "EXISTS (SELECT 1 FROM \"BroadcastSasaranUnit\" s WHERE s.\"broadcastId\" = b.\"id\" AND {profil atas s.\"unitId\"}) OR b.\"dikirimOlehId\" = @penggunaId" },
-    "IKUT_INDUK":   { "predikat": "baris induk lampiran terlihat menurut permission dan Scope induknya" }
-  },
-  "gabungMultiPeran": "OR atas profil peran yang memberi permission endpoint; peran lain diabaikan",
-  "permission": {
-    "sigap:safety-check:read":       { "PEGAWAI": { "GET /safety-check/aktif": "SASARAN_SAYA", "GET /safety-check/respons-saya": "SELF" } },
-    "sigap:safety-check:respond":    { "PEGAWAI": "SASARAN_SAYA" },
-    "sigap:safety-check:record":     { "SATGAS": "UNIT" },
-    "sigap:safety-check-rekap:read": { "PEGAWAI": "UNIT", "PIMPINAN": "UNIT", "SATGAS": "UNIT" },
-    "sigap:broadcast:trigger":       { "SATGAS": "UNIT", "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL" },
-    "sigap:broadcast:read":          { "SATGAS": "TERSENTUH(UNIT)", "PERWAKILAN": "TERSENTUH(WILAYAH)", "SUBKOORDINATOR": "TERSENTUH(ESELON_I)", "KOORDINATOR": "NASIONAL" },
-    "sigap:broadcast:close":         { "SATGAS": "PEMICU_ATAU_MENCAKUP", "PERWAKILAN": "PEMICU_ATAU_MENCAKUP", "SUBKOORDINATOR": "PEMICU_ATAU_MENCAKUP", "KOORDINATOR": "NASIONAL" },
-    "sigap:laporan:create":          { "PEGAWAI": "UNIT_SENDIRI" },
-    "sigap:laporan:read":            { "PEGAWAI": "SELF", "SATGAS": "UNIT" },
-    "sigap:laporan:verify":          { "SATGAS": "UNIT" },
-    "sigap:asesmen:create":          { "SATGAS": "UNIT_SENDIRI" },
-    "sigap:asesmen:update":          { "SATGAS": "UNIT" },
-    "sigap:asesmen:read":            { "SATGAS": "UNIT", "PIMPINAN": "UNIT", "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL", "SEKJEN": "NASIONAL" },
-    "sigap:asesmen:approve":         { "PIMPINAN": "UNIT" },
-    "sigap:tanggap-darurat:close":   { "PIMPINAN": "UNIT" },
-    "sigap:monitor:read":            { "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL", "SEKJEN": "NASIONAL" },
-    "sigap:layanan-kritis:read":     { "SATGAS": "UNIT", "PIMPINAN": "UNIT" },
-    "sigap:layanan-kritis:create":   { "SATGAS": "UNIT_SENDIRI" },
-    "sigap:referensi:read":          { "PEGAWAI": "UNIT", "SATGAS": "UNIT", "PIMPINAN": "UNIT", "PERWAKILAN": "WILAYAH", "SUBKOORDINATOR": "ESELON_I", "KOORDINATOR": "NASIONAL", "SEKJEN": "NASIONAL" },
-    "sigap:lampiran:read":           { "PEGAWAI": "IKUT_INDUK", "SATGAS": "IKUT_INDUK", "PIMPINAN": "IKUT_INDUK", "PERWAKILAN": "IKUT_INDUK", "SUBKOORDINATOR": "IKUT_INDUK", "KOORDINATOR": "IKUT_INDUK", "SEKJEN": "IKUT_INDUK" },
-    "sigap:lampiran:upload":         { "PEGAWAI": "SELF", "SATGAS": "UNIT" },
-    "sigap:notifikasi:read":         { "PEGAWAI": "SELF", "SATGAS": "SELF", "PIMPINAN": "SELF", "PERWAKILAN": "SELF", "SUBKOORDINATOR": "SELF", "KOORDINATOR": "SELF", "SEKJEN": "SELF" },
-    "sigap:notifikasi:subscribe":    { "PEGAWAI": "SELF", "SATGAS": "SELF", "PIMPINAN": "SELF", "PERWAKILAN": "SELF", "SUBKOORDINATOR": "SELF", "KOORDINATOR": "SELF", "SEKJEN": "SELF" }
-  },
-  "sieve": [
-    { "endpoint": "GET /safety-check/rekap", "field": "data[].lokasiTerakhir",                  "terlihatUntuk": ["SATGAS"] },
-    { "endpoint": "GET /safety-check/rekap", "field": "data[].keterangan",                      "terlihatUntuk": ["SATGAS", "PIMPINAN"] },
-    { "endpoint": "GET /safety-check/rekap", "field": "data[].dicatatOleh",                     "terlihatUntuk": ["SATGAS", "PIMPINAN"] },
-    { "endpoint": "GET /asesmen*",           "field": "aspek.sdm.catatanKondisiPegawai",        "terlihatUntuk": ["SATGAS", "PIMPINAN"] },
-    { "endpoint": "GET /asesmen*",           "field": "aspek.sdm.catatanTambahan",              "terlihatUntuk": ["SATGAS", "PIMPINAN"] },
-    { "endpoint": "GET /monitor/unit/{unitId}", "field": "asesmenTerkini.aspek.sdm.catatanKondisiPegawai", "terlihatUntuk": [] },
-    { "endpoint": "GET /monitor/unit/{unitId}", "field": "asesmenTerkini.aspek.sdm.catatanTambahan",       "terlihatUntuk": [] }
-  ]
-}
-```
-
-`UNIT_SENDIRI` = tulis selalu atas nama unit pemanggil (§2.4). `PEMICU_ATAU_MENCAKUP` =
+`UNIT_SENDIRI` = tulis selalu atas nama unit pemanggil (bagian 2.4). `PEMICU_ATAU_MENCAKUP` =
 pemicunya, atau lingkup pengakhir mencakup seluruh unit `DISASAR` broadcast.
 
 ---
 
 ## 8. Pertanyaan untuk BaTII terkait IAM
 
-Daftar lengkap ada di API_CONTRACT §9. Yang menyangkut dokumen ini:
+Daftar lengkap ada di API_CONTRACT bagian 9. Yang menyangkut dokumen ini:
 1. Apakah format `sigap:resource:action` sesuai konvensi platform? (Lampiran E #5)
-2. Cara mendaftarkan Scope dan Sieve: UI admin, berkas konfigurasi seperti §7, atau API?
+2. Cara mendaftarkan Scope dan Sieve: UI admin, berkas konfigurasi seperti bagian 7, atau API?
    (Lampiran E #6)
-3. Bagaimana `iam.plugin` menggabungkan Scope pengguna berperan ganda: OR seperti §2.3, atau
+3. Bagaimana `iam.plugin` menggabungkan Scope pengguna berperan ganda: OR seperti bagian 2.3, atau
    prioritas?
 4. Dapatkah Scope dinyatakan sebagai subquery, seperti profil `WILAYAH` dan `SASARAN_SAYA`,
    atau hanya kesamaan kolom?

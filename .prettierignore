@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.angular/
+package-lock.json
+
+# Folder aplikasi punya .prettierignore dan aturan sendiri.
+apps/
+libs/
+docs/
+infra/
+
+# Dokumen tulisan tangan.
+*.md
+docker-compose.yml

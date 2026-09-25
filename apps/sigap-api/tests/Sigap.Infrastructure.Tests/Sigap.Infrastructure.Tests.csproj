@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Sigap.Infrastructure/Sigap.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <!--
+    DDL yang asli, bukan salinan: SkemaTests membacanya langsung, sehingga model EF dan skema
+    di repo tidak dapat berpisah diam-diam.
+  -->
+  <ItemGroup>
+    <None Include="../../../../infra/skema/*.sql" LinkBase="skema" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Respons asli BMKG dan varian buatan tangan untuk tes penguraian. -->
+  <ItemGroup>
+    <None Include="Integrasi/Fikstur/*.json" LinkBase="Integrasi/Fikstur" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

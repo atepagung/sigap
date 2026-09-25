@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Layer terluar: controller tipis, perakitan DI, OpenAPI, middleware.
+    Tidak ada aturan bisnis di sini.
+
+    Dummy notifikasi hanya ikut pada konfigurasi Debug (aturan dummy #4) — build Release
+    tidak menyusunnya sama sekali, dan blok #if DEBUG di Program.cs ikut hilang.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Sigap.Api</RootNamespace>
+    <UserSecretsId>sigap-api</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Sigap.Application/Sigap.Application.csproj" />
+    <ProjectReference Include="../Sigap.Infrastructure/Sigap.Infrastructure.csproj" />
+    <ProjectReference Include="../../../../libs/notifikasi-dummy/src/Sigap.Notifikasi.Dummy/Sigap.Notifikasi.Dummy.csproj"
+                      Condition="'$(Configuration)' == 'Debug'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.12" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.10.0" />
+  </ItemGroup>
+
+  <!--
+    Kebijakan IAM yang asli, bukan salinan: satu-satunya berkasnya tetap di
+    apps/sigap-api/iam-policy.sigap.json dan hanya disalin ke folder keluaran.
+  -->
+  <ItemGroup>
+    <None Include="../../iam-policy.sigap.json" Link="iam-policy.sigap.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Sigap.Api.Tests" />
+  </ItemGroup>
+
+  <!--
+    Aturan dummy #4: tidak boleh naik ke production.
+
+    Penjaganya dipasang pada PUBLISH, bukan pada setiap build Release. Publish adalah
+    tindakan yang menghasilkan artefak siap pasang, jadi di situlah larangan ini berarti.
+    Menggagalkan setiap build Release justru akan membuat orang terbiasa melewatinya,
+    padahal saat ini belum ada satu pun jalur deploy.
+
+    Berlaku untuk seluruh dummy sekaligus — libs/iam-dummy hari ini, dan apa pun yang
+    ditambahkan kemudian. Pemeriksa yang lebih luas (seluruh solusi, di CI) menyusul di P6.2.
+  -->
+  <Target Name="LarangDummyDiPublish" BeforeTargets="PrepareForPublish" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <DummyTerpasang Include="@(ReferencePath)"
+                      Condition="$([System.String]::Copy('%(Filename)').Contains('Dummy'))" />
+    </ItemGroup>
+    <Error Condition="'@(DummyTerpasang)' != ''"
+           Code="SIGAP001"
+           Text="Publish dibatalkan: masih ada dummy yang ter-resolve — @(DummyTerpasang->'%(Filename)', ', '). Ganti ProjectReference dummy dengan paket platform yang asli lebih dulu (lihat DUMMY_REGISTRY.md bagian 7, Urutan penukaran)." />
+  </Target>
+
+</Project>

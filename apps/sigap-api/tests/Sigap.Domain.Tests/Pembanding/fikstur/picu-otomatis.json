@@ -1,0 +1,611 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/picu-otomatis.ts"
+  },
+  "kasus": {
+    "angkaMmi": [
+      {
+        "masukan": {
+          "mmi": ""
+        },
+        "keluaran": 0
+      },
+      {
+        "masukan": {
+          "mmi": "V"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "mmi": "II-III"
+        },
+        "keluaran": 3
+      },
+      {
+        "masukan": {
+          "mmi": "iv"
+        },
+        "keluaran": 4
+      },
+      {
+        "masukan": {
+          "mmi": " IV - V "
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "mmi": "X-II"
+        },
+        "keluaran": 10
+      },
+      {
+        "masukan": {
+          "mmi": "XIII"
+        },
+        "keluaran": 0
+      },
+      {
+        "masukan": {
+          "mmi": "IIII"
+        },
+        "keluaran": 0
+      },
+      {
+        "masukan": {
+          "mmi": "V-"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "mmi": "-"
+        },
+        "keluaran": 0
+      },
+      {
+        "masukan": {
+          "mmi": "VI-VII-IX"
+        },
+        "keluaran": 9
+      },
+      {
+        "masukan": {
+          "mmi": null
+        },
+        "keluaran": 0
+      }
+    ],
+    "romawiMmi": [
+      {
+        "masukan": {
+          "n": 0
+        },
+        "keluaran": "0"
+      },
+      {
+        "masukan": {
+          "n": 1
+        },
+        "keluaran": "I"
+      },
+      {
+        "masukan": {
+          "n": 2
+        },
+        "keluaran": "II"
+      },
+      {
+        "masukan": {
+          "n": 3
+        },
+        "keluaran": "III"
+      },
+      {
+        "masukan": {
+          "n": 4
+        },
+        "keluaran": "IV"
+      },
+      {
+        "masukan": {
+          "n": 5
+        },
+        "keluaran": "V"
+      },
+      {
+        "masukan": {
+          "n": 6
+        },
+        "keluaran": "VI"
+      },
+      {
+        "masukan": {
+          "n": 7
+        },
+        "keluaran": "VII"
+      },
+      {
+        "masukan": {
+          "n": 8
+        },
+        "keluaran": "VIII"
+      },
+      {
+        "masukan": {
+          "n": 9
+        },
+        "keluaran": "IX"
+      },
+      {
+        "masukan": {
+          "n": 10
+        },
+        "keluaran": "X"
+      },
+      {
+        "masukan": {
+          "n": 11
+        },
+        "keluaran": "XI"
+      },
+      {
+        "masukan": {
+          "n": 12
+        },
+        "keluaran": "XII"
+      },
+      {
+        "masukan": {
+          "n": 13
+        },
+        "keluaran": "13"
+      }
+    ],
+    "ARTI_MMI": [
+      {
+        "masukan": {},
+        "keluaran": {
+          "1": {
+            "guncangan": "Not felt",
+            "kerusakan": "None"
+          },
+          "2": {
+            "guncangan": "Weak",
+            "kerusakan": "None"
+          },
+          "3": {
+            "guncangan": "Weak",
+            "kerusakan": "None"
+          },
+          "4": {
+            "guncangan": "Light",
+            "kerusakan": "None"
+          },
+          "5": {
+            "guncangan": "Moderate",
+            "kerusakan": "Very Light"
+          },
+          "6": {
+            "guncangan": "Strong",
+            "kerusakan": "Light"
+          },
+          "7": {
+            "guncangan": "Very Strong",
+            "kerusakan": "Moderate"
+          },
+          "8": {
+            "guncangan": "Severe",
+            "kerusakan": "Moderate to Heavy"
+          },
+          "9": {
+            "guncangan": "Violent",
+            "kerusakan": "Heavy"
+          },
+          "10": {
+            "guncangan": "Extreme",
+            "kerusakan": "Very Heavy"
+          },
+          "11": {
+            "guncangan": "Extreme",
+            "kerusakan": "Very Heavy"
+          },
+          "12": {
+            "guncangan": "Extreme",
+            "kerusakan": "Very Heavy"
+          }
+        }
+      }
+    ],
+    "AMBANG_MMI": [
+      {
+        "masukan": {
+          "teks": null
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": ""
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": "5"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": "6"
+        },
+        "keluaran": 6
+      },
+      {
+        "masukan": {
+          "teks": " 6 "
+        },
+        "keluaran": 6
+      },
+      {
+        "masukan": {
+          "teks": "0"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": "13"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": "12"
+        },
+        "keluaran": 12
+      },
+      {
+        "masukan": {
+          "teks": "1"
+        },
+        "keluaran": 1
+      },
+      {
+        "masukan": {
+          "teks": "4.5"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": "6.0"
+        },
+        "keluaran": 6
+      },
+      {
+        "masukan": {
+          "teks": "abc"
+        },
+        "keluaran": 5
+      },
+      {
+        "masukan": {
+          "teks": "0x6"
+        },
+        "keluaran": 6
+      },
+      {
+        "masukan": {
+          "teks": "1e1"
+        },
+        "keluaran": 10
+      },
+      {
+        "masukan": {
+          "teks": "-3"
+        },
+        "keluaran": 5
+      }
+    ],
+    "PICU_OTOMATIS_AKTIF": [
+      {
+        "masukan": {
+          "teks": null
+        },
+        "keluaran": true
+      },
+      {
+        "masukan": {
+          "teks": "0"
+        },
+        "keluaran": false
+      },
+      {
+        "masukan": {
+          "teks": "1"
+        },
+        "keluaran": true
+      },
+      {
+        "masukan": {
+          "teks": ""
+        },
+        "keluaran": true
+      },
+      {
+        "masukan": {
+          "teks": "false"
+        },
+        "keluaran": true
+      },
+      {
+        "masukan": {
+          "teks": " 0"
+        },
+        "keluaran": true
+      }
+    ],
+    "periksaPicuOtomatis": [
+      {
+        "masukan": {
+          "nama": "tidak ada gempa dirasakan",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": null,
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "tidak-ada-data",
+          "keterangan": "Tidak ada gempa dirasakan pada data BMKG.",
+          "mmi": null,
+          "dibuat": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "di bawah ambang, \"v\" huruf kecil tidak terbaca",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "III-IV Cianjur, II-III Kota Sukabumi",
+              "shakemap": null
+            },
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "v Padang, II Garut",
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "di-bawah-ambang",
+          "keterangan": "Guncangan tertinggi yang tercatat baru MMI IV, belum mencapai ambang MMI V.",
+          "mmi": 4,
+          "dibuat": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "yang pertama melampaui ambang dipilih, bukan yang tertinggi",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "IV Padang",
+              "shakemap": null
+            },
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-17T21:00:00+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa di laut 40 km BaratDaya Kota Padang",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "V Kota Padang, IV Padang Pariaman",
+              "shakemap": null
+            },
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-17T20:00:00+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa di darat Kab. Jayawijaya",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "VII Jayapura",
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "dipicu",
+          "keterangan": "Safety check dinyalakan otomatis. Guncangan MMI V di Sumatera Barat.",
+          "mmi": 5,
+          "dibuat": {
+            "jenisBencana": "Gempa Bumi",
+            "kategoriBencana": "ALAM",
+            "pesan": "Gempa M 5.6 Pusat gempa di laut 40 km BaratDaya Kota Padang. Guncangan mencapai skala MMI V (Moderate, potensi kerusakan Very Light) di Kota Padang. Safety check dinyalakan otomatis dari data BMKG. Mohon konfirmasi kondisi Anda.",
+            "sumberKejadian": "bmkg:2026-09-17T21:00:00+00:00|Pusat gempa di laut 40 km BaratDaya Kota Padang",
+            "mmiTertinggi": 5
+          }
+        }
+      },
+      {
+        "masukan": {
+          "nama": "waktu kosong: penanda memakai tanggal dan jam",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "",
+              "magnitudo": "6.4",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa di darat 12 km Tenggara Kab. Jayawijaya",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "VI-VII Jayapura, V Wamena, III Sentani",
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "dipicu",
+          "keterangan": "Safety check dinyalakan otomatis. Guncangan MMI VII di Papua.",
+          "mmi": 7,
+          "dibuat": {
+            "jenisBencana": "Gempa Bumi",
+            "kategoriBencana": "ALAM",
+            "pesan": "Gempa M 6.4 Pusat gempa di darat 12 km Tenggara Kab. Jayawijaya. Guncangan mencapai skala MMI VII (Very Strong, potensi kerusakan Moderate) di Jayapura, Wamena. Safety check dinyalakan otomatis dari data BMKG. Mohon konfirmasi kondisi Anda.",
+            "sumberKejadian": "bmkg:18 Sep 2026 09:40:15 WIB|Pusat gempa di darat 12 km Tenggara Kab. Jayawijaya",
+            "mmiTertinggi": 7
+          }
+        }
+      },
+      {
+        "masukan": {
+          "nama": "MMI IX",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "IX Kab. Cianjur, VIII Kota Sukabumi",
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "dipicu",
+          "keterangan": "Safety check dinyalakan otomatis. Guncangan MMI IX di Jawa Barat.",
+          "mmi": 9,
+          "dibuat": {
+            "jenisBencana": "Gempa Bumi",
+            "kategoriBencana": "ALAM",
+            "pesan": "Gempa M 5.6 Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur. Guncangan mencapai skala MMI IX (Violent, potensi kerusakan Heavy) di Kab. Cianjur, Kota Sukabumi. Safety check dinyalakan otomatis dari data BMKG. Mohon konfirmasi kondisi Anda.",
+            "sumberKejadian": "bmkg:2026-09-18T02:40:15+00:00|Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+            "mmiTertinggi": 9
+          }
+        }
+      },
+      {
+        "masukan": {
+          "nama": "wilayah tidak dikenali",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "Pusat gempa berada di darat 10 km BaratLaut Kab. Cianjur",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "VI Kota Antah Berantah",
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "wilayah-tak-dikenali",
+          "keterangan": "Tidak ada kantor Kemenkeu yang dapat dikenali pada kota kota yang merasakan guncangan ini, sehingga sasaran broadcast tidak dapat ditentukan. Pemicuan manual tetap tersedia.",
+          "mmi": 6,
+          "dibuat": null
+        }
+      },
+      {
+        "masukan": {
+          "nama": "wilayah BMKG panjang: penanda dipotong 190 karakter",
+          "calon": [
+            {
+              "tanggal": "18 Sep 2026",
+              "jam": "09:40:15 WIB",
+              "waktu": "2026-09-18T02:40:15+00:00",
+              "magnitudo": "5.6",
+              "kedalaman": "10 km",
+              "wilayah": "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+              "lintang": "6.84 LS",
+              "bujur": "107.05 BT",
+              "koordinat": null,
+              "potensi": "Tidak berpotensi tsunami",
+              "dirasakan": "V Padang",
+              "shakemap": null
+            }
+          ]
+        },
+        "keluaran": {
+          "status": "dipicu",
+          "keterangan": "Safety check dinyalakan otomatis. Guncangan MMI V di Sumatera Barat.",
+          "mmi": 5,
+          "dibuat": {
+            "jenisBencana": "Gempa Bumi",
+            "kategoriBencana": "ALAM",
+            "pesan": "Gempa M 5.6 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww. Guncangan mencapai skala MMI V (Moderate, potensi kerusakan Very Light) di Padang. Safety check dinyalakan otomatis dari data BMKG. Mohon konfirmasi kondisi Anda.",
+            "sumberKejadian": "bmkg:2026-09-18T02:40:15+00:00|wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+            "mmiTertinggi": 5
+          }
+        }
+      }
+    ]
+  }
+}
