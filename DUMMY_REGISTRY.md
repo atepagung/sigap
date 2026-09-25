@@ -225,6 +225,8 @@ atau map SCSS?** Karena `@use 'index' as *` menyiratkan variabel SCSS, kami bera
 | 33 ★ | `KeuModalComponent` | `<keu-modal [open] [title] [wide] [dismissible] (closed)>` |
 | 34 ★ | `KeuTabsComponent` | `<keu-tabs>` |
 | 35 ★ | `KeuTabComponent` | `<keu-tab [label] [count]>` |
+| 104 ★ | `KeuPaginationComponent` (**dummy atas keputusan pemilik, 25 Sep 2026**) | `<keu-pagination [halaman] [ukuran] [total] (halamanBerubah)>`. Kontrak yang kita butuhkan: menerima tiga angka amplop koleksi API_CONTRACT 1.4 dan memberi tahu nomor halaman yang diminta; pemanggil yang memuat datanya. Dipakai di daftar asesmen, asesmen masuk, layanan, dan rekap safety check, yang sebelumnya diam-diam berhenti di halaman pertama |
+| 105 ★ | `KeuBarChartComponent` (**dummy atas keputusan pemilik, 25 Sep 2026**) | `<keu-bar-chart [data]="[{label, nilai}]" [judul]>`. Diagram batang mendatar dari HTML/CSS tanpa pustaka; nilai tiap batang tetap tertulis sebagai teks (terbaca pembaca layar). Dipakai untuk histogram `dashboard-aspek` (#33) |
 | 36 | Prefix selector `keu-` | Platform mungkin memakai `kmk-`, `ics-`, atau lainnya |
 | 37 | Komponen `standalone: true` | Perlu dipastikan versi Angular & gaya modul yang dipakai platform |
 | 38 | `@Input()`/`@Output()` klasik, bukan signal `input()`/`output()` | Kami pilih yang paling kompatibel lintas versi; sesuaikan kalau platform menetapkan versi Angular tertentu |
@@ -235,6 +237,11 @@ Supaya tidak menambah nama tebakan tanpa perlu, komponen berikut **tidak** dibua
 komponen Angular meski dipakai SIGAP — cukup class CSS:
 
 kartu statistik, header halaman, tabel, badge status, form field, tombol.
+
+> **Diperbarui 25 Sep 2026:** atas keputusan pemilik ("gunakan dummy terlebih dahulu jika perlu keputusan BaTII"),
+> paginasi dan diagram batang kini ada sebagai **dummy** `KeuPaginationComponent` dan `KeuBarChartComponent` di
+> `libs/keu-ui-dummy` (butir 104 dan 105 di tabel 2.7). Keduanya tetap tebakan; pertanyaan ★ di bawah **belum dijawab BaTII**
+> dan tetap harus ditanyakan. Bila katalog asli menyediakannya, cukup hapus dummy ini bersama alias paketnya.
 
 **Paginasi** juga belum dibuat, padahal di prototipe ia komponen yang paling sering dipakai ulang
 (31+ lokasi, lihat [COMPONENT_INVENTORY.md](COMPONENT_INVENTORY.md)). Pertanyaan ★ ke BaTII:
