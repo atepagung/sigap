@@ -36,8 +36,8 @@ data), ditarik 8% ke tengah supaya tidak nangkring di sudut kotak yang sering ka
 - **Bbox itu kotak kasar, bukan batas administratif presisi.** Untuk provinsi kepulauan (Maluku,
   NTT, Kepulauan Riau, dll.) sebagian titik bisa jatuh di laut dalam kotak itu. Cukup untuk
   "tersebar di wilayah provinsi yang sesuai" seperti diminta, tidak untuk presisi geografis.
-- **`unitId` dibiarkan `NULL` untuk semua baris.** Menautkan tiap gedung ke unit organisasi (OTK)
-  di luar cakupan permintaan ini dan butuh logika pencocokan tersendiri.
+- **`unitId` dibiarkan `NULL` oleh seeder ini.** Tautan ke unit dummy diisi terpisah oleh
+  `infra/organisasi-seed/kantor-vertikal-dummy.mjs` (DUMMY_REGISTRY bagian 9 butir 19).
 
 ## Verifikasi yang sudah dijalankan (18 Sep 2026)
 

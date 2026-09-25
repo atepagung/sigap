@@ -28,8 +28,25 @@ ganti lewat `--otk=<path>` atau variabel `OTK_BUNDLE`.
   diproyeksikan ke respons.
 - Unit OTK tidak punya `provinsi` maupun `kabkota` (OTK tidak memuatnya), jadi lingkup `WILAYAH` hanya menjangkau unit
   demo Riau, dan pemicu otomatis BMKG hanya menjangkau unit yang `kabkota`-nya terisi (kelima unit demo: `Kota Pekanbaru`). Mengisi provinsi untuk unit vertikal nyata butuh sumber lain (BMN/SIMAN) dan di luar cakupan.
-- `"KantorBmn"."unitId"` tetap `NULL` (lihat `infra/kantor-bmn-seed`).
+- `"KantorBmn"."unitId"` diisi skrip terpisah di bawah, bukan `seed.mjs`.
 - Tanpa perubahan struktur tabel.
+
+## Unit vertikal dummy (KPP/KPPN/KPPBC)
+
+Di platform asli data organisasi sudah sampai lokasi kantor dan ditarik lewat API; sementara ini
+`kantor-vertikal-dummy.mjs` membuat satu unit `isDemo = true` per `kodeSatker` di `"KantorBmn"`
+dan mengisi `"KantorBmn"."unitId"`. Jalankan setelah `seed.mjs` dan `kantor-bmn-seed`.
+Bawaannya **dry-run** (melaporkan saja); menulis butuh `--yes-development`. Aman dijalankan ulang.
+
+```bash
+node infra/organisasi-seed/kantor-vertikal-dummy.mjs                    # laporan
+node infra/organisasi-seed/kantor-vertikal-dummy.mjs --yes-development  # tulis
+```
+
+Hasil pada data dev (25 Sep 2026): 849 unit, 1.424 dari 1.431 gedung tertaut. Tujuh gedung dilewati
+(`kodeSatker`/`namaSatker`/`kabkota` kosong atau Eselon I tak dikenal) dan 44 satker tersebar di lebih
+dari satu kabupaten/kota, sehingga unitnya memakai kabupaten/kota terbanyak. Lihat DUMMY_REGISTRY
+bagian 9 butir 19.
 
 ## Penjaga "tidak pernah di production"
 
@@ -39,5 +56,5 @@ development yang dikenal, dan `--yes-development` wajib.
 ## Tes
 
 ```bash
-node --test infra/organisasi-seed/bangun.spec.mjs
+node --test infra/organisasi-seed/*.spec.mjs
 ```
