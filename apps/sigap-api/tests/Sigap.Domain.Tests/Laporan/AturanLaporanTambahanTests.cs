@@ -8,7 +8,7 @@ public class AturanLaporanTambahanTests
 {
     private static readonly string Bom = ((char)0xFEFF).ToString();
     private static readonly string Nel = ((char)0x85).ToString();
-    private static readonly string[] TipeDikenal = ["FOTO", "VIDEO", "AUDIO"];
+    private static readonly string[] TipeDikenal = ["FOTO", "VIDEO", "AUDIO", "DOKUMEN"];
 
     [Fact]
     public void Rapikan_memangkas_spasi_javascript_dan_menerima_null()
@@ -82,6 +82,9 @@ public class AturanLaporanTambahanTests
     [InlineData("audio/mp4", "AUDIO", ".m4a")]
     [InlineData("audio/ogg", "AUDIO", ".ogg")]
     [InlineData("audio/webm", "AUDIO", ".weba")]
+    [InlineData("application/pdf", "DOKUMEN", ".pdf")]
+    [InlineData("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "DOKUMEN", ".docx")]
+    [InlineData("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "DOKUMEN", ".xlsx")]
     public void Tipe_dan_ekstensi_penyimpanan(string mime, string tipe, string ekstensi)
     {
         Assert.Equal(tipe, AturanLampiran.TipeDari(mime));
@@ -103,5 +106,19 @@ public class AturanLaporanTambahanTests
     public void Ekstensi_tidak_pernah_mengambil_nama_berkas_kiriman()
     {
         Assert.Equal(".bin", AturanLampiran.EkstensiDari("../../etc/passwd"));
+    }
+
+    [Fact]
+    public void Asesmen_menerima_dokumen_tetapi_tetap_menolak_video_dan_audio()
+    {
+        // Keputusan pemilik 27 Sep 2026 (API_CONTRACT #9): dokumen ditambahkan ke kedua daftar,
+        // video/audio tetap khusus laporan.
+        Assert.All(
+            ["application/pdf",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+            tipe => Assert.Contains(tipe, AturanLampiran.TipeAsesmen));
+        Assert.DoesNotContain("video/mp4", AturanLampiran.TipeAsesmen);
+        Assert.DoesNotContain("audio/mpeg", AturanLampiran.TipeAsesmen);
     }
 }

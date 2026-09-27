@@ -42,11 +42,12 @@ public class LaporanPembandingTests
     }
 
     /// <summary>
-    /// Selisih disengaja (API_CONTRACT #8, bagian 6 butir 10): daftar tipe tertutup yang menerima
-    /// pesan suara. Hanya tipe ini yang boleh diputus berbeda dari prototipe.
+    /// Selisih disengaja (API_CONTRACT #8, #9, bagian 6 butir 10): daftar tipe tertutup yang menerima
+    /// pesan suara, dan (keputusan pemilik 27 Sep 2026) dokumen. Hanya tipe ini yang boleh diputus
+    /// berbeda dari prototipe.
     /// </summary>
     private static readonly HashSet<string> TipeBerbedaDariPrototipe =
-        new(StringComparer.Ordinal) { "image/gif", "video/webm", "audio/mpeg", "audio/webm" };
+        new(StringComparer.Ordinal) { "image/gif", "video/webm", "audio/mpeg", "audio/webm", "application/pdf" };
 
     [Theory]
     [MemberData(nameof(Lampiran))]
@@ -119,9 +120,11 @@ public class LaporanPembandingTests
     }
 
     [Fact]
-    public void Lampiran_asesmen_hanya_foto()
+    public void Lampiran_asesmen_foto_dan_dokumen_tetapi_bukan_video()
     {
         Assert.True(AturanLampiran.ValidasiAsesmen(1000, "image/png").Ok);
+        // Keputusan pemilik 27 Sep 2026 (API_CONTRACT #9): dokumen diterima di asesmen juga.
+        Assert.True(AturanLampiran.ValidasiAsesmen(1000, "application/pdf").Ok);
         Assert.Equal(KodeGalat.LampiranTipeDitolak, AturanLampiran.ValidasiAsesmen(1000, "video/mp4").Kode);
         Assert.Equal(KodeGalat.LampiranTerlaluBesar, AturanLampiran.ValidasiAsesmen(AturanLampiran.BatasBytes + 1, "video/mp4").Kode);
     }

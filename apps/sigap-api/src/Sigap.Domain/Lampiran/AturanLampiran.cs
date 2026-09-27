@@ -12,23 +12,33 @@ namespace Sigap.Domain.Lampiran;
 /// daftar tipe tertutup dan menerima AUDIO untuk laporan. Batas ukuran dan urutan pemeriksaannya
 /// (ukuran lebih dulu, lalu tipe) tetap sama dengan prototipe.
 /// </para>
+/// <para>
+/// <b>Keputusan pemilik 27 Sep 2026</b> (API_CONTRACT #9, dulu pertanyaan terbuka): dokumen
+/// (PDF, DOCX, XLSX) ditambahkan ke kedua daftar sebagai tipe <c>DOKUMEN</c>. Video dan pesan
+/// suara tetap hanya untuk laporan — UR menyebutnya eksplisit sebagai jenis lampiran laporan,
+/// dan foto kerusakan pada asesmen tidak berubah menjadi rekaman.
+/// </para>
 /// </summary>
 public static class AturanLampiran
 {
     /// <summary>Dijaga agar unggahan dari jaringan daerah tetap wajar.</summary>
     public const long BatasBytes = 10 * 1_048_576;
 
-    public static IReadOnlySet<string> TipeLaporan { get; } = new HashSet<string>(StringComparer.Ordinal)
-    {
-        "image/jpeg", "image/png", "video/mp4", "audio/mpeg", "audio/mp4", "audio/ogg", "audio/webm"
-    };
+    private static readonly string[] Dokumen =
+    [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ];
 
-    public static IReadOnlySet<string> TipeAsesmen { get; } = new HashSet<string>(StringComparer.Ordinal)
-    {
-        "image/jpeg", "image/png"
-    };
+    public static IReadOnlySet<string> TipeLaporan { get; } = new HashSet<string>(
+        ["image/jpeg", "image/png", "video/mp4", "audio/mpeg", "audio/mp4", "audio/ogg", "audio/webm", .. Dokumen],
+        StringComparer.Ordinal);
 
-    /// <summary>Kode tipe lampiran tersimpan (enum <c>"AttachmentType"</c>): <c>FOTO</c>, <c>VIDEO</c>, <c>AUDIO</c>.</summary>
+    public static IReadOnlySet<string> TipeAsesmen { get; } = new HashSet<string>(
+        ["image/jpeg", "image/png", .. Dokumen], StringComparer.Ordinal);
+
+    /// <summary>Kode tipe lampiran tersimpan (enum <c>"AttachmentType"</c>): <c>FOTO</c>, <c>VIDEO</c>, <c>AUDIO</c>, <c>DOKUMEN</c>.</summary>
     public static string TipeDari(string mimeType)
     {
         if (mimeType.StartsWith("image/", StringComparison.Ordinal))
@@ -36,7 +46,12 @@ public static class AturanLampiran
             return "FOTO";
         }
 
-        return mimeType.StartsWith("video/", StringComparison.Ordinal) ? "VIDEO" : "AUDIO";
+        if (mimeType.StartsWith("video/", StringComparison.Ordinal))
+        {
+            return "VIDEO";
+        }
+
+        return mimeType.StartsWith("audio/", StringComparison.Ordinal) ? "AUDIO" : "DOKUMEN";
     }
 
     /// <summary>
@@ -52,6 +67,9 @@ public static class AturanLampiran
         "audio/mp4" => ".m4a",
         "audio/ogg" => ".ogg",
         "audio/webm" => ".weba",
+        "application/pdf" => ".pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => ".docx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => ".xlsx",
         _ => ".bin"
     };
 
