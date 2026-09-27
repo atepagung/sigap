@@ -68,6 +68,7 @@ internal static class KamusKodeLaporan
         "FOTO" => AttachmentType.Foto,
         "VIDEO" => AttachmentType.Video,
         "AUDIO" => AttachmentType.Audio,
+        "DOKUMEN" => AttachmentType.Dokumen,
         _ => throw new ArgumentOutOfRangeException(nameof(kode), kode, "Kode tipe lampiran tidak dikenal.")
     };
 }

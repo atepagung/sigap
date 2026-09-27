@@ -1,3 +1,4 @@
+using Amazon.S3;
 using Kemenkeu.Iam;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -67,16 +68,6 @@ public static class InfrastructureServiceCollectionExtensions
                 $"setel environment variable ConnectionStrings__{NamaKoneksi} dari vault.");
         }
 
-        // Sama seperti connection string: tanpa folder lampiran proses menolak mulai, bukan gagal
-        // saat unggahan pertama. Di production nilainya menunjuk volume yang bertahan antar restart.
-        var folderLampiran = configuration[KunciFolderLampiran];
-        if (string.IsNullOrWhiteSpace(folderLampiran))
-        {
-            throw new InvalidOperationException(
-                $"{KunciFolderLampiran} belum diisi. Di development nilainya ada di appsettings.Development.json; " +
-                "di lingkungan lain setel environment variable Lampiran__Folder ke volume yang bertahan antar restart.");
-        }
-
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<PengisiUpdatedAt>();
 
@@ -103,10 +94,59 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<ISafetyCheckStore, SafetyCheckStore>();
         services.AddScoped<IMonitorStore, MonitorStore>();
         services.AddScoped<INotifikasiStore, NotifikasiStore>();
-        services.AddSingleton<IPenyimpanLampiran>(_ => new PenyimpanLampiranDisk(folderLampiran));
+        services.AddPenyimpanLampiran(configuration);
 
         // Pemicu Safety Check otomatis dari BMKG (P5.1): mati bawaan, dinyalakan lewat Bmkg:Aktif.
         services.AddBmkg(configuration);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Penyimpanan lampiran (P5.2): <c>Lampiran:Driver</c> = <c>disk</c> (bawaan) atau <c>s3</c>
+    /// (object storage berprotokol S3 — MinIO lokal, atau layanan lain yang disediakan BaTII).
+    /// Sama seperti connection string: konfigurasi yang wajib bagi driver terpilih tetapi kosong
+    /// menggagalkan proses saat mulai, bukan saat unggahan pertama.
+    /// </summary>
+    private static IServiceCollection AddPenyimpanLampiran(this IServiceCollection services, IConfiguration configuration)
+    {
+        var opsi = configuration.GetSection(LampiranOptions.Bagian).Get<LampiranOptions>() ?? new LampiranOptions();
+
+        switch (opsi.Driver.ToLowerInvariant())
+        {
+            case LampiranOptions.DriverS3:
+                if (string.IsNullOrWhiteSpace(opsi.S3.Endpoint)
+                    || string.IsNullOrWhiteSpace(opsi.S3.AccessKey)
+                    || string.IsNullOrWhiteSpace(opsi.S3.SecretKey))
+                {
+                    throw new InvalidOperationException(
+                        "Lampiran:Driver = s3 tetapi Lampiran:S3:Endpoint/AccessKey/SecretKey belum lengkap. Di " +
+                        "development nilainya ada di appsettings.Development.json (mengikuti docker-compose.yml, " +
+                        "MinIO lokal); di lingkungan lain setel Lampiran__S3__AccessKey dan " +
+                        "Lampiran__S3__SecretKey dari vault.");
+                }
+
+                services.AddSingleton<IAmazonS3>(_ => PenyimpanLampiranS3.BuatKlien(opsi.S3));
+                services.AddSingleton<IPenyimpanLampiran>(sp =>
+                    new PenyimpanLampiranS3(sp.GetRequiredService<IAmazonS3>(), opsi.S3.Bucket));
+                break;
+
+            case LampiranOptions.DriverDisk:
+                if (string.IsNullOrWhiteSpace(opsi.Folder))
+                {
+                    throw new InvalidOperationException(
+                        $"{KunciFolderLampiran} belum diisi. Di development nilainya ada di appsettings.Development.json; " +
+                        "di lingkungan lain setel environment variable Lampiran__Folder ke volume yang bertahan antar restart.");
+                }
+
+                services.AddSingleton<IPenyimpanLampiran>(_ => new PenyimpanLampiranDisk(opsi.Folder));
+                break;
+
+            default:
+                throw new InvalidOperationException(
+                    $"Lampiran:Driver '{opsi.Driver}' tidak dikenal. Nilai yang sah: " +
+                    $"'{LampiranOptions.DriverDisk}' atau '{LampiranOptions.DriverS3}'.");
+        }
 
         return services;
     }
