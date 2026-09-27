@@ -75,6 +75,9 @@ public sealed class LampiranTests(AplikasiUjiDb app) : TesEndpoint(app)
     [InlineData("audio/mp4", "AUDIO")]
     [InlineData("audio/ogg", "AUDIO")]
     [InlineData("audio/webm", "AUDIO")]
+    [InlineData("application/pdf", "DOKUMEN")]
+    [InlineData("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "DOKUMEN")]
+    [InlineData("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "DOKUMEN")]
     public async Task Tipe_yang_diizinkan_kontrak_termasuk_pesan_suara(string tipe, string kodeTipe)
     {
         string laporan = await BuatLaporanAsync(Data.PegawaiA1);
@@ -87,13 +90,14 @@ public sealed class LampiranTests(AplikasiUjiDb app) : TesEndpoint(app)
 
     [TeoriDb]
     [InlineData("text/plain")]
-    [InlineData("application/pdf")]
+    [InlineData("application/zip")]
     [InlineData("image/gif")]
     [InlineData("image/webp")]
     [InlineData("video/webm")]
     [InlineData("text/html")]
     [InlineData("IMAGE/JPEG")]
     [InlineData("application/octet-stream")]
+    [InlineData("application/msword")]
     public async Task Tipe_di_luar_daftar_ditolak_415_dan_tidak_menyimpan_apa_pun(string tipe)
     {
         string laporan = await BuatLaporanAsync(Data.PegawaiA1);

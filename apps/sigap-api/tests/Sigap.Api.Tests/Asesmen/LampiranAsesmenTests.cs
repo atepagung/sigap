@@ -23,9 +23,12 @@ public sealed class LampiranAsesmenTests(AplikasiUjiDb app) : TesAsesmen(app)
         HitungAsync("""SELECT count(*) FROM "Attachment" WHERE "damageAssessmentId" = @id""", ("id", id));
 
     [TeoriDb]
-    [InlineData("image/jpeg")]
-    [InlineData("image/png")]
-    public async Task Satgas_menambah_foto_ke_versi_asesmen_unitnya(string tipe)
+    [InlineData("image/jpeg", "FOTO")]
+    [InlineData("image/png", "FOTO")]
+    [InlineData("application/pdf", "DOKUMEN")]
+    [InlineData("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "DOKUMEN")]
+    [InlineData("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "DOKUMEN")]
+    public async Task Satgas_menambah_foto_atau_dokumen_ke_versi_asesmen_unitnya(string tipe, string kodeTipe)
     {
         var l = await LingkunganBaruAsync();
         string id = await KirimSahAsync(l.Satgas);
@@ -35,7 +38,7 @@ public sealed class LampiranAsesmenTests(AplikasiUjiDb app) : TesAsesmen(app)
 
         Assert.Equal(HttpStatusCode.Created, respons.StatusCode);
         Assert.Equal(tipe, isi.Teks("mimeType"));
-        Assert.Equal("FOTO", isi.Teks("tipe"));
+        Assert.Equal(kodeTipe, isi.Teks("tipe"));
         Assert.Equal(isiBerkas.Length.ToString(System.Globalization.CultureInfo.InvariantCulture), isi.Teks("ukuranBytes"));
         Assert.Equal($"/api/v1/lampiran/{isi.Teks("id")}", isi.Teks("url"));
         Assert.Equal($"/api/v1/lampiran/{isi.Teks("id")}", respons.Headers.Location?.OriginalString);
@@ -105,11 +108,11 @@ public sealed class LampiranAsesmenTests(AplikasiUjiDb app) : TesAsesmen(app)
     }
 
     [TeoriDb]
-    [InlineData("application/pdf")]
     [InlineData("video/mp4")]
     [InlineData("audio/mpeg")]
     [InlineData("text/html")]
-    public async Task Hanya_JPEG_dan_PNG_yang_diterima_untuk_asesmen(string tipe)
+    [InlineData("application/zip")]
+    public async Task Video_dan_audio_ditolak_untuk_asesmen(string tipe)
     {
         var l = await LingkunganBaruAsync();
         string id = await KirimSahAsync(l.Satgas);
