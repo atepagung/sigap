@@ -58,7 +58,7 @@ Koordinator MKB, Sekretaris Jenderal, Administrator (tanpa permission bisnis). D
 Bencana (Satgas wajib approve/reject) → Asesmen Dampak Bencana & aktivasi Tanggap Darurat
 (5 aspek: SDM, Aset, TIK, Arsip, Layanan).
 
-**Kontrak yang mengikat:** [API_CONTRACT.md](API_CONTRACT.md) (47 endpoint),
+**Kontrak yang mengikat:** [API_CONTRACT.md](API_CONTRACT.md) (48 endpoint),
 [PERMISSION_MAP.md](PERMISSION_MAP.md) (23 permission). Bila prototipe berbeda dari kontrak,
 **kontrak menang** (API_CONTRACT bagian 6, 12 selisih yang disengaja). Koreksi stakeholder lebih
 baru daripada mockup HTML — [MIGRATION_NOTES.md](MIGRATION_NOTES.md) bagian 2.

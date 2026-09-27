@@ -383,6 +383,11 @@ adalah yang asli. Akun uji ada di `Basisdata/DatabaseUji.cs` (`Data`), NIP-nya d
 | `Bmkg:AmbangMmi` | Kosong atau di luar 1–12 = MMI V (aturan prototipe `AmbangDariTeks`) |
 | `Bmkg:JendelaMenit` / `IntervalMenit` | Bawaan 180 / 5. Gempa yang lebih tua dari jendela tidak memicu; batas BMKG 60 permintaan per menit per IP, satu putaran memakai dua |
 | `Bmkg:UrlAutogempa`, `UrlGempaDirasakan`, `UrlDasarGambar`, `TimeoutDetik` | Bawaan data terbuka BMKG; diganti hanya untuk peragaan lewat server lokal |
+| `Bmkg:BatasPermintaanPerMenit` | Bawaan 50. Plafon permintaan per menit dari proses ini ke **seluruh** host BMKG (gempa + CAP bersama, `PembatasLajuBmkg`, jendela geser); batas BMKG 60/menit per IP. Bagi dengan jumlah replika bila replika keluar lewat satu IP |
+| `InfoBencana:Aktif` | Pemantau info bencana #48 (CAP cuaca BMKG + rekap BNPB, plus gempa BMKG bila `Bmkg:Aktif` mati). **Menyala di `appsettings.json`**: hanya membaca data publik ke cache, tidak memberi tahu siapa pun. Tes mematikannya |
+| `InfoBencana:IntervalMenit` / `TimeoutDetik` / `MaksPeringatanCuaca` | Bawaan 5 / 10 / 30. Berkas CAP yang sudah terbaca utuh dipakai ulang, jadi putaran biasa = satu permintaan RSS |
+| `InfoBencana:UrlCapRss`, `UrlDasarCap` | RSS peringatan dini cuaca dan awalan wajib tautan CAP (tautan lain di RSS tidak diikuti) |
+| `InfoBencana:UrlDasarBnpb`, `ResourceIdRekapBnpb` | API CKAN `data.bnpb.go.id`. Id sumber daya = kompilasi tahunan BNPB (bawaan 2025); **ganti saat kompilasi tahun berikutnya terbit** |
 
 ### Pemicu otomatis BMKG (P5.1, putaran 1)
 
@@ -409,10 +414,22 @@ ON CONFLICT ("nip") DO NOTHING;
 
 **Data BMKG** dipakai sesuai ketentuan data terbuka mereka: sumber wajib disebut (teks pesan broadcast menyebut "data BMKG").
 
+### Info bencana terkini #48 (P5.1, putaran 4)
+
+`PemantauInfoBencana` (worker, `InfoBencana:Aktif`) mengisi cadangan Redis tiap 5 menit, tiap sumber berdiri sendiri:
+**CAP** `sigap:bmkg:cap` (`KlienCap`: RSS nowcast lalu berkas CAP 1.2 per peringatan, XML tanpa DTD dan dibatasi ukurannya;
+berkas yang gagal dibaca tampil dari RSS saja tanpa kedaluwarsa), **BNPB** `sigap:bnpb:rekap` (`KlienBnpb`: CKAN `resource_show`
++ `datastore_search`; baris "Total" BNPB dipisah; rekap tanpa baris dianggap gagal), dan **gempa** `sigap:bmkg:{sumber}` hanya
+bila pemicu otomatis mati (bila menyala `PemantauBmkg` sudah membacanya). Sumber yang gagal dicatat terstruktur
+(`Sumber`, `Kapan` cadangan yang dipakai, galat) dan cadangan lama dibiarkan. `GET /info-bencana` (`sigap:referensi:read`,
+tanpa Scope) hanya membaca cadangan, membuang peringatan cuaca kedaluwarsa, dan selalu menyertakan **`atribusi`** BMKG dan
+BNPB (ODC-By) yang wajib tampil di layar. Seluruh permintaan ke BMKG lewat satu `PembatasLajuBmkg`. Fikstur asli 27 Sep 2026
+di `tests/Sigap.Infrastructure.Tests/Integrasi/Fikstur`. Asumsi: DUMMY_REGISTRY bagian 9 butir 21.
+
 ## Keadaan sekarang
 
 Yang sudah berjalan: perakitan, keamanan, galat, OpenAPI, `GET /me/konteks` (#36), pemetaan
-33 tabel, health check `ready` yang benar-benar memeriksa database (200 / 503), dan **seluruh 47
+33 tabel, health check `ready` yang benar-benar memeriksa database (200 / 503), dan **seluruh 48
 endpoint kontrak** (Laporan/Lampiran/Verifikasi, Referensi, Asesmen/Layanan Kritis/Tanggap Darurat,
 Broadcast/Trigger Safety Check, Safety Check/SOS, Monitor SC & Sumber Daya, Notifikasi; tabel di atas).
 
@@ -430,6 +447,6 @@ Broadcast/Trigger Safety Check, Safety Check/SOS, Monitor SC & Sumber Daya, Noti
   /notifikasi/langganan` menulis `"LanggananPush"` lewat `INotifikasiStore` sendiri — belum menyentuh
   jalur pengiriman. Implementasi EF Core sungguhan untuk kedua port itu (P4.2 lama, belum dikerjakan)
   masih perlu dibangun sebelum aturan dummy #4 benar-benar tuntas untuk domain ini.
-- **Seluruh 47 endpoint kontrak sudah dibangun.** Yang tersisa bukan endpoint baru, melainkan pekerjaan
+- **Seluruh 48 endpoint kontrak sudah dibangun** (#48 info bencana ditambahkan 27 Sep 2026). Yang tersisa bukan endpoint baru, melainkan pekerjaan
   lanjutan yang sudah tercatat: pengisian data organisasi (`"User"`/`"Unit"`), pengiriman push sungguhan
   (poin di atas), dan butir terbuka di ACCESS_RULES/KANDIDAT_SCOPE_SIEVE (V1, V4, A9, A11).
