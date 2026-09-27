@@ -18,7 +18,7 @@ public static class ApplicationServiceCollectionExtensions
     /// Mendaftarkan seluruh use case.
     ///
     /// <para>
-    /// Satu kelas per tindakan, didaftarkan biasa — tanpa mediator. Untuk 47 endpoint,
+    /// Satu kelas per tindakan, didaftarkan biasa — tanpa mediator. Untuk 48 endpoint,
     /// lapisan tak langsung tambahan lebih banyak menyembunyikan alur daripada menolong,
     /// dan MediatR kini berlisensi komersial sehingga menambah pertanyaan pengadaan.
     /// Perilaku lintas permintaan yang biasanya dititipkan ke pipeline behaviour sudah
@@ -78,6 +78,9 @@ public static class ApplicationServiceCollectionExtensions
         // ── Notifikasi (#43–#45) ──
         services.AddScoped<BacaPeringatan>();
         services.AddScoped<KelolaLangganan>();
+
+        // ── Info bencana terkini BMKG/BNPB (#48) ──
+        services.AddScoped<BacaInfoBencana>();
 
         return services;
     }

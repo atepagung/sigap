@@ -6,14 +6,26 @@ namespace Sigap.Application.Integrasi;
 
 /// <summary>
 /// Cadangan hasil terakhir yang sah dari BMKG (isi ditulis klien BMKG). Dibaca #43 untuk peringatan
-/// "gempa kuat tanpa kantor" tanpa menghubungi BMKG pada setiap permintaan. Kosong bila pemicu otomatis
-/// mati atau belum sempat berjalan.
+/// "gempa kuat tanpa kantor" dan #48 (info bencana terkini) tanpa menghubungi BMKG pada setiap permintaan.
+/// Kosong bila belum ada pemantau yang sempat membaca BMKG.
 /// </summary>
 public interface ICadanganGempa
 {
     /// <summary>Gempa terbaru lebih dulu, lalu gempa dirasakan, seperti <see cref="IKlienBmkg"/>.</summary>
     Task<IReadOnlyList<Gempa>> TerakhirAsync(CancellationToken ct);
+
+    /// <summary>Kedua sumber gempa terpisah, masing-masing dengan saat terakhir berhasil dibaca.</summary>
+    Task<GempaTerkini> TerkiniAsync(CancellationToken ct);
 }
+
+/// <summary>
+/// <paramref name="Terbaru"/> dari <c>autogempa.json</c> (satu kejadian), <paramref name="Dirasakan"/> dari
+/// <c>gempadirasakan.json</c>; <c>null</c> bila sumbernya belum pernah berhasil dibaca.
+/// </summary>
+public sealed record GempaTerkini(Tersimpan<IReadOnlyList<Gempa>>? Terbaru, Tersimpan<IReadOnlyList<Gempa>>? Dirasakan);
+
+/// <summary>Data publik dari sumber luar beserta saat terakhir berhasil dibaca dari sumbernya.</summary>
+public sealed record Tersimpan<T>(T Data, DateTimeOffset Kapan);
 
 /// <summary>
 /// Satu gempa ber-MMI di atas ambang dan penilaiannya. <see cref="Status"/> memakai <see cref="StatusKejadian"/>
