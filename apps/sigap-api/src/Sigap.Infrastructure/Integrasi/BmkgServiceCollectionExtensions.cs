@@ -9,7 +9,7 @@ namespace Sigap.Infrastructure.Integrasi;
 internal static class BmkgServiceCollectionExtensions
 {
     /// <summary>
-    /// Klien BMKG, worker terjadwal, dan pengaturan pemicu otomatis (P5.1). Dipanggil dari
+    /// Klien BMKG, worker terjadwal, pengaturan pemicu otomatis, dan pemantau info bencana BMKG/BNPB (P5.1). Dipanggil dari
     /// <c>AddSigapInfrastructure</c>. Bila <c>Bmkg:Aktif</c> menyala tanpa <c>Bmkg:NipLayanan</c>, proses
     /// menolak mulai daripada diam-diam tidak memicu apa pun saat gempa sungguhan.
     /// </summary>
@@ -37,9 +37,32 @@ internal static class BmkgServiceCollectionExtensions
                 TimeSpan.FromMinutes(Math.Max(1, o.JendelaMenit)),
                 o.NipLayanan);
         });
-        services.AddHttpClient<IKlienBmkg, KlienBmkg>(klien => klien.DefaultRequestHeaders.UserAgent.ParseAdd("SIGAP-MKB/1.0 (Kemenkeu)"));
+
+        // Satu pembatas untuk seluruh host BMKG: batasnya per IP, bukan per endpoint.
+        services.AddKeyedSingleton(PembatasLajuBmkg.Kunci, (_, _) => PembatasLajuBmkg.Buat(awal.BatasPermintaanPerMenit));
+        services.AddTransient<PembatasLajuBmkg>();
+
+        services.AddHttpClient<IKlienBmkg, KlienBmkg>(AturKlien).AddHttpMessageHandler<PembatasLajuBmkg>();
         services.AddHostedService<PemantauBmkg>();
+
+        // Info bencana terkini (#48): peringatan dini cuaca BMKG (CAP) dan rekap BNPB, cadangan yang sama.
+        services.AddOptions<InfoBencanaOptions>().Bind(configuration.GetSection(InfoBencanaOptions.Bagian));
+        services.AddSingleton<CadanganInfoBencana>();
+        services.AddSingleton<ICadanganInfoBencana>(sp => sp.GetRequiredService<CadanganInfoBencana>());
+        services.AddHttpClient<KlienCap>(AturKlien).AddHttpMessageHandler<PembatasLajuBmkg>();
+        services.AddHttpClient<KlienBnpb>(AturKlien);
+        services.AddHostedService<PemantauInfoBencana>();
         return services;
+    }
+
+    /// <summary>
+    /// Respons BMKG/BNPB terbesar yang wajar adalah berkas CAP berpoligon (puluhan KB); plafon 4 MB mencegah sumber
+    /// luar yang rusak atau disusupi menghabiskan memori proses.
+    /// </summary>
+    private static void AturKlien(HttpClient klien)
+    {
+        klien.DefaultRequestHeaders.UserAgent.ParseAdd("SIGAP-MKB/1.0 (Kemenkeu)");
+        klien.MaxResponseContentBufferSize = 4 * 1024 * 1024;
     }
 
     /// <summary>

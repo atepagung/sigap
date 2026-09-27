@@ -22,6 +22,13 @@ public sealed class BmkgOptions
     /// <summary>Jeda antarputaran. Batas BMKG 60 permintaan per menit per IP; satu putaran memakai dua.</summary>
     public int IntervalMenit { get; set; } = 5;
 
+    /// <summary>
+    /// Plafon permintaan per menit dari proses ini ke seluruh host BMKG (gempa dan CAP bersama), ditegakkan
+    /// <see cref="PembatasLajuBmkg"/>. Di bawah batas BMKG (60 per menit per IP) untuk memberi ruang selisih jam
+    /// dan permintaan ulang jaringan.
+    /// </summary>
+    public int BatasPermintaanPerMenit { get; set; } = 50;
+
     /// <summary>NIP akun layanan pengirim broadcast otomatis (ACCESS_RULES A11).</summary>
     public string NipLayanan { get; set; } = string.Empty;
 
