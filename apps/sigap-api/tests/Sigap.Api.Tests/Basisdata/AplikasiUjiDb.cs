@@ -38,6 +38,9 @@ public sealed class AplikasiUjiDb : AplikasiUji, IAsyncLifetime
     /// </summary>
     public CadanganGempaUji CadanganGempa { get; } = new();
 
+    /// <summary>Cadangan CAP/BNPB yang dibaca #48. Kosong bawaan.</summary>
+    public CadanganInfoBencanaUji CadanganInfoBencana { get; } = new();
+
     /// <summary>
     /// Pengaturan pemicu otomatis yang dilihat use case. Worker tetap mati: ia membaca <c>Bmkg:Aktif</c> dari
     /// konfigurasi (false), bukan dari sini.
@@ -131,6 +134,8 @@ public sealed class AplikasiUjiDb : AplikasiUji, IAsyncLifetime
 
             services.RemoveAll<ICadanganGempa>();
             services.AddSingleton<ICadanganGempa>(CadanganGempa);
+            services.RemoveAll<ICadanganInfoBencana>();
+            services.AddSingleton<ICadanganInfoBencana>(CadanganInfoBencana);
             services.RemoveAll<OpsiPicuOtomatis>();
             services.AddScoped(_ => OpsiBmkg);
 
@@ -208,9 +213,27 @@ internal sealed class LampiranStoreUji(AplikasiUjiDb app, ILampiranStore dalam) 
 }
 public sealed class CadanganGempaUji : ICadanganGempa
 {
+    /// <summary>Yang dibaca #43.</summary>
     public IReadOnlyList<Gempa> Isi { get; set; } = [];
 
+    /// <summary>Yang dibaca #48; kosong (belum pernah terbaca) bawaan.</summary>
+    public GempaTerkini Terkini { get; set; } = new(null, null);
+
     public Task<IReadOnlyList<Gempa>> TerakhirAsync(CancellationToken ct) => Task.FromResult(Isi);
+
+    public Task<GempaTerkini> TerkiniAsync(CancellationToken ct) => Task.FromResult(Terkini);
+}
+
+/// <summary>Cadangan CAP/BNPB yang dibaca #48; kosong bawaan. Tes yang mengisinya wajib mengosongkannya lagi.</summary>
+public sealed class CadanganInfoBencanaUji : ICadanganInfoBencana
+{
+    public Tersimpan<IReadOnlyList<PeringatanCuaca>>? Cuaca { get; set; }
+
+    public Tersimpan<RekapBencana>? RekapBnpb { get; set; }
+
+    public Task<Tersimpan<IReadOnlyList<PeringatanCuaca>>?> CuacaAsync(CancellationToken ct) => Task.FromResult(Cuaca);
+
+    public Task<Tersimpan<RekapBencana>?> RekapBnpbAsync(CancellationToken ct) => Task.FromResult(RekapBnpb);
 }
 
 /// <summary>Meneruskan ke identitas asli, kecuali <see cref="AplikasiUjiDb.AkunSementara"/> terisi.</summary>

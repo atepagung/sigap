@@ -70,6 +70,9 @@ public class AplikasiUji : WebApplicationFactory<Program>
                 // Wajib ada supaya host mau dirakit; tes di sini tidak pernah membukanya.
                 ["ConnectionStrings:Sigap"] = "Host=localhost;Port=5433;Database=sigap_dev;Username=sigap_app;Password=sigap_password",
 
+                // appsettings.json menyalakannya; tes tidak boleh menghubungi BMKG/BNPB sungguhan.
+                ["InfoBencana:Aktif"] = "false",
+
                 // Kanal notifikasi paling sederhana yang lolos pemeriksaan awal.
                 ["Notifikasi:Kanal:0"] = "dalam-aplikasi",
                 ["Notifikasi:Kanal:1"] = null,

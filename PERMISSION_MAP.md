@@ -140,7 +140,7 @@ dan tidak dihitung sebagai tulis bisnis (lihat bagian 5.3).
 | 16 | `sigap:monitor:read` | baca | #30–#35 | PERWAKILAN `WILAYAH`; SUBKOORDINATOR `ESELON_I`; KOORDINATOR, SEKJEN `NASIONAL` |
 | 17 | `sigap:layanan-kritis:read` | baca | #19 | SATGAS, PIMPINAN → `UNIT` |
 | 18 | `sigap:layanan-kritis:create` | tulis | #20 | SATGAS → atas nama unit sendiri |
-| 19 | `sigap:referensi:read` | baca | #37–#42 | tujuh peran matriks. #37–#38 tanpa Scope. #39–#42: PEGAWAI, SATGAS, PIMPINAN `UNIT`; PERWAKILAN `WILAYAH`; SUBKOORDINATOR `ESELON_I`; KOORDINATOR, SEKJEN `NASIONAL` |
+| 19 | `sigap:referensi:read` | baca | #37–#42, #48 | tujuh peran matriks. #37–#38 dan #48 (info bencana BMKG/BNPB, data publik) tanpa Scope. #39–#42: PEGAWAI, SATGAS, PIMPINAN `UNIT`; PERWAKILAN `WILAYAH`; SUBKOORDINATOR `ESELON_I`; KOORDINATOR, SEKJEN `NASIONAL` |
 | 20 | `sigap:lampiran:read` | baca | #11 | PEGAWAI, SATGAS, PIMPINAN, PERWAKILAN, SUBKOORDINATOR, KOORDINATOR, SEKJEN → `IKUT_INDUK` |
 | 21 | `sigap:lampiran:upload` | tulis | #8, #23 | PEGAWAI → #8 `SELF` (laporan `MENUNGGU`); SATGAS → #23 `UNIT` |
 | 22 | `sigap:notifikasi:read` | baca | #43 | tujuh peran matriks; isi dihitung menurut peran & Scope masing-masing |

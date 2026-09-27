@@ -73,10 +73,11 @@ public sealed class OpenApiTests(AplikasiUji aplikasi) : IClassFixture<AplikasiU
     }
 
     [Fact]
-    public void Kontrak_memuat_47_endpoint()
+    public void Kontrak_memuat_48_endpoint()
     {
         // Kalau angka ini berubah, API_CONTRACT berubah — dan itu keputusan, bukan kecelakaan.
-        Assert.Equal(47, KontrakApi.Semua.Count);
+        // 47 → 48: #48 info bencana BMKG/BNPB, keputusan pemilik 27 Sep 2026.
+        Assert.Equal(48, KontrakApi.Semua.Count);
     }
 
     [Fact]

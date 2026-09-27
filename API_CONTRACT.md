@@ -104,7 +104,7 @@ ditangani aturan bisnis yang sama dengan prototipe:
 
 ---
 
-## 2. Daftar endpoint (47)
+## 2. Daftar endpoint (48)
 
 | # | Method & path | Kode matriks | Permission |
 |---|---|---|---|
@@ -162,10 +162,12 @@ ditangani aturan bisnis yang sama dengan prototipe:
 | 45 | `DELETE /notifikasi/langganan` | — | `sigap:notifikasi:subscribe` |
 | 46 | `GET /health/live` | — | publik |
 | 47 | `GET /health/ready` | — | publik |
+| 48 | `GET /info-bencana` | *di luar matriks* (menu "Info Bencana Terkini" prototipe) | `sigap:referensi:read` |
 
 Kebutuhan Teknis memperkirakan 60–80 endpoint. Angka itu mencakup seluruh sistem termasuk
 Fase 2 (enam modul dokumen MKB, eksekusi RKB, LPKB). Butir 2.1–2.6 menghasilkan 47, dan
-tidak digelembungkan untuk mengejar angka.
+tidak digelembungkan untuk mengejar angka. #48 ditambahkan 27 Sep 2026 atas keputusan pemilik
+(P5.1): info bencana terkini BMKG/BNPB, yang semula berada di bagian 8 ("dikontrak bersama service integrasi").
 
 ---
 
@@ -858,6 +860,41 @@ domain platform belum dijawab BaTII (Lampiran E #13).
 #### 46–47. `GET /health/live`, `GET /health/ready`
 `live`: proses hidup. `ready`: database dapat dijangkau. 200/503, tanpa autentikasi.
 
+#### 48. `GET /info-bencana` — di luar matriks (keputusan pemilik 27 Sep 2026)
+Gempa dan peringatan dini cuaca BMKG plus rekap kejadian bencana BNPB, pengganti halaman "Info Bencana
+Terkini" prototipe (menu seluruh peran). `sigap:referensi:read`, **tanpa Scope** (data publik, seperti #37–#38),
+tanpa Sieve (tidak ada data pengguna). Dibaca dari cache yang diisi pemantau tiap 5 menit, bukan dari
+BMKG/BNPB per permintaan (batas BMKG 60 permintaan per menit per IP). Tiap bagian membawa `diperbarui` = saat
+sumbernya terakhir berhasil dibaca (`null` = belum pernah), supaya tampilan dapat menandai data basi saat
+sumbernya tidak terjangkau. Peringatan cuaca yang kedaluwarsa tidak ikut. **`atribusi` wajib ditampilkan**
+di layar yang menampilkan data ini (ketentuan data terbuka BMKG; lisensi ODC-By BNPB).
+```json
+{ "gempa": { "terbaru": Gempa | null, "dirasakan": [Gempa], "diperbarui": "2026-09-27T02:30:00+00:00" },
+  "cuaca": { "data": [ { "id": "2.49.0.1.360.0.2026.09.27.02.62.001", "judul": "Hujan Lebat disertai Petir di Kalimantan Tengah",
+                         "peristiwa": "Hujan Lebat dan Petir", "wilayah": "Kalimantan Tengah", "deskripsi": "…",
+                         "keparahan": "Moderate", "urgensi": "Immediate", "kepastian": "Observed",
+                         "terkirim": "…", "mulaiBerlaku": "…", "kedaluwarsa": "2026-09-27T11:30:00+07:00",
+                         "tautan": "https://www.bmkg.go.id/alerts/nowcast/id/…_alert.xml", "infografis": "…" } ],
+             "diperbarui": "…" },
+  "rekapBnpb": { "data": { "judul": "Rekapitulasi Jumlah Kejadian dan Dampak Bencana Menurut Provinsi 2025",
+                           "diperbaruiSumber": "…", "tautan": "https://data.bnpb.go.id/dataset/…",
+                           "baris": [ { "kodeBencana": 101, "jenisBencana": "BANJIR", "jumlahKejadian": 2009,
+                                        "meninggal": 1353, "hilang": 182, "luka": 6208, "terdampak": 10563082,
+                                        "mengungsi": 1115244, "rumahRusakBerat": 64587, "rumahRusakSedang": 55560,
+                                        "rumahRusakRingan": 123627 } ],
+                           "total": { "kodeBencana": null, "jenisBencana": "Total", "…": "…" } },
+                 "diperbarui": "…" },
+  "atribusi": [ { "sumber": "BMKG", "teks": "Sumber data gempa bumi dan peringatan dini cuaca: BMKG (…).",
+                  "tautan": "https://data.bmkg.go.id", "lisensi": null },
+                { "sumber": "BNPB", "teks": "…", "tautan": "https://data.bnpb.go.id",
+                  "lisensi": "Open Data Commons Attribution License" } ] }
+```
+`Gempa` = objek gempa BMKG apa adanya (`tanggal`, `jam`, `waktu`, `magnitudo`, `kedalaman`, `wilayah`,
+`lintang`, `bujur`, `koordinat`, `potensi`, `dirasakan`, `shakemap`). Nilai CAP (`keparahan`, `urgensi`,
+`kepastian`) tidak diterjemahkan. Peringatan yang berkas CAP-nya tidak terjangkau tampil dari RSS saja:
+`kedaluwarsa` `null` dan isian CAP kosong. Rekap BNPB adalah kompilasi tahunan, bukan kejadian waktu nyata;
+angka yang tidak ada di sumber tetap `null`. Tanpa `sigap:referensi:read` (Administrator) → 403.
+
 ---
 
 ## 4. Siklus status
@@ -987,7 +1024,8 @@ Tidak diubah (bukan bagian keputusan tabel ke-33), tetapi harus diketahui implem
 
 - **Butir 1.1 Data Bencana Nasional.** Matriks memberi Koordinator MKB "Tambah, Modify",
   sedangkan prototipe memindahkannya ke Sekretaris Jenderal. Menunggu keputusan (bagian 9).
-- **Info Bencana Terkini BMKG/BNPB/MAGMA.** Dikontrak bersama service integrasi (P5.1).
+- **Info Bencana Terkini MAGMA** (gunung api). BMKG dan BNPB sudah masuk kontrak sebagai #48 (27 Sep 2026);
+  MAGMA belum diminta.
 - **Alur request → approve broadcast** pada desain V15 (`"BroadcastRequest"`). Sudah
   digantikan trigger berjenjang langsung (koreksi 12, UAT T12). Tabelnya tetap ada tetapi
   tidak dipakai.
