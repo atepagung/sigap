@@ -1054,8 +1054,8 @@ Tidak diubah (bukan bagian keputusan tabel ke-33), tetapi harus diketahui implem
 **Untuk pemilik proses bisnis**
 8. Mengakhiri broadcast (#16) dan menyatakan pulih tanggap darurat (#29) tidak ada di matriks
    tetapi diperlukan siklus hidupnya. Siapa berwenang?
-9. Jenis dan batas lampiran. PLAYBOOK P5.2 menyebut "foto/video/rekaman suara" lalu "jpg, png,
-   pdf, docx, xlsx". Usulan kontrak: foto+video+audio untuk laporan, foto untuk asesmen, 10 MB
-   per berkas, 5 berkas per laporan.
+9. ~~Jenis dan batas lampiran.~~ **Diputuskan 27 Sep 2026 (P5.2):** foto+video+audio+dokumen
+   (PDF/DOCX/XLSX) untuk laporan; foto+dokumen (tanpa video/audio) untuk asesmen; 10 MB per
+   berkas, 5 berkas per laporan. Diterapkan di `AturanLampiran` (tipe tersimpan `DOKUMEN`).
 10. Butir 1.1 Data Bencana Nasional: Koordinator MKB (matriks) atau Sekretaris Jenderal
     (prototipe)?

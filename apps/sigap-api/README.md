@@ -377,7 +377,9 @@ adalah yang asli. Akun uji ada di `Basisdata/DatabaseUji.cs` (`Data`), NIP-nya d
 | --- | --- |
 | `ConnectionStrings:Sigap` | Wajib; proses menolak mulai bila kosong. Production: `ConnectionStrings__Sigap` dari vault |
 | `ConnectionStrings:Redis` | Opsional. Bila terisi, cadangan hasil BMKG disimpan di Redis berawalan `sigap:` (kunci `sigap:bmkg:{sumber}`, kedaluwarsa 7 hari) sehingga dibagi antarinstans dan selamat dari restart; kosong = cache memori proses. Redis yang mati tidak menjatuhkan apa pun: galatnya dicatat sebagai peringatan dan salinan memori proses dipakai. Hanya data publik BMKG/BNPB, tidak pernah data pengguna. Production: `ConnectionStrings__Redis` dari vault. Pengembangan: `localhost:6379` (docker compose) |
-| `Lampiran:Folder` | Wajib, sama. Folder penyimpanan lampiran; path relatif dihitung dari folder keluaran. Production: `Lampiran__Folder` ke volume yang bertahan antar restart. Driver disk ini padanan `local` di prototipe; object storage MinIO/S3 (P5.2) cukup menjadi implementasi `IPenyimpanLampiran` lain |
+| `Lampiran:Driver` | `disk` (bawaan) atau `s3` (P5.2). Sama seperti `Bmkg:Aktif`: berpindah ke object storage di production adalah keputusan penempatan (`Lampiran__Driver=s3`), bukan efek samping. Nilai tak dikenal menggagalkan proses saat mulai |
+| `Lampiran:Folder` | Wajib bila `Driver=disk`. Folder penyimpanan lampiran; path relatif dihitung dari folder keluaran. Production: `Lampiran__Folder` ke volume yang bertahan antar restart. Padanan driver `local` di prototipe (`storage.ts`) |
+| `Lampiran:S3:*` | Wajib bila `Driver=s3`: `Endpoint`, `AccessKey`, `SecretKey` (kosong menggagalkan proses saat mulai). `Bucket` bawaan `sigap-lampiran`, `Region` bawaan `us-east-1`, `ForcePathStyle` bawaan `true` (wajib untuk MinIO). Padanan `S3_*` di `storage.ts`. Production: `Lampiran__S3__AccessKey`/`Lampiran__S3__SecretKey` dari vault. Pengembangan: MinIO lokal (docker-compose, `http://localhost:9000`, kredensial dev `minioadmin`/`miniopassword`) |
 | `Bmkg:Aktif` | Pemicu Safety Check otomatis dari BMKG (P5.1). **Mati bawaan** (`false`): pegawai menerima pemberitahuan genting darinya, jadi menyalakannya keputusan penempatan. Production: `Bmkg__Aktif=true` |
 | `Bmkg:NipLayanan` | Wajib bila `Aktif`; proses menolak mulai bila kosong. NIP akun layanan (baris `"User"` tanpa peran), bawaan `SISTEM-BMKG`. Lihat SQL di bawah |
 | `Bmkg:AmbangMmi` | Kosong atau di luar 1–12 = MMI V (aturan prototipe `AmbangDariTeks`) |
@@ -425,6 +427,35 @@ bila pemicu otomatis mati (bila menyala `PemantauBmkg` sudah membacanya). Sumber
 tanpa Scope) hanya membaca cadangan, membuang peringatan cuaca kedaluwarsa, dan selalu menyertakan **`atribusi`** BMKG dan
 BNPB (ODC-By) yang wajib tampil di layar. Seluruh permintaan ke BMKG lewat satu `PembatasLajuBmkg`. Fikstur asli 27 Sep 2026
 di `tests/Sigap.Infrastructure.Tests/Integrasi/Fikstur`. Asumsi: DUMMY_REGISTRY bagian 9 butir 21.
+
+### Object storage lampiran (P5.2)
+
+`IPenyimpanLampiran` punya dua implementasi dipilih lewat `Lampiran:Driver`: `PenyimpanLampiranDisk` (bawaan) dan
+`PenyimpanLampiranS3` (object storage berprotokol S3 — MinIO lokal, atau layanan lain yang disediakan BaTII), padanan
+persis driver `local`/`s3` pada `storage.ts` prototipe. **Tidak ada perubahan kode fitur** saat berpindah driver, dan
+**tidak pernah ada URL yang bisa diakses tanpa autentikasi**: berbeda dari prototipe, `"Attachment"."url"` selalu path
+API (`LampiranStore`, sudah begitu sejak sebelum P5.2), sehingga satu-satunya jalan membaca isi berkas tetap
+`GET /lampiran/{id}` yang memeriksa permission dan Scope lebih dulu — bucket S3 di dev berkebijakan `private` dan
+akses langsung ke MinIO tanpa kredensial ditolak. Bucket dibuat otomatis saat unggahan pertama menemukan
+`NoSuchBucket` (prototipe mengasumsikan bucket sudah ada; tidak ada langkah setup MinIO terpisah di repo ini),
+idempoten terhadap dua replika yang mulai bersamaan (`BucketAlreadyOwnedByYou` diabaikan). Kegagalan menyimpan
+(host tidak terjangkau, dsb.) melempar `AturanBisnisException` 503 `LAMPIRAN_GAGAL_DISIMPAN` sama seperti driver
+disk — laporannya sendiri tetap tercatat, unggahan boleh diulang. **Keputusan pemilik 27 Sep 2026** (API_CONTRACT
+#9, dulu pertanyaan terbuka): dokumen (PDF/DOCX/XLSX, tipe `DOKUMEN`) ditambahkan ke `AturanLampiran` untuk laporan
+maupun asesmen; video/audio tetap khusus laporan. **Tes:** Domain +4 (tipe/ekstensi dokumen, pembanding prototipe),
+Infrastructure +11 (`PenyimpanLampiranS3Tests` terhadap MinIO **sungguhan** — bulat-pergi, kunci tak ada, hapus,
+biner utuh, pembuatan bucket otomatis dan idempoten, host tak terjangkau; `Skipped` beserta alasan bila MinIO tidak
+terjangkau, seperti `FaktaDatabaseAttribute` untuk PostgreSQL — jadi **Skipped di container Linux** karena MinIO
+host tidak ikut dijalankan di sana), Api +7 (tipe dokumen diterima/ditolak sesuai aturan). Tiga mutasi tertangkap
+(tipe dokumen asesmen dihapus, pemetaan `DOKUMEN` dihapus, pengabaian "bucket sudah ada" dihapus); satu mutasi pada
+`BukaAsync` (menghapus pemeriksaan `ErrorCode == "NoSuchKey"`) **tidak** tertangkap karena berlebih dengan
+pemeriksaan `StatusCode == NotFound` di baris yang sama — MinIO selalu mengirim keduanya bersamaan, bukan celah tes. **Terbukti dengan MinIO sungguhan lewat HTTP nyata** (login Keycloak asli, `POST
+/laporan-bencana/{id}/lampiran` dengan PDF asli): tersimpan di MinIO (`mc ls` menunjukkan
+`2026-09-27/…pdf`), `GET /lampiran/{id}` mengembalikan isi persis dengan `Content-Type`/`Cache-Control`/
+`X-Content-Type-Options` yang benar, tanpa token 401, akses langsung ke objek MinIO tanpa kredensial 403; data
+uji sudah dibersihkan | `Infrastructure/Lampiran/{PenyimpanLampiranS3,LampiranOptions,SimpananDataPublik-serupa}`,
+`Domain/Lampiran/AturanLampiran`, `tests/Sigap.Infrastructure.Tests/Lampiran/PenyimpanLampiranS3Tests.cs`. Asumsi:
+DUMMY_REGISTRY bagian 9 butir 3 dan 4.
 
 ## Keadaan sekarang
 
