@@ -153,9 +153,11 @@ dotnet test apps/sigap-api/sigap-api.slnx           # backend: tes + analyzer
 dotnet format apps/sigap-api/sigap-api.slnx --verify-no-changes
 
 npm run check:web                                   # frontend: lint + stylelint + prettier + tes
-npm run periksa:repo                                # aturan lintas platform (termasuk kapitalisasi impor)
+npm run periksa:repo                                # aturan lintas platform (kapitalisasi impor, CRLF, path backslash)
 npm run verifikasi:container                        # bangun image sigap-api + sigap-web, jalankan di Linux, periksa
 npm run test:skrip                                  # tes pemeriksa repo
+npm run status:dummy                                # cetak status tiap dummy dari DUMMY_REGISTRY.md
+npm run verifikasi:siap-produksi                    # gerbang manual: gagal selama ada dummy ter-resolve (web + api)
 ```
 
 **Selesai berarti:** tes hijau, `dotnet format` / `npm run check:web` bersih, dan — bila menyentuh

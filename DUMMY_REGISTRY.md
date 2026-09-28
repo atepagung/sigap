@@ -445,12 +445,23 @@ Itulah sebabnya bentuknya abstraksi: ia menyerap jawaban apa pun tanpa mengubah 
 2. **Kontrak identik** — nama dan signature mengikuti dokumentasi platform.
 3. **Isi sesederhana mungkin** — dummy tidak perlu benar, hanya perlu berjalan.
 4. **Tidak boleh naik ke production** — build production gagal kalau dummy masih ter-resolve.
-   *(Sebagian ditegakkan 21 Sep 2026, P4.1: target `LarangDummyDiPublish` di `Sigap.Api.csproj`
+   *(Ditegakkan 21 Sep 2026, P4.1: target `LarangDummyDiPublish` di `Sigap.Api.csproj`
    menggagalkan `dotnet publish` selama masih ada rujukan ber-nama `*Dummy*`, dan
-   `libs/notifikasi-dummy` bahkan tidak ikut disusun pada konfigurasi Release. Pemeriksa
-   seluruh solusi menyusul di P6.2. Sejak P4.3, workflow CI `sigap-api` menjalankan `dotnet publish`
-   dan gagal bila publish berhasil atau gagal bukan karena `SIGAP001`.)*
-5. **Tercatat di berkas ini.**
+   `libs/notifikasi-dummy` bahkan tidak ikut disusun pada konfigurasi Release.
+   `node scripts/verifikasi-linux.mjs api` menegaskan publish gagal via `SIGAP001` (CI GitHub
+   tidak dipakai — akun terkunci billing — jadi ini gerbangnya, bukan workflow `.github`).
+   Sisi web tidak punya target build yang bisa "gagal": alias dummy di `tsconfig.base.json`
+   memang wajib ada supaya `ng build` jalan sama sekali hari ini. Sejak 27 Sep 2026 (P6.2),
+   `node scripts/verifikasi-siap-produksi.mjs` menggabungkan kedua sisi jadi satu gerbang
+   kesiapan-produksi: memeriksa alias `tsconfig.base.json` dan menjalankan `dotnet publish`
+   Sigap.Api, lalu melaporkan dummy mana saja yang masih menghalangi. Skrip ini **sengaja gagal
+   hari ini** (dummy memang masih aktif) — dijalankan manual saat mengecek progres penukaran,
+   bukan bagian `check:web`/`verifikasi-linux` harian.)*
+5. **Tercatat di berkas ini** — dan bisa dicetak ringkas lewat `node scripts/status-dummy.mjs`
+   (mem-parse tabel Status tiap entri di bagian 1, bukan daftar terpisah yang bisa basi). Proses
+   `sigap-api` juga mencetak dummy backend yang aktif sebagai banner startup di Development
+   (`BannerDummy.Tulis()`, `apps/sigap-api/src/Sigap.Api/Umum/BannerDummy.cs`) — daftarnya ditulis
+   tangan dan **wajib diperbarui bersamaan** dengan tabel Status di bagian 1 tiap ada perubahan.
 
 Yang ditiru adalah **kontraknya**, bukan cara kerjanya. Kode aplikasi ditulis seolah-olah platform
 asli sudah ada — tidak boleh ada workaround yang menyesuaikan diri dengan keterbatasan dummy.
