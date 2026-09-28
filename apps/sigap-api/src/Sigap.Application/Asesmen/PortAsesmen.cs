@@ -74,6 +74,9 @@ public interface IAsesmenStore
     /// <summary>Satu versi berikut pasangannya. <c>null</c> bila tidak ada atau di luar lingkup.</summary>
     Task<AsesmenTersimpan?> BacaAsync(string id, DataScope lingkup, CancellationToken ct);
 
+    /// <summary>Versi yang baru ditulis pemanggil (#21), dibaca ulang untuk respons. <c>null</c> bila bukan kirimannya.</summary>
+    Task<AsesmenTersimpan?> BacaKirimanSendiriAsync(string id, string pengirimId, CancellationToken ct);
+
     /// <summary>Menulis kedua separuh dalam satu penyimpanan dengan <c>createdAt</c> yang sama. Mengembalikan pengenal versi.</summary>
     Task<string> TambahAsync(NaskahAsesmen naskah, CancellationToken ct);
 

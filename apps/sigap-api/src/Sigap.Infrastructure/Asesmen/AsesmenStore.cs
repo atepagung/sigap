@@ -29,10 +29,20 @@ internal sealed class AsesmenStore(SigapDbContext db) : IAsesmenStore
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-    public async Task<AsesmenTersimpan?> BacaAsync(string id, DataScope lingkup, CancellationToken ct)
+    public Task<AsesmenTersimpan?> BacaAsync(string id, DataScope lingkup, CancellationToken ct) =>
+        BacaDariAsync(db.DamageAssessment.AsNoTracking().ApplyScope(lingkup, unit: a => a.UnitId), id, ct);
+
+    /// <summary>
+    /// Tanpa Scope baca, sama seperti <c>LaporanStore.TambahAsync</c>: versi yang baru saja ditulis pemanggil sendiri
+    /// (<c>sigap:asesmen:create</c> berprofil tulis <c>UNIT_SENDIRI</c>, tidak dapat dipakai membaca). Dibatasi ke
+    /// kiriman pengirim itu supaya tidak dapat membaca baris lain.
+    /// </summary>
+    public Task<AsesmenTersimpan?> BacaKirimanSendiriAsync(string id, string pengirimId, CancellationToken ct) =>
+        BacaDariAsync(db.DamageAssessment.AsNoTracking().Where(a => a.SubmittedById == pengirimId), id, ct);
+
+    private async Task<AsesmenTersimpan?> BacaDariAsync(IQueryable<DamageAssessment> sumber, string id, CancellationToken ct)
     {
-        var d = await db.DamageAssessment.AsNoTracking()
-            .ApplyScope(lingkup, unit: a => a.UnitId)
+        var d = await sumber
             .Where(a => a.Id == id)
             .Select(a => new
             {

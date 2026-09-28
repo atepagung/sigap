@@ -359,4 +359,24 @@ public sealed class KirimAsesmenTests(AplikasiUjiDb app) : TesAsesmen(app)
         var kiriman = Assert.Single(App.Pengirim.Untuk("ASESMEN", isi.Teks("id")!));
         Assert.Equal("ASESMEN_DIPERBARUI", kiriman.Isi.Kode);
     }
+
+    [FaktaDb]
+    public async Task Respons_kiriman_tidak_bergantung_pada_lingkup_baca_asesmen()
+    {
+        // #21 berizin sigap:asesmen:create (profil tulis UNIT_SENDIRI). Membaca ulang lewat Scope sigap:asesmen:read
+        // berarti peran yang boleh mengirim tanpa boleh membaca akan mendapat 500 setelah datanya telanjur tersimpan.
+        var l = await LingkunganBaruAsync();
+        App.LingkupDikosongkan = new HashSet<string> { Sigap.Application.Keamanan.Izin.AsesmenRead };
+        try
+        {
+            var (respons, isi) = await KirimAsync(l.Satgas, Isian());
+
+            Assert.Equal(HttpStatusCode.Created, respons.StatusCode);
+            Assert.Equal(l.Satgas.Id, isi.Teks("dikirimOleh", "id"));
+        }
+        finally
+        {
+            App.LingkupDikosongkan = new HashSet<string>();
+        }
+    }
 }

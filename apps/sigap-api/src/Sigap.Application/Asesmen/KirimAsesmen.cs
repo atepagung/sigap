@@ -52,7 +52,7 @@ public sealed class KirimAsesmen(
             return baru;
         }, ct);
 
-        var tersimpan = await asesmen.BacaAsync(id, pengguna.GetScope(Izin.AsesmenRead), ct)
+        var tersimpan = await asesmen.BacaKirimanSendiriAsync(id, userId, ct)
             ?? throw new InvalidOperationException("Asesmen yang baru disimpan tidak terbaca.");
 
         await pengirim.KirimAsync(
