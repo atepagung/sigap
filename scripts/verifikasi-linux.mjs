@@ -54,6 +54,10 @@ echo "== tes sigap-api =="; dotnet test apps/sigap-api/sigap-api.slnx --no-build
 echo "== tes library ==";   dotnet test libs/notifikasi/notifikasi.slnx 2>&1 | grep -E "Passed!|Failed!"
                             dotnet test libs/iam-dummy 2>&1 | grep -E "Passed!|Failed!"
 echo "== build Release =="; dotnet build apps/sigap-api/sigap-api.slnx -c Release --no-restore 2>&1 | grep -E "Error\\(s\\)|Build succeeded"
+echo "== artefak publish tanpa appsettings.Development.json =="
+daftar=$(dotnet msbuild apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -nologo -t:ComputeResolvedFilesToPublishList -p:Configuration=Release -getItem:ResolvedFileToPublish)
+echo "$daftar" | grep -q '"appsettings.json"' || { echo "GAGAL: daftar publish tidak terbaca"; exit 1; }
+if echo "$daftar" | grep -q 'appsettings.Development.json'; then echo "GAGAL: kredensial pengembangan ikut artefak publish"; exit 1; fi
 echo "== aturan dummy 4: publish HARUS gagal via SIGAP001 =="
 set +e; keluaran=$(dotnet publish apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -c Release --no-restore 2>&1); kode=$?; set -e
 [ "$kode" -ne 0 ] || { echo "GAGAL: publish berhasil padahal dummy masih ter-resolve"; exit 1; }

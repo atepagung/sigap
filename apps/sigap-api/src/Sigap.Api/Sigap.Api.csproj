@@ -34,6 +34,14 @@
     <None Include="../../iam-policy.sigap.json" Link="iam-policy.sigap.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!--
+    Kredensial pengembangan lokal (PostgreSQL/MinIO docker compose) tidak ikut artefak publish. Tetap disalin ke
+    keluaran build: "dotnet run" membacanya dari folder keluaran (ContentRoot, lihat Program.cs).
+  -->
+  <ItemGroup>
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Sigap.Api.Tests" />
   </ItemGroup>

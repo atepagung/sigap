@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { aliasDummyWeb, tafsirkanPublishApi } from './verifikasi-siap-produksi.mjs';
+import { aliasDummyWeb, seamLoginDev, tafsirkanPublishApi } from './verifikasi-siap-produksi.mjs';
 
 test('aliasDummyWeb: menangkap alias yang menunjuk ke dummy, mengabaikan yang tidak', () => {
   const hasil = aliasDummyWeb({
@@ -49,4 +49,38 @@ test('tafsirkanPublishApi: kegagalan tanpa SIGAP001 dianggap galat lain, bukan s
   assert.equal(hasil.siap, false);
   assert.equal(hasil.dummyTerpasang, null);
   assert.match(hasil.galatLain, /MSB3021/);
+});
+
+test('seamLoginDev: password grant dan client dev ditangkap, berkas tes diabaikan', () => {
+  const hasil = seamLoginDev([
+    {
+      path: 'apps/sigap-web/src/app/core/auth/token-provider.ts',
+      teks: "const body = new URLSearchParams({ grant_type: 'password', client_id: this.clientId });",
+    },
+    {
+      path: 'apps/sigap-web/src/app/core/config/api-config.ts',
+      teks: "export const KEYCLOAK_DEV_CLIENT_ID = new InjectionToken<string>('x');",
+    },
+    {
+      path: 'apps/sigap-web/src/app/core/auth/token-provider.spec.ts',
+      teks: "expect(body.get('grant_type')).toBe('password'); KEYCLOAK_DEV_CLIENT_ID",
+    },
+  ]);
+  assert.deepEqual(
+    hasil.map((h) => h.path),
+    [
+      'apps/sigap-web/src/app/core/auth/token-provider.ts',
+      'apps/sigap-web/src/app/core/config/api-config.ts',
+    ],
+  );
+});
+
+test('seamLoginDev: kode tanpa seam (mis. token dari shell) dianggap siap', () => {
+  const hasil = seamLoginDev([
+    {
+      path: 'apps/sigap-web/src/app/core/auth/auth.interceptor.ts',
+      teks: "req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }); // grant_type: 'authorization_code'",
+    },
+  ]);
+  assert.deepEqual(hasil, []);
 });

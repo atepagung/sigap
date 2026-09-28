@@ -8,6 +8,10 @@
 // Sisi web: `compilerOptions.paths` di tsconfig.base.json adalah SATU-SATUNYA tempat yang tahu
 // design system/iam-web masih dummy (lihat komentar di berkas itu) — cukup periksa isinya.
 //
+// Sisi web juga: seam login pengembangan (password grant langsung ke Keycloak lokal, DUMMY_REGISTRY
+// butir 51) sengaja masih ikut bundel produksi karena UAT lewat container memakainya. Ia wajib hilang saat
+// mekanisme token shell asli dipasang (P7.2), jadi keberadaannya berarti belum siap produksi.
+//
 // Sisi api: `dotnet publish` Sigap.Api sudah punya penjaga MSBuild (`LarangDummyDiPublish` di
 // Sigap.Api.csproj) yang menggagalkan publish dengan kode SIGAP001 selama ada ProjectReference
 // dummy yang ter-resolve (iam-dummy hari ini selalu; notifikasi-dummy hanya di konfigurasi
@@ -62,6 +66,39 @@ export function tafsirkanPublishApi(kode, keluaran) {
   return { siap: false, dummyTerpasang: null, galatLain: keluaran.trim().slice(-2000) };
 }
 
+/** Penanda seam login pengembangan di kode sigap-web. */
+const PENANDA_SEAM = [
+  { pola: /grant_type['"]?\s*[:=,]\s*['"]password['"]/, alasan: 'password grant langsung ke SSO' },
+  { pola: /\bKEYCLOAK_DEV_CLIENT_ID\b/, alasan: 'client Keycloak khusus pengembangan' },
+];
+
+/**
+ * Berkas sigap-web (bukan tes) yang masih memuat seam login pengembangan.
+ *
+ * @param {{ path: string, teks: string }[]} berkas
+ * @returns {{ path: string, alasan: string }[]}
+ */
+export function seamLoginDev(berkas) {
+  const hasil = [];
+  for (const { path, teks } of berkas) {
+    if (/\.spec\.ts$/.test(path)) continue;
+    for (const { pola, alasan } of PENANDA_SEAM) {
+      if (pola.test(teks)) hasil.push({ path, alasan });
+    }
+  }
+  return hasil;
+}
+
+function berkasWeb() {
+  return execFileSync('git', ['ls-files', '-z', 'apps/sigap-web/src'], {
+    cwd: AKAR,
+    encoding: 'utf8',
+  })
+    .split('\0')
+    .filter((p) => p.endsWith('.ts'))
+    .map((path) => ({ path, teks: readFileSync(join(AKAR, path), 'utf8') }));
+}
+
 function jalankanPublish() {
   const out = mkdtempSync(join(tmpdir(), 'sigap-siap-produksi-'));
   try {
@@ -90,6 +127,16 @@ function main() {
     siap = false;
     for (const a of aliasWeb) console.log(`✖ "${a.alias}" → "${a.target}"`);
     console.log('  Kunci penukaran ada di komentar tsconfig.base.json.');
+  }
+
+  console.log('\n━━━ Web: seam login pengembangan ━━━');
+  const seam = seamLoginDev(berkasWeb());
+  if (seam.length === 0) {
+    console.log('✔ Tidak ada seam login pengembangan.');
+  } else {
+    siap = false;
+    for (const s of seam) console.log(`✖ ${s.path}: ${s.alasan}`);
+    console.log('  Ganti dengan mekanisme token shell asli (P7.2, DUMMY_REGISTRY butir 51).');
   }
 
   console.log('\n━━━ Api: dotnet publish Sigap.Api (Release) ━━━');
