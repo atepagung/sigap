@@ -92,7 +92,12 @@ gabung multi-peran ada di PERMISSION_MAP bagian 2. Ringkasnya:
 Setiap tindakan tulis dicatat terpusat (interceptor, bukan per endpoint) ke `"JejakPerubahan"`
 (`entitas`, `entitasId`, `aksi`, `olehId`, `alasan`, `ringkasan`). `ringkasan` memuat JSON
 nilai sebelum/sesudah, karena tabelnya tidak punya kolom khusus untuk itu. Akses baca ke data
-paling sensitif (daftar keadaan per pegawai, koordinat) juga dicatat. **[asumsi — diganti
+paling sensitif (daftar keadaan per pegawai, koordinat) juga dicatat: `DIAKSES` pada `"ActiveBroadcast"`/
+`{broadcastId}` setiap kali #4 dijawab sukses, dengan pelaku dan unit yang direkap, tanpa isi datanya (P6.4).
+Aksi bernama: `DIPICU` (#13), `DIAKHIRI` (#16), `DICATATKAN`/`DICATATKAN_ULANG` (#6), `DIVERIFIKASI`/`DITOLAK`
+(#18), `DIREVISI` (#22, `alasan` = id versi asal), `DISETUJUI` (#28, pada `"DisasterDeclaration"`, `alasan` = id
+asesmen); selebihnya `DIBUAT`/`DIUBAH`/`DIHAPUS`. Koordinat dan keterangan jawaban safety check disamarkan di
+jejak (P6.3). Belum ada endpoint yang membaca jejak (KANDIDAT_SCOPE_SIEVE S7). **[asumsi — diganti
 audit trail bawaan `iam.plugin` bila tersedia, Lampiran E #10]**
 
 ### 1.8 Kiriman ulang dan jaringan buruk
@@ -251,7 +256,8 @@ dashboard Monitor SC" (bagian 3.6).
 - **Sieve**: `lokasiTerakhir` hanya SATGAS. `keterangan`, `dicatatOleh` hanya SATGAS dan
   PIMPINAN.
 - Query: `broadcastId` (opsional), `status` = `BUTUH_BANTUAN`|`BELUM`|`AMAN` (tab per
-  kondisi, koreksi 11), `cari`, `halaman`, `ukuran`.
+  kondisi, koreksi 11), `cari`, `halaman`, `ukuran`. `cari` (nama pegawai, tanpa membedakan huruf besar/kecil)
+  paling panjang 100 karakter, selain itu 400 `VALIDASI_GAGAL`; `%` dan `_` dibaca apa adanya, sama dengan #42.
 - Tanpa `broadcastId`, dipakai broadcast aktif yang memegang unit pemanggil dan paling baru
   dipicu. Broadcast aktif lain yang juga memegang unit itu (jenis bencana berbeda) disebut
   di `broadcastLainAktif`.
@@ -860,6 +866,9 @@ domain platform belum dijawab BaTII (Lampiran E #13).
 panjang 256 karakter. Selain itu 400 `VALIDASI_GAGAL` (P5.3: server mengirim `POST` ke endpoint ini,
 jadi alamat sembarang berarti SSRF). Saat mengirim, hanya host peladen push yang terdaftar di
 `Notifikasi:WebPush:HostDiizinkan` yang dikirimi (bawaan FCM, Mozilla, Apple, Windows).
+`endpoint` yang sudah terdaftar milik pengguna lain berpindah pemilik hanya bila `keys` sama (perangkat yang sama
+berganti akun); dengan `keys` berbeda → 409 `LANGGANAN_MILIK_PERANGKAT_LAIN` tanpa perubahan apa pun (P6.3: yang
+sekadar tahu URL endpoint perangkat orang lain tidak boleh memutus peringatan ke perangkat itu).
 
 #### 46–47. `GET /health/live`, `GET /health/ready`
 `live`: proses hidup. `ready`: database dapat dijangkau. 200/503, tanpa autentikasi.

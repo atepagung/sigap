@@ -358,6 +358,10 @@ Aturan yang perlu diingat saat menulis kode baru:
 - **Header keamanan respons** (`Umum/HeaderKeamanan.cs`): `/api/*` dan `/health/*` selalu `Cache-Control: no-store`,
   `nosniff`, CSP `default-src 'none'; frame-ancestors 'none'`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`,
   tanpa menimpa nilai yang disetel endpoint. HSTS diserahkan ke gateway (DUMMY_REGISTRY bagian 9 butir 23).
+- **Akses baca data sensitif tercatat terpusat** (P6.4): respons yang memuat daftar keadaan per pegawai bertanda
+  `IAksesTercatat` (implementasi eksplisit, tidak ikut diserialkan); `CatatAksesFilter` global menulis `DIAKSES` sebelum
+  respons sukses dikirim, dan bila gagal respons ikut gagal. `ArsitekturAksesTests` menolak DTO pembawa `RekapBarisDto`
+  yang tidak bertanda.
 - **Kolom rahasia disamarkan** (`[DISAMARKAN]`), bukan dibuang: `PasswordHash`, `Email`, kunci perangkat push, dua catatan
   SDM asesmen, dan — khusus `SafetyCheckResponse` (`RingkasanJejak.RahasiaPerEntitas`) — `lat`, `lng`, `keterangan`:
   data keberadaan pegawai yang di API di-Sieve. Per entitas karena `"GangguanLayanan"."keterangan"` bukan data pribadi.

@@ -102,6 +102,8 @@ Aturan yang sering dilanggar:
 - **Di luar Scope = 404**, bukan 403 dan bukan "di luar lingkup unit Anda" (tidak membocorkan
   keberadaan data).
 - **Jangan menulis DTO ber-`[Sieve]` ke log atau cache** — nilai aslinya masih ada di objek.
+- **Respons berisi keadaan per pegawai wajib bertanda `IAksesTercatat`** (implementasi eksplisit) supaya
+  aksesnya tercatat terpusat; jangan mencatat akses di endpoint. `ArsitekturAksesTests` menegakkannya.
 - **Tidak pernah diproyeksikan ke respons mana pun:** `"User"."passwordHash"`, `"email"`,
   kunci `"LanggananPush"` (`p256dh`, `auth`, `endpoint`), `"Attachment"."storageKey"` / `"url"`.
   Daftar kandidat Sieve lainnya: [KANDIDAT_SCOPE_SIEVE.md](KANDIDAT_SCOPE_SIEVE.md).
