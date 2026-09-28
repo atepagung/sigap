@@ -184,6 +184,7 @@ gagal tidak membuktikan apa-apa.
 ## 10. Rujukan
 
 [docs/PLAYBOOK.md](docs/PLAYBOOK.md) (Lampiran A = standar platform) ·
+[DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) (review sebelum submit ke BaTII) ·
 [MIGRATION_NOTES.md](MIGRATION_NOTES.md) (scope, koreksi stakeholder, status) ·
 [API_CONTRACT.md](API_CONTRACT.md) · [PERMISSION_MAP.md](PERMISSION_MAP.md) ·
 [DUMMY_REGISTRY.md](DUMMY_REGISTRY.md) · [KANDIDAT_SCOPE_SIEVE.md](KANDIDAT_SCOPE_SIEVE.md) ·

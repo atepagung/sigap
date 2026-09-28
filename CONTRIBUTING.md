@@ -107,6 +107,9 @@ Laporkan dulu, jangan langsung dikerjakan:
 
 ## 5. Sebelum membuka pull request
 
+Checklist ini per pull request. Apakah sebuah **modul** sudah pantas diserahkan ke BaTII dinilai dengan
+[DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md).
+
 ```bash
 npm run check:web                                    # bila menyentuh sigap-web
 dotnet format apps/sigap-api/sigap-api.slnx --verify-no-changes
