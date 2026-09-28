@@ -247,12 +247,17 @@ internal sealed class BroadcastStore(SigapDbContext db, IJejakAudit jejak) : IBr
         var unitPemicu = await UnitAsync(pemicu?.UnitPemicuId ?? b.PemicuUnitId, ct)
             ?? new RingkasUnit(b.PemicuUnitId, string.Empty, null, null, null);
 
-        var sasaran = await db.BroadcastSasaranUnit.AsNoTracking()
-            .Where(s => s.BroadcastId == id)
+        // Angka jumlah* selalu penuh; daftar unit disaring ke wilayah dasar pembaca di klausa WHERE (API_CONTRACT #15).
+        // TERSENTUH hanya menentukan broadcast mana yang terlihat, bukan unit sasaran mana yang boleh disebut.
+        var semuaSasaran = db.BroadcastSasaranUnit.AsNoTracking().Where(s => s.BroadcastId == id);
+        var unitDisasarIds = await semuaSasaran.Where(s => s.Status == StatusSasaran.Disasar).Select(s => s.UnitId).ToListAsync(ct);
+        int jumlahPegawai = await JumlahPegawaiAsync(unitDisasarIds, ct);
+
+        var (nasional, unitLingkup) = WilayahDasar(lingkup);
+        var sasaran = await semuaSasaran
+            .Where(s => nasional || unitLingkup.Contains(s.UnitId))
             .Select(s => new { s.UnitId, s.Status, s.DilewatiKarenaBroadcastId, Unit = new { s.Unit.Nama, s.Unit.Provinsi, s.Unit.Kabkota, s.Unit.EselonIKey } })
             .ToListAsync(ct);
-        var unitDisasarIds = sasaran.Where(s => s.Status == StatusSasaran.Disasar).Select(s => s.UnitId).ToList();
-        int jumlahPegawai = await JumlahPegawaiAsync(unitDisasarIds, ct);
         int jumlahMenjawab = await db.SafetyCheckResponse.AsNoTracking()
             .Where(s => s.BroadcastId == id).Select(s => s.UserId).Distinct().CountAsync(ct);
 
@@ -303,7 +308,7 @@ internal sealed class BroadcastStore(SigapDbContext db, IJejakAudit jejak) : IBr
             DipicuPada = b.CreatedAt,
             Status = b.SelesaiPada is null ? "AKTIF" : "SELESAI",
             Diakhiri = diakhiri,
-            Sasaran = new SasaranDto(unitDisasar.Count, jumlahPegawai, jumlahMenjawab, unitDisasar, unitDilewati)
+            Sasaran = new SasaranDto(unitDisasarIds.Count, jumlahPegawai, jumlahMenjawab, unitDisasar, unitDilewati)
         };
     }
 
@@ -426,15 +431,20 @@ internal sealed class BroadcastStore(SigapDbContext db, IJejakAudit jejak) : IBr
         return true;
     }
 
+    /// <summary>Wilayah dasar seluruh grant (profil domain TERSENTUH disusun dari sini, lihat <see cref="ScopeGrant.IsGeneric"/>).</summary>
+    private static (bool Nasional, string[] UnitIds) WilayahDasar(DataScope lingkup) =>
+        lingkup.Grants.Any(g => g.Area.IsNational)
+            ? (true, [])
+            : (false, lingkup.Grants.SelectMany(g => g.Area.UnitIds).Distinct().ToArray());
+
     private IQueryable<ActiveBroadcast> Dasar(DataScope lingkup, string? penggunaId)
     {
-        bool nasional = lingkup.Grants.Any(g => g.Area.IsNational);
+        var (nasional, unitIds) = WilayahDasar(lingkup);
         if (nasional)
         {
             return db.ActiveBroadcast.AsNoTracking();
         }
 
-        var unitIds = lingkup.Grants.SelectMany(g => g.Area.UnitIds).Distinct().ToArray();
         return db.ActiveBroadcast.AsNoTracking().Where(b =>
             (penggunaId != null && b.DikirimOlehId == penggunaId)
             || db.BroadcastSasaranUnit.Any(s => s.BroadcastId == b.Id && unitIds.Contains(s.UnitId)));

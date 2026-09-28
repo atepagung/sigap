@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Sigap.Api.Tests.Basisdata;
 
 namespace Sigap.Api.Tests.Broadcast;
@@ -126,5 +127,47 @@ public sealed class BacaBroadcastTests(AplikasiUjiDb app) : TesBroadcast(app)
 
         Assert.Equal(HttpStatusCode.BadRequest, respons.StatusCode);
         Assert.NotEmpty(Errors(isi, "status"));
+    }
+
+    private static string[] IdUnit(JsonElement detail, string daftar) =>
+        daftar == "unitDilewati"
+            ? [.. detail.GetProperty("sasaran").GetProperty(daftar).EnumerateArray().Select(u => u.GetProperty("unit").Teks("id")!)]
+            : [.. detail.GetProperty("sasaran").GetProperty(daftar).EnumerateArray().Select(u => u.Teks("id")!)];
+
+    [FaktaDb]
+    public async Task Daftar_unit_sasaran_disaring_ke_lingkup_pembaca_angkanya_tetap_penuh()
+    {
+        var w = await WilayahBaruAsync(3);
+        string id = await PicuSahAsync(w.Perwakilan, "Gempa Bumi");
+
+        var (_, satgas) = await AmbilAsync(w.Satgas, $"{Broadcast}/{id}");
+        var (_, perwakilan) = await AmbilAsync(w.Perwakilan, $"{Broadcast}/{id}");
+        var (_, koordinator) = await AmbilAsync(Data.Koordinator, $"{Broadcast}/{id}");
+
+        Assert.Equal([w.Unit[0].Id], IdUnit(satgas, "unitDisasar"));
+        Assert.Equal(3, satgas.GetProperty("sasaran").GetProperty("jumlahUnitDisasar").GetInt32());
+        Assert.Equal(
+            perwakilan.GetProperty("sasaran").GetProperty("jumlahPegawaiDisasar").GetInt32(),
+            satgas.GetProperty("sasaran").GetProperty("jumlahPegawaiDisasar").GetInt32());
+        Assert.Equal(w.Unit.Select(u => u.Id).Order(StringComparer.Ordinal), IdUnit(perwakilan, "unitDisasar").Order(StringComparer.Ordinal));
+        Assert.Equal(3, IdUnit(koordinator, "unitDisasar").Length);
+    }
+
+    [FaktaDb]
+    public async Task Unit_dilewati_di_luar_lingkup_pembaca_tidak_disebut_beserta_pemicu_pemegangnya()
+    {
+        var w = await WilayahBaruAsync(2);
+        var satgasUnitLain = await AkunBaruAsync(w.Unit[1].Id, "satgas-unit-lain", "SATGAS");
+        await PicuSahAsync(satgasUnitLain, "Gempa Bumi");
+        string id = await PicuSahAsync(w.Perwakilan, "Gempa Bumi");
+
+        var (_, satgas) = await AmbilAsync(w.Satgas, $"{Broadcast}/{id}");
+        var (_, pemegang) = await AmbilAsync(satgasUnitLain, $"{Broadcast}/{id}");
+        var (_, perwakilan) = await AmbilAsync(w.Perwakilan, $"{Broadcast}/{id}");
+
+        Assert.Empty(IdUnit(satgas, "unitDilewati"));
+        Assert.DoesNotContain("satgas-unit-lain", satgas.ToString(), StringComparison.Ordinal);
+        Assert.Equal([w.Unit[1].Id], IdUnit(pemegang, "unitDilewati"));
+        Assert.Equal([w.Unit[1].Id], IdUnit(perwakilan, "unitDilewati"));
     }
 }
