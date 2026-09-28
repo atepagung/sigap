@@ -178,6 +178,22 @@ public sealed class MonitorTests(AplikasiUjiDb app) : TesMonitor(app)
     }
 
     [FaktaDb]
+    public async Task SafetyCheck_kelompok_dihitung_per_unit_di_SQL_bukan_per_pegawai_di_memori()
+    {
+        var l = await LingkunganBaruAsync();
+        string broadcastId = await PicuBroadcastAsync(l.Satgas);
+        await JawabAsync(l.Pegawai1, broadcastId, "AMAN");
+
+        int mulai = App.Sql.Count;
+        var (respons, _) = await AmbilAsync(l.Perwakilan, $"{Monitor}/safety-check?kelompok=provinsi");
+        var kueri = App.Sql.Skip(mulai).Where(s => s.Contains("\"SafetyCheckResponse\"", StringComparison.Ordinal)).ToList();
+
+        Assert.Equal(HttpStatusCode.OK, respons.StatusCode);
+        Assert.NotEmpty(kueri);
+        Assert.All(kueri, s => Assert.Contains("GROUP BY", s, StringComparison.Ordinal));
+    }
+
+    [FaktaDb]
     public async Task Kelompok_tidak_dikenal_ditolak_400()
     {
         var l = await LingkunganBaruAsync();

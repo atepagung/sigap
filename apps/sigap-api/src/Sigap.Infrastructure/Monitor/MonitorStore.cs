@@ -116,7 +116,9 @@ internal sealed class MonitorStore(SigapDbContext db, ISafetyCheckStore safetyCh
         var unitIds = unit.Select(u => u.Id);
         var pemegang = Pemegang(unitIds, jenisBencana, sejak);
 
-        var baris = await (
+        // Dihitung per unit di SQL: yang dimuat satu baris per unit, bukan satu per pegawai (lingkup NASIONAL = seluruh
+        // pegawai). Pengelompokan per provinsi/Eselon I tetap di memori karena labelnya dari kamus Eselon I.
+        var perUnit = await (
             from s in pemegang
             join u in unit on s.UnitId equals u.Id
             join peg in Pegawai() on u.Id equals peg.UnitId
@@ -124,17 +126,29 @@ internal sealed class MonitorStore(SigapDbContext db, ISafetyCheckStore safetyCh
                 on new { UserId = peg.Id, BroadcastId = s.BroadcastId } equals new { UserId = r.UserId, BroadcastId = r.BroadcastId! } into rg
             from resp in rg.DefaultIfEmpty()
             select new { u.Id, u.Nama, u.Provinsi, u.EselonIKey, Status = resp == null ? (SafetyStatus?)null : resp.Status }
-        ).ToListAsync(ct);
+        )
+            .GroupBy(x => new { x.Id, x.Nama, x.Provinsi, x.EselonIKey })
+            .Select(g => new
+            {
+                g.Key.Id,
+                g.Key.Nama,
+                g.Key.Provinsi,
+                g.Key.EselonIKey,
+                Total = g.Count(),
+                Aman = g.Count(x => x.Status == SafetyStatus.Aman),
+                Butuh = g.Count(x => x.Status == SafetyStatus.ButuhBantuan)
+            })
+            .ToListAsync(ct);
 
-        var namaEselon = await NamaEselonAsync([.. baris.Select(b => b.EselonIKey).Where(k => k != null).Cast<string>().Distinct()], ct);
+        var namaEselon = await NamaEselonAsync([.. perUnit.Select(b => b.EselonIKey).Where(k => k != null).Cast<string>().Distinct()], ct);
 
-        var kelompokkan = baris
+        var kelompokkan = perUnit
             .GroupBy(b => Kunci(kelompok, b.Id, b.Nama, b.Provinsi, b.EselonIKey, namaEselon))
             .Select(g =>
             {
-                int total = g.Count();
-                int aman = g.Count(x => x.Status == SafetyStatus.Aman);
-                int butuh = g.Count(x => x.Status == SafetyStatus.ButuhBantuan);
+                int total = g.Sum(x => x.Total);
+                int aman = g.Sum(x => x.Aman);
+                int butuh = g.Sum(x => x.Butuh);
                 var rekap = new RekapSafetyCheck(total, aman, butuh);
                 return new SafetyCheckKelompokDto(new KelompokMonitorDto(g.Key.Kode, g.Key.Label), total, aman, butuh, rekap.BelumMerespons, rekap.TingkatRespons);
             })
