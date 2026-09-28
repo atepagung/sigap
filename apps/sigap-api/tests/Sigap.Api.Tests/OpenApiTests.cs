@@ -72,6 +72,55 @@ public sealed class OpenApiTests(AplikasiUji aplikasi) : IClassFixture<AplikasiU
         Assert.Empty(diLuarAwalan);
     }
 
+    /// <summary>
+    /// "Dokumentasi OpenAPI terisi" (DEFINITION_OF_DONE butir 7) untuk SELURUH operasi, bukan hanya domain yang punya
+    /// tes OpenAPI sendiri: ringkasan, skema respons sukses (kecuali 201/204 tanpa badan), 401 — dan 403 bila endpoint
+    /// ber-permission — sebagai <c>application/problem+json</c>.
+    /// </summary>
+    [Fact]
+    public async Task Setiap_operasi_bisnis_punya_ringkasan_skema_sukses_dan_galat_problem_json()
+    {
+        using var klien = aplikasi.Klien();
+        using var respons = await klien.GetAsync(new Uri("/openapi/v1.json", UriKind.Relative));
+        var dokumen = await respons.Content.ReadFromJsonAsync<JsonElement>();
+
+        var kurang = new List<string>();
+        foreach (var path in dokumen.GetProperty("paths").EnumerateObject().Where(p => p.Name.StartsWith(AwalanApi, StringComparison.Ordinal)))
+        {
+            foreach (var operasi in path.Value.EnumerateObject())
+            {
+                string nama = $"{operasi.Name.ToUpperInvariant()} {path.Name}";
+                var o = operasi.Value;
+                var hasil = o.GetProperty("responses").EnumerateObject().ToDictionary(r => r.Name, r => r.Value);
+                bool cukupLogin = KontrakApi.Permission[new EndpointKontrak(operasi.Name.ToUpperInvariant(), path.Name[AwalanApi.Length..])]
+                    == KontrakApi.Terautentikasi;
+
+                if (!o.TryGetProperty("summary", out var ringkasan) || string.IsNullOrWhiteSpace(ringkasan.GetString()))
+                {
+                    kurang.Add($"{nama}: tanpa summary");
+                }
+
+                if (hasil.FirstOrDefault(r => r.Key.StartsWith('2')) is not { Key: { } kodeSukses } sukses
+                    || (kodeSukses is not ("201" or "204") && !sukses.Value.TryGetProperty("content", out _)))
+                {
+                    kurang.Add($"{nama}: tanpa skema respons sukses");
+                }
+
+                foreach (string kode in cukupLogin ? ["401"] : new[] { "401", "403" })
+                {
+                    if (!hasil.TryGetValue(kode, out var galat)
+                        || !galat.TryGetProperty("content", out var isi)
+                        || !isi.TryGetProperty("application/problem+json", out _))
+                    {
+                        kurang.Add($"{nama}: {kode} tidak didokumentasikan sebagai problem+json");
+                    }
+                }
+            }
+        }
+
+        Assert.Empty(kurang);
+    }
+
     [Fact]
     public void Kontrak_memuat_48_endpoint()
     {
