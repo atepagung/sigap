@@ -75,8 +75,13 @@ builder.Services.AddHealthChecks()
     // "ready" berarti database terjangkau (API_CONTRACT #47).
     .AddDbContextCheck<SigapDbContext>("database", tags: ["ready"]);
 
+// Nama dan versi peladen tidak perlu diumumkan.
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);
+
 var app = builder.Build();
 
+// Paling depan: berlaku juga untuk respons galat dan tantangan 401.
+app.UseHeaderKeamanan();
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
