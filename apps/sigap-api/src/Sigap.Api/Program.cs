@@ -47,15 +47,6 @@ builder.Services.AddNotifikasi(builder.Configuration, kanal =>
 builder.Services.AddSigapApplication();
 builder.Services.AddSigapInfrastructure(builder.Configuration);
 
-#if DEBUG
-if (builder.Environment.IsDevelopment())
-{
-    // DUMMY, hanya pengembangan. Memakai TryAdd, jadi implementasi sungguhan (P4.2/P5.3)
-    // otomatis menang begitu didaftarkan.
-    builder.Services.AddNotifikasiDummy();
-}
-#endif
-
 // ── HTTP ─────────────────────────────────────────────────────────────────────
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = GalatModel.Buat);

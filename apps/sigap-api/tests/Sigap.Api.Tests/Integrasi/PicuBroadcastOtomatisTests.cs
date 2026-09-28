@@ -78,8 +78,7 @@ public sealed class PicuBroadcastOtomatisTests(AplikasiUjiDb app) : TesBroadcast
             sp.GetRequiredService<ICurrentUserContext>(),
             klien ?? new KlienBmkgTiruan(gempa),
             sp.GetRequiredService<IBroadcastStore>(),
-            sp.GetRequiredService<IPenerimaPemberitahuan>(),
-            sp.GetRequiredService<IPengirimNotifikasi>(),
+            sp.GetRequiredService<PemberitahuBroadcast>(),
             new WaktuTetap(sekarang ?? Terjadi.AddMinutes(10))).JalankanAsync(CancellationToken.None));
 
     private Task<Dictionary<string, object?>?> BroadcastDariKejadianAsync(Gempa g) =>

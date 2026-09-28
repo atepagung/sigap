@@ -46,8 +46,15 @@ internal sealed class PencatatJejakInterceptor(ICurrentUserContext pengguna, Kon
         typeof(LanggananPush)
     ];
 
-    /// <summary>Kolom yang berubah otomatis dan tidak berarti apa-apa bagi audit.</summary>
-    private static readonly HashSet<string> Diabaikan = new(StringComparer.Ordinal) { PengisiUpdatedAt.NamaProperti };
+    /// <summary>
+    /// Kolom yang berubah otomatis dan tidak berarti apa-apa bagi audit. <c>"LanggananPush"."dipakaiPada"</c> diperbarui
+    /// setiap kali sebuah perangkat berhasil dikirimi push; mencatatnya berarti satu baris jejak per perangkat per
+    /// pemberitahuan. Pembuatan dan penghapusan langganan tetap tercatat.
+    /// </summary>
+    private static readonly HashSet<string> Diabaikan = new(StringComparer.Ordinal)
+    {
+        PengisiUpdatedAt.NamaProperti, nameof(Persistensi.Notifikasi.LanggananPush.DipakaiPada)
+    };
 
     public static IReadOnlySet<Type> EntitasDiaudit => Diaudit;
 

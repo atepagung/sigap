@@ -1,11 +1,9 @@
 using Kemenkeu.Iam;
 using Sigap.Application.Keamanan;
-using Sigap.Application.Notifikasi;
 using Sigap.Application.Umum;
 using Sigap.Domain.Broadcast;
 using Sigap.Domain.Referensi;
 using Sigap.Domain.Umum;
-using Sigap.Notifikasi;
 
 namespace Sigap.Application.Broadcast;
 
@@ -16,8 +14,7 @@ namespace Sigap.Application.Broadcast;
 public sealed class PicuBroadcast(
     ICurrentUserContext pengguna,
     IBroadcastStore store,
-    IPenerimaPemberitahuan penerima,
-    IPengirimNotifikasi pengirim,
+    PemberitahuBroadcast pemberitahu,
     TimeProvider waktu)
 {
     public async Task<DetailBroadcastDto> JalankanAsync(PicuPermintaan permintaan, CancellationToken ct)
@@ -60,24 +57,7 @@ public sealed class PicuBroadcast(
             };
         }
 
-        var pegawai = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var unit in hasil.Disasar)
-        {
-            pegawai.UnionWith(await penerima.PegawaiUnitAsync(unit.Id, ct));
-        }
-
-        await pengirim.KirimAsync(
-            pegawai,
-            new Pemberitahuan
-            {
-                Kode = KodePemberitahuan.SafetyCheckDipicu,
-                Tingkat = TingkatPemberitahuan.Genting,
-                Judul = "Konfirmasi keselamatan Anda",
-                Pesan = pesan,
-                Terkait = new Terkait(KodePemberitahuan.TerkaitBroadcast, hasil.BroadcastId),
-                KunciIdempotensi = $"broadcast-dipicu:{hasil.BroadcastId}"
-            },
-            ct);
+        await pemberitahu.KirimAsync(hasil, pesan, ct);
 
         return await store.BacaAsync(hasil.BroadcastId, pengguna.GetScope(Izin.BroadcastRead), userId, ct)
             ?? throw new InvalidOperationException("Broadcast yang baru dipicu tidak terbaca.");

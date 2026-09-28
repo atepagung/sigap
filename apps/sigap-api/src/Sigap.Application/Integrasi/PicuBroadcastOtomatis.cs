@@ -1,11 +1,9 @@
 using Kemenkeu.Iam;
 using Sigap.Application.Broadcast;
-using Sigap.Application.Notifikasi;
 using Sigap.Application.Umum;
 using Sigap.Domain.Broadcast;
 using Sigap.Domain.Integrasi;
 using Sigap.Domain.Referensi;
-using Sigap.Notifikasi;
 
 namespace Sigap.Application.Integrasi;
 
@@ -75,8 +73,7 @@ public sealed class PicuBroadcastOtomatis(
     ICurrentUserContext pengguna,
     IKlienBmkg klien,
     IBroadcastStore store,
-    IPenerimaPemberitahuan penerima,
-    IPengirimNotifikasi pengirim,
+    PemberitahuBroadcast pemberitahu,
     TimeProvider waktu)
 {
     /// <summary>Peran dan profil yang dititipkan di jejak audit pemicu (bukan peran SSO; akun layanan tanpa peran).</summary>
@@ -142,7 +139,7 @@ public sealed class PicuBroadcastOtomatis(
                 continue;
             }
 
-            await KirimAsync(hasil, naskah.Pesan, ct);
+            await pemberitahu.KirimAsync(hasil, naskah.Pesan, ct);
             kejadian.Add(new(k.Kunci, k.Mmi, StatusKejadian.Dipicu, null, hasil.BroadcastId, hasil.Disasar.Count, hasil.Dilewati.Count));
         }
 
@@ -160,27 +157,5 @@ public sealed class PicuBroadcastOtomatis(
         return new SasaranPemicu(
             satu is null ? JenisTarget.Nasional : JenisTarget.Provinsi,
             null, satu, string.Join(", ", wilayah.Select(k => k.Nama)), null, g.Wilayah);
-    }
-
-    private async Task KirimAsync(HasilPicu hasil, string pesan, CancellationToken ct)
-    {
-        var pegawai = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var unit in hasil.Disasar)
-        {
-            pegawai.UnionWith(await penerima.PegawaiUnitAsync(unit.Id, ct));
-        }
-
-        await pengirim.KirimAsync(
-            pegawai,
-            new Pemberitahuan
-            {
-                Kode = KodePemberitahuan.SafetyCheckDipicu,
-                Tingkat = TingkatPemberitahuan.Genting,
-                Judul = "Konfirmasi keselamatan Anda",
-                Pesan = pesan,
-                Terkait = new Terkait(KodePemberitahuan.TerkaitBroadcast, hasil.BroadcastId!),
-                KunciIdempotensi = $"broadcast-dipicu:{hasil.BroadcastId}"
-            },
-            ct);
     }
 }

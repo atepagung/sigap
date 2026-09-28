@@ -70,6 +70,34 @@ public sealed class OpsiWebPush
     public int TtlDetik { get; set; } = 3600;
 
     /// <summary>
+    /// Host peladen push yang boleh dikirimi. <c>endpoint</c> langganan datang dari peramban pengguna (#44), jadi tanpa
+    /// daftar ini server dapat disuruh mengirim <c>POST</c> ke alamat mana pun, termasuk jaringan internal (SSRF).
+    /// Awalan <c>*.</c> berarti subdomain apa pun. Bawaan: peladen push Chrome/Edge (FCM), Firefox, Safari, dan
+    /// Windows. Isian di konfigurasi <b>ditambahkan</b> ke bawaan ini (perilaku binder konfigurasi .NET untuk list).
+    /// </summary>
+    public IList<string> HostDiizinkan { get; set; } = new List<string>
+    {
+        "fcm.googleapis.com",
+        "updates.push.services.mozilla.com",
+        "*.push.apple.com",
+        "*.notify.windows.com"
+    };
+
+    /// <summary><c>https</c> dan host-nya ada di <see cref="HostDiizinkan"/>.</summary>
+    public bool EndpointDiizinkan(string endpoint)
+    {
+        if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps || !uri.IsDefaultPort)
+        {
+            return false;
+        }
+
+        string host = uri.IdnHost;
+        return HostDiizinkan.Any(pola => pola.StartsWith("*.", StringComparison.Ordinal)
+            ? host.EndsWith(pola[1..], StringComparison.OrdinalIgnoreCase)
+            : string.Equals(host, pola, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
     /// Sepadan dengan <c>PUSH_SIAP</c> di prototipe: tanpa sepasang kunci, seluruh jalur push
     /// berhenti dengan tenang alih-alih melempar saat berjalan.
     /// </summary>

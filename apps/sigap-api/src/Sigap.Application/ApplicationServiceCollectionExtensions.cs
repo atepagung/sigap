@@ -63,6 +63,7 @@ public static class ApplicationServiceCollectionExtensions
 
         // ── Broadcast: trigger safety check (#12–#16) ──
         services.AddScoped<PratinjauTrigger>();
+        services.AddScoped<PemberitahuBroadcast>();
         services.AddScoped<PicuBroadcast>();
         services.AddScoped<PicuBroadcastOtomatis>();
         services.AddScoped<BacaBroadcast>();

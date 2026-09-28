@@ -268,6 +268,35 @@ public sealed class NotifikasiTests(AplikasiUjiDb app) : TesNotifikasi(app)
         AssertGalat(tanpaKunci, isi2, HttpStatusCode.BadRequest, "VALIDASI_GAGAL");
     }
 
+    [TeoriDb]
+    [InlineData("http://fcm.googleapis.com/fcm/send/x")]
+    [InlineData("bukan-url")]
+    [InlineData("/relatif/saja")]
+    [InlineData("ftp://push.uji/x")]
+    [InlineData("javascript:alert(1)")]
+    public async Task Endpoint_langganan_selain_URL_https_ditolak_400_dan_tidak_disimpan(string endpoint)
+    {
+        // Server kelak mengirim POST ke endpoint ini (P5.3): menerima alamat sembarang sama dengan membuka SSRF.
+        var l = await LingkunganBaruAsync();
+
+        var (respons, isi) = await LangganAsync(l.Pegawai1, endpoint);
+
+        AssertGalat(respons, isi, HttpStatusCode.BadRequest, "VALIDASI_GAGAL");
+        Assert.Equal(0, await HitungAsync("""SELECT count(*) FROM "LanggananPush" WHERE "endpoint" = @e""", ("e", endpoint)));
+    }
+
+    [FaktaDb]
+    public async Task Endpoint_atau_kunci_yang_terlalu_panjang_ditolak_400()
+    {
+        var l = await LingkunganBaruAsync();
+
+        var (panjang, isi1) = await LangganAsync(l.Pegawai1, "https://fcm.googleapis.com/" + new string('a', 2048));
+        var (kunci, isi2) = await LangganAsync(l.Pegawai1, "https://fcm.googleapis.com/x-" + Guid.NewGuid().ToString("N"), p256dh: new string('k', 257));
+
+        AssertGalat(panjang, isi1, HttpStatusCode.BadRequest, "VALIDASI_GAGAL");
+        AssertGalat(kunci, isi2, HttpStatusCode.BadRequest, "VALIDASI_GAGAL");
+    }
+
     [FaktaDb]
     public async Task P256dh_dan_auth_tidak_pernah_terproyeksi_ke_respons_manapun()
     {

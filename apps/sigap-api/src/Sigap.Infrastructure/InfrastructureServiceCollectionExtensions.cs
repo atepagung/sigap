@@ -26,6 +26,8 @@ using Sigap.Infrastructure.Persistensi;
 using Sigap.Infrastructure.Persistensi.Konvensi;
 using Sigap.Infrastructure.Referensi;
 using Sigap.Infrastructure.SafetyCheck;
+using Sigap.Notifikasi;
+using Sigap.Notifikasi.WebPush;
 
 namespace Sigap.Infrastructure;
 
@@ -95,6 +97,14 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IMonitorStore, MonitorStore>();
         services.AddScoped<INotifikasiStore, NotifikasiStore>();
         services.AddPenyimpanLampiran(configuration);
+
+        // Port notifikasi (libs/notifikasi) di atas tabel yang sudah ada: "KirimanPush" dan "LanggananPush" (P5.3).
+        // Sebelumnya hanya diisi dummy pengembangan, sehingga di Production IPengirimNotifikasi tidak dapat dibuat dan
+        // setiap use case yang memberi tahu (trigger broadcast, lapor, verifikasi, asesmen) gagal.
+        services.AddScoped<ICatatanKiriman, CatatanKirimanPostgres>();
+        services.AddScoped<IGudangLanggananPush, GudangLanggananPushPostgres>();
+        services.AddHttpClient<IPengirimWebPush, PengirimWebPushVapid>(klien => klien.Timeout = TimeSpan.FromSeconds(10))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler { AllowAutoRedirect = false });
 
         // Pemicu Safety Check otomatis dari BMKG (P5.1): mati bawaan, dinyalakan lewat Bmkg:Aktif.
         services.AddBmkg(configuration);
