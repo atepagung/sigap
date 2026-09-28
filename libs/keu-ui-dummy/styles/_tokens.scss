@@ -1,0 +1,101 @@
+// =============================================================================
+// TOKEN DESIGN SYSTEM — DUMMY
+// Menggantikan: @danarakca/keu-ui (token platform ICS Keuangan)
+//
+// Hanya berisi variabel/mixin/function — TIDAK menghasilkan output CSS apa pun.
+// Aman dipanggil berkali-kali lewat `@use 'index' as *` dari komponen mana pun.
+//
+// Legenda:
+//   [RESMI]  nilai dari Standar-Arsitektur-ICS.pdf, jangan diubah
+//   [ASUMSI] tebakan kita, WAJIB diverifikasi ke BaTII (lihat DUMMY_REGISTRY.md)
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Warna merek — [RESMI]
+// -----------------------------------------------------------------------------
+$color-navy: #003d7a;
+$color-blue: #275ea8;
+$color-gold: #fcb332;
+
+// -----------------------------------------------------------------------------
+// Warna turunan — [ASUMSI]
+// Nama variabel maupun nilainya tebakan kita. Platform bisa saja memakai nama
+// lain ($surface-1, $bg-default, dsb) atau palet netral yang berbeda.
+// -----------------------------------------------------------------------------
+$color-navy-dark: #002b56; // [ASUMSI] hover/active untuk elemen navy
+$color-blue-light: #e8eff8; // [ASUMSI] latar lembut aksen biru
+$color-gold-light: #fff4e0; // [ASUMSI] latar lembut aksen emas
+
+$color-surface: #ffffff; // [ASUMSI] latar kartu/panel
+$color-surface-muted: #f5f7fa; // [ASUMSI] latar halaman & baris zebra
+$color-border: #d8dee7; // [ASUMSI] garis tepi standar
+$color-border-strong: #b3bdcc; // [ASUMSI] garis tepi kontras
+$color-overlay: rgba(0, 0, 0, 0.45); // [ASUMSI] latar redup di belakang modal; ditambah 21 Sep 2026 (P4.3)
+
+$color-text: #1c2430; // [ASUMSI] teks utama
+$color-text-muted: #5b6676; // [ASUMSI] teks sekunder/label
+$color-text-inverse: #ffffff; // [ASUMSI] teks di atas navy/blue
+
+// Status — [ASUMSI] seluruhnya.
+// Catatan domain: SIGAP butuh status Normal/Terganggu/Berhenti Total (5 aspek
+// asesmen) dan Aman/Butuh Bantuan/Belum Merespons (rekap safety check).
+// Pemetaan status domain -> warna ini juga asumsi.
+$color-success: #1d7a4c; // [ASUMSI] normal / aman
+$color-success-light: #e6f4ec; // [ASUMSI]
+$color-success-dark: #16603b; // [ASUMSI] hover
+$color-warning: #b26a00; // [ASUMSI] terganggu / belum merespons
+$color-warning-light: #fdf1dd; // [ASUMSI]
+$color-warning-dark: #8c5400; // [ASUMSI] hover
+$color-danger: #b3261e; // [ASUMSI] berhenti total / butuh bantuan
+$color-danger-light: #fbeae9; // [ASUMSI]
+$color-danger-dark: #8c1e17; // [ASUMSI] hover
+$color-info: $color-blue; // [ASUMSI]
+$color-info-light: $color-blue-light; // [ASUMSI]
+
+// -----------------------------------------------------------------------------
+// Jarak, radius, bayangan, tipografi — [ASUMSI] seluruhnya
+// -----------------------------------------------------------------------------
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 32px;
+
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+
+$shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+$font-family-base: 'Inter', 'Segoe UI', system-ui, sans-serif;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-lg: 16px;
+$font-size-title: 20px;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+$line-height-base: 1.5;
+
+// -----------------------------------------------------------------------------
+// Breakpoint — [ASUMSI]
+// -----------------------------------------------------------------------------
+$breakpoint-sm: 640px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1280px;
+
+// -----------------------------------------------------------------------------
+// Mixin bantu — [ASUMSI] nama dan signature-nya
+// -----------------------------------------------------------------------------
+@mixin focus-ring($color: $color-blue) {
+  outline: 2px solid $color;
+  outline-offset: 2px;
+}
+
+@mixin media-up($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}

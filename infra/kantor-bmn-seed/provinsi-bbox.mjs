@@ -1,0 +1,41 @@
+// Kotak batas (bounding box) KASAR per provinsi, hanya untuk menyebar titik koordinat DUMMY
+// secara masuk akal — BUKAN data geografis presisi. Nama provinsi harus PERSIS sama dengan
+// string "provinsi" di data/kantor-bmn.json (termasuk spasi ganjil "P A P U A").
+//
+// [utara, selatan, barat, timur] dalam derajat desimal (WGS84).
+export const PROVINSI_BBOX = {
+  'Aceh': [6.0, 2.0, 95.0, 98.3],
+  'Bali': [-8.05, -8.9, 114.4, 115.7],
+  'Banten': [-5.7, -7.05, 105.1, 106.6],
+  'Bengkulu': [-2.3, -5.9, 101.0, 103.9],
+  'DKI Jakarta': [-6.08, -6.37, 106.68, 106.97],
+  'Daerah Istimewa Yogyakarta': [-7.5, -8.2, 110.0, 110.8],
+  'Gorontalo': [1.2, 0.2, 121.2, 123.6],
+  'Jambi': [0.5, -2.7, 101.0, 104.6],
+  'Jawa Barat': [-5.9, -7.8, 106.3, 108.8],
+  'Jawa Tengah': [-5.7, -8.2, 108.5, 111.5],
+  'Jawa Timur': [-6.7, -8.8, 111.0, 114.5],
+  'Kalimantan Barat': [2.0, -3.0, 108.0, 114.2],
+  'Kalimantan Selatan': [-1.2, -4.2, 114.3, 116.3],
+  'Kalimantan Tengah': [0.9, -3.5, 110.9, 115.2],
+  'Kalimantan Timur': [4.0, -2.6, 113.9, 119.0],
+  'Kalimantan Utara': [4.5, 1.3, 115.0, 118.2],
+  'Kepulauan Bangka Belitung': [-1.2, -3.7, 105.0, 108.3],
+  'Kepulauan Riau': [4.9, -1.2, 103.3, 109.5],
+  'Lampung': [-3.4, -6.0, 103.4, 105.9],
+  'Maluku': [0.0, -8.4, 125.0, 135.0],
+  'Maluku Utara': [3.0, -1.0, 124.0, 129.5],
+  'Nusa Tenggara Barat': [-8.0, -9.1, 115.8, 119.4],
+  'Nusa Tenggara Timur': [-7.7, -11.0, 118.8, 125.2],
+  'P A P U A': [-1.0, -9.5, 130.0, 141.0],
+  'Papua Barat': [0.5, -4.3, 130.0, 135.5],
+  'Riau': [2.5, -1.2, 100.0, 103.5],
+  'Sulawesi Barat': [-0.6, -3.6, 118.5, 119.6],
+  'Sulawesi Selatan': [-1.9, -7.5, 118.7, 121.6],
+  'Sulawesi Tengah': [1.5, -3.5, 119.5, 124.5],
+  'Sulawesi Tenggara': [-2.9, -6.2, 120.5, 124.2],
+  'Sulawesi Utara': [4.8, -1.0, 121.0, 127.0],
+  'Sumatera Barat': [0.8, -3.4, 98.5, 101.9],
+  'Sumatera Selatan': [-1.0, -5.1, 102.0, 106.2],
+  'Sumatera Utara': [4.3, -0.2, 96.5, 100.2],
+};

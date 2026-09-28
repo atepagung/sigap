@@ -1,0 +1,15 @@
+{
+  "_catatan": [
+    "SATU-SATUNYA sumber identitas remote SIGAP. PROVISIONAL — diganti saat BaTII menetapkan nilai resmi (PLAYBOOK Lampiran E #2).",
+    "Seluruh nilai diturunkan dari remoteName sesuai Golden Rule platform; konsistensinya diuji di src/federation/remote-identity.spec.ts.",
+    "Port sengaja 4299, di luar deret 4200-an milik platform, supaya jelas sementara.",
+    "Dibaca oleh: federation.config.mjs, scripts/*.mjs, src/federation/*, dan registry apps/shell-dummy. Jangan salin nilai ini ke berkas lain."
+  ],
+  "remoteName": "remoteSigapBencana",
+  "elementName": "remote-sigap-bencana-element",
+  "defineFunction": "defineRemoteSigapBencanaElement",
+  "selector": "app-remote-sigap-bencana-entry",
+  "routePath": "/sigap-bencana",
+  "displayName": "SIGAP Bencana",
+  "port": 4299
+}

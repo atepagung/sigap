@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sigap.Notifikasi/Sigap.Notifikasi.csproj" />
+  </Folder>
+  <Folder Name="/dummy/">
+    <Project Path="../notifikasi-dummy/src/Sigap.Notifikasi.Dummy/Sigap.Notifikasi.Dummy.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sigap.Notifikasi.Tests/Sigap.Notifikasi.Tests.csproj" />
+  </Folder>
+</Solution>

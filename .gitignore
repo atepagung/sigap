@@ -1,0 +1,12 @@
+# npm workspaces: dependensi seluruh app di-hoist ke sini
+/node_modules/
+
+# Keluaran build .NET
+bin/
+obj/
+
+# Kredensial lokal — dibuat oleh infra/keycloak/buat-env.mjs
+.env
+
+# Hasil generate seeder KantorBmn (derivatif, besar, deterministik dari sumber)
+infra/kantor-bmn-seed/output/

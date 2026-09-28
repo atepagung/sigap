@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sigap.Domain/Sigap.Domain.csproj" />
+    <Project Path="src/Sigap.Application/Sigap.Application.csproj" />
+    <Project Path="src/Sigap.Infrastructure/Sigap.Infrastructure.csproj" />
+    <Project Path="src/Sigap.Api/Sigap.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sigap.Domain.Tests/Sigap.Domain.Tests.csproj" />
+    <Project Path="tests/Sigap.Application.Tests/Sigap.Application.Tests.csproj" />
+    <Project Path="tests/Sigap.Infrastructure.Tests/Sigap.Infrastructure.Tests.csproj" />
+    <Project Path="tests/Sigap.Api.Tests/Sigap.Api.Tests.csproj" />
+  </Folder>
+  <Folder Name="/platform/">
+    <Project Path="../../libs/iam-dummy/src/Kemenkeu.Iam.Dummy/Kemenkeu.Iam.Dummy.csproj" />
+    <Project Path="../../libs/notifikasi/src/Sigap.Notifikasi/Sigap.Notifikasi.csproj" />
+    <Project Path="../../libs/notifikasi-dummy/src/Sigap.Notifikasi.Dummy/Sigap.Notifikasi.Dummy.csproj" />
+  </Folder>
+</Solution>

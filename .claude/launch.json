@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sigap-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:web"],
+      "port": 4299
+    },
+    {
+      "name": "shell-dummy",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:shell"],
+      "port": 4200
+    }
+  ]
+}

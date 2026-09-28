@@ -1,0 +1,26 @@
+// .pagination — [ASUMSI] SELURUHNYA. Nama class dan strukturnya tebakan kita.
+// Dibutuhkan SIGAP di daftar berhalaman (asesmen, asesmen masuk, layanan, rekap safety check).
+@use '../index' as *;
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+  padding: $space-sm $space-md;
+  border-top: 1px solid $color-border;
+
+  &__info,
+  &__posisi {
+    margin: 0;
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+}

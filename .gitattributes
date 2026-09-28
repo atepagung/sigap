@@ -19,3 +19,8 @@ Dockerfile text eol=lf
 *.pdf     binary
 *.xlsx    binary
 *.docx    binary
+
+# Skrip Node dan hook Git: harus LF. Hook dijalankan sh; CRLF membuatnya gagal di Linux/macOS.
+*.mjs     text eol=lf
+*.md      text eol=lf
+.husky/*  text eol=lf

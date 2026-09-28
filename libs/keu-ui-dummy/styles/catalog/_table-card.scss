@@ -1,0 +1,76 @@
+// .table-card — [RESMI] nama class disebut di Standar-Arsitektur-ICS.pdf.
+// [ASUMSI] struktur anak (__header, __title, __toolbar, __footer) dan tampilannya.
+@use '../index' as *;
+
+.table-card {
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-surface;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    padding: $space-md;
+    border-bottom: 1px solid $color-border;
+  }
+
+  &__title {
+    margin: 0;
+    color: $color-navy;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+  }
+
+  &__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-base;
+  }
+
+  th,
+  td {
+    padding: $space-sm $space-md;
+    text-align: left;
+    border-bottom: 1px solid $color-border;
+  }
+
+  th {
+    background: $color-surface-muted;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  // [ASUMSI] baris kosong & footer paginasi.
+  &__empty {
+    padding: $space-xl $space-md;
+    color: $color-text-muted;
+    text-align: center;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    padding: $space-sm $space-md;
+    border-top: 1px solid $color-border;
+    background: $color-surface-muted;
+    font-size: $font-size-sm;
+  }
+}

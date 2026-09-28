@@ -1,0 +1,118 @@
+name: sigap-api
+
+# Jalan HANYA bila ada perubahan yang dapat memengaruhi sigap-api. Selain apps/sigap-api/**,
+# yang ikut dihitung adalah hal-hal yang dirujuk kodenya atau dibaca tesnya: library iam-dummy
+# dan notifikasi, DDL skema (dibaca SkemaTests), dan API_CONTRACT.md (dibaca OpenApiTests).
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/sigap-api/**'
+      - 'libs/iam-dummy/**'
+      - 'libs/notifikasi/**'
+      - 'libs/notifikasi-dummy/**'
+      - 'infra/skema/**'
+      - 'API_CONTRACT.md'
+      - '.github/workflows/sigap-api.yml'
+  pull_request:
+    paths:
+      - 'apps/sigap-api/**'
+      - 'libs/iam-dummy/**'
+      - 'libs/notifikasi/**'
+      - 'libs/notifikasi-dummy/**'
+      - 'infra/skema/**'
+      - 'API_CONTRACT.md'
+      - '.github/workflows/sigap-api.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: sigap-api-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  PGHOST: localhost
+  PGUSER: sigap_app
+  PGPASSWORD: sigap_password # kredensial database uji sekali pakai di service container ini
+  PGDATABASE: sigap_ci
+
+jobs:
+  verifikasi:
+    # Linux — lihat catatan di sigap-web.yml. Untuk .NET: kapitalisasi jalur di csproj/Include,
+    # pemisah path, dan akhir baris baru ketahuan di sini.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sigap_app
+          POSTGRES_PASSWORD: sigap_password
+          POSTGRES_DB: sigap_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U sigap_app -d sigap_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Pasang skema database (32 tabel prototipe + dua perubahan yang disetujui)
+        run: |
+          for f in infra/skema/00-*.sql infra/skema/10-*.sql infra/skema/11-*.sql; do
+            echo "→ $f"
+            psql -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+          psql -Atc "select count(*) || ' tabel' from information_schema.tables where table_schema = 'public'"
+
+      - name: Restore
+        run: dotnet restore apps/sigap-api/sigap-api.slnx
+
+      - name: Gaya kode (dotnet format)
+        # Menangkap penamaan dan spasi yang lolos dari build biasa: aturan penamaan
+        # .editorconfig baru berlaku penuh lewat `dotnet format`, tidak lewat `dotnet build`.
+        run: dotnet format apps/sigap-api/sigap-api.slnx --verify-no-changes --no-restore
+
+      - name: Build (analyzer dan gaya kode = galat)
+        run: dotnet build apps/sigap-api/sigap-api.slnx --no-restore
+
+      - name: Tes sigap-api
+        env:
+          SIGAP_DB_UJI: Host=localhost;Port=5432;Database=sigap_ci;Username=sigap_app;Password=sigap_password;Timeout=5
+        run: dotnet test apps/sigap-api/sigap-api.slnx --no-build
+
+      - name: Tes library yang dipakai sigap-api
+        run: |
+          dotnet test libs/notifikasi/notifikasi.slnx
+          dotnet test libs/iam-dummy
+
+      - name: Build Release
+        run: dotnet build apps/sigap-api/sigap-api.slnx -c Release --no-restore
+
+      - name: Aturan dummy 4 — publish HARUS gagal selama dummy masih ter-resolve
+        run: |
+          set +e
+          keluaran=$(dotnet publish apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -c Release --no-restore 2>&1)
+          kode=$?
+          set -e
+          if [ "$kode" -eq 0 ]; then
+            echo "::error::dotnet publish berhasil, padahal dummy masih ter-resolve. Aturan dummy #4 (DUMMY_REGISTRY.md) tidak lagi ditegakkan."
+            exit 1
+          fi
+          if ! grep -q "SIGAP001" <<<"$keluaran"; then
+            echo "$keluaran"
+            echo "::error::publish gagal, tetapi bukan karena penjaga SIGAP001 — periksa penyebab sebenarnya di atas."
+            exit 1
+          fi
+          echo "OK: publish ditolak oleh SIGAP001 seperti yang diharapkan."

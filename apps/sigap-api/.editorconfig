@@ -1,0 +1,97 @@
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Produksi berjalan di Linux; akhir baris wajib LF (PLAYBOOK Bagian I).
+end_of_line = lf
+
+[*.{json,jsonc,yml,yaml}]
+indent_size = 2
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[*.{csproj,props,targets,slnx}]
+indent_size = 2
+
+[*.cs]
+# ── Penamaan ──────────────────────────────────────────────────────────────────
+# PascalCase untuk kelas dan method, dengan kosakata domain berbahasa Indonesia
+# (KirimAsesmen, HitungRto, AspekSdm) — konsisten dengan libs/notifikasi.
+dotnet_naming_rule.tipe_pascal_case.severity = warning
+dotnet_naming_rule.tipe_pascal_case.symbols = tipe
+dotnet_naming_rule.tipe_pascal_case.style = pascal_case
+dotnet_naming_symbols.tipe.applicable_kinds = class,struct,enum,property,method,event,delegate
+dotnet_naming_symbols.tipe.applicable_accessibilities = *
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+dotnet_naming_rule.antarmuka_berawalan_i.severity = warning
+dotnet_naming_rule.antarmuka_berawalan_i.symbols = antarmuka
+dotnet_naming_rule.antarmuka_berawalan_i.style = berawalan_i
+dotnet_naming_symbols.antarmuka.applicable_kinds = interface
+dotnet_naming_symbols.antarmuka.applicable_accessibilities = *
+dotnet_naming_style.berawalan_i.required_prefix = I
+dotnet_naming_style.berawalan_i.capitalization = pascal_case
+
+# Konvensi C# yang lazim: field INSTANS privat memakai _camelCase; const dan static (termasuk
+# static readonly) memakai PascalCase. Aturan static ditulis lebih dulu karena lebih spesifik.
+dotnet_naming_rule.field_statis_pascal_case.severity = warning
+dotnet_naming_rule.field_statis_pascal_case.symbols = field_statis
+dotnet_naming_rule.field_statis_pascal_case.style = pascal_case
+dotnet_naming_symbols.field_statis.applicable_kinds = field
+dotnet_naming_symbols.field_statis.applicable_accessibilities = *
+dotnet_naming_symbols.field_statis.required_modifiers = static
+
+dotnet_naming_rule.field_const_pascal_case.severity = warning
+dotnet_naming_rule.field_const_pascal_case.symbols = field_const
+dotnet_naming_rule.field_const_pascal_case.style = pascal_case
+dotnet_naming_symbols.field_const.applicable_kinds = field
+dotnet_naming_symbols.field_const.applicable_accessibilities = *
+dotnet_naming_symbols.field_const.required_modifiers = const
+
+dotnet_naming_rule.field_instans_privat.severity = warning
+dotnet_naming_rule.field_instans_privat.symbols = field_instans_privat
+dotnet_naming_rule.field_instans_privat.style = garis_bawah_camel
+dotnet_naming_symbols.field_instans_privat.applicable_kinds = field
+dotnet_naming_symbols.field_instans_privat.applicable_accessibilities = private
+dotnet_naming_style.garis_bawah_camel.required_prefix = _
+dotnet_naming_style.garis_bawah_camel.capitalization = camel_case
+
+# ── Yang ditegakkan sebagai galat ─────────────────────────────────────────────
+# Using yang tidak terpakai: menumpuk saat porting per domain (P4.4).
+dotnet_diagnostic.IDE0005.severity = warning
+# Perbandingan/operasi async yang lupa di-await.
+dotnet_diagnostic.CS4014.severity = error
+# ConfigureAwait tidak diwajibkan di ASP.NET Core.
+dotnet_diagnostic.CA2007.severity = none
+# Perbandingan string wajib menyebut StringComparison — penting untuk kode enum kontrak.
+dotnet_diagnostic.CA1310.severity = warning
+# Jangan pakai tipe konkret untuk parameter; terlalu bising saat porting.
+dotnet_diagnostic.CA1002.severity = none
+# Nama kelas berbahasa Indonesia sering dianggap salah eja oleh analyzer identifier.
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1716.severity = none
+# Kelas use case didaftarkan di DI dan menerima ketergantungannya saat domainnya diporting
+# (P4.4). Memaksanya static sekarang hanya untuk dibatalkan nanti adalah kerja bolak-balik.
+dotnet_diagnostic.CA1822.severity = none
+# LoggerMessage source-generated delegate untuk setiap baris log terlalu banyak upacara
+# untuk beban API ini; yang ditegakkan tetap logging terstruktur, bukan string interpolasi.
+dotnet_diagnostic.CA1848.severity = none
+
+# ── Gaya: saran, bukan penghalang build ───────────────────────────────────────
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_prefer_braces = true:warning
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:warning
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_style_readonly_field = true:warning
+csharp_style_prefer_primary_constructors = true:suggestion

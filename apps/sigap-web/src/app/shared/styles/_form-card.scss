@@ -1,0 +1,8 @@
+// Partial APLIKASI (bukan katalog design system) — padding isi form di dalam .table-card, sebab
+// katalog belum mendefinisikan class untuk itu (hanya __header/__toolbar/__footer). Di-@use per
+// komponen yang butuh, jadi CSS-nya ikut ter-scoped ke komponen masing-masing (ViewEncapsulation).
+@use 'index' as *;
+
+@mixin isi-form-card {
+  padding: $space-md;
+}

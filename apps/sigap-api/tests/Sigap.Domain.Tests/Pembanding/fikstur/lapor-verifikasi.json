@@ -1,0 +1,379 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/lapor-verifikasi.ts"
+  },
+  "kasus": {
+    "validasiLaporanBencana": [
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "Lantai 1 Gedung A",
+          "deskripsi": "Air masuk setinggi 20 cm"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "",
+          "lokasi": "Lantai 1",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Jenis bencana dan lokasi wajib diisi."
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Jenis bencana dan lokasi wajib diisi."
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "   ",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lokasi terlalu panjang, maksimal 200 karakter."
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "Lobi",
+          "deskripsi": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Banjir",
+          "lokasi": "Lobi",
+          "deskripsi": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Uraian terlalu panjang, maksimal 2000 karakter."
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "Gempa",
+          "lokasi": "Lobi",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "jenisBencana": "gempa bumi",
+          "lokasi": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "deskripsi": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lokasi terlalu panjang, maksimal 200 karakter."
+        }
+      }
+    ],
+    "validasiLampiranBencana": [
+      {
+        "masukan": {
+          "size": 482113,
+          "type": "image/jpeg"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "size": 10485760,
+          "type": "image/png"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "size": 10485761,
+          "type": "image/png"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Ukuran berkas 10.0 MB melebihi batas 10 MB."
+        }
+      },
+      {
+        "masukan": {
+          "size": 16515072,
+          "type": "image/jpeg"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Ukuran berkas 15.8 MB melebihi batas 10 MB."
+        }
+      },
+      {
+        "masukan": {
+          "size": 10747904,
+          "type": "application/pdf"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Ukuran berkas 10.3 MB melebihi batas 10 MB."
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "video/mp4"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "image/gif"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "video/webm"
+        },
+        "keluaran": {
+          "ok": true
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "audio/mpeg"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lampiran hanya boleh berupa foto atau video."
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "audio/webm"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lampiran hanya boleh berupa foto atau video."
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "application/pdf"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lampiran hanya boleh berupa foto atau video."
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": ""
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lampiran hanya boleh berupa foto atau video."
+        }
+      },
+      {
+        "masukan": {
+          "size": 1000,
+          "type": "IMAGE/JPEG"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Lampiran hanya boleh berupa foto atau video."
+        }
+      }
+    ],
+    "bisaDiverifikasi": [
+      {
+        "masukan": {
+          "status": "MENUNGGU"
+        },
+        "keluaran": true
+      },
+      {
+        "masukan": {
+          "status": "TERVERIFIKASI"
+        },
+        "keluaran": false
+      },
+      {
+        "masukan": {
+          "status": "DITOLAK"
+        },
+        "keluaran": false
+      }
+    ],
+    "validasiVerifikasiAlert": [
+      {
+        "masukan": {
+          "approve": true,
+          "catatan": null
+        },
+        "keluaran": {
+          "ok": true,
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "approve": false,
+          "catatan": null
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sertakan alasan penolakan, supaya pelapor mengerti dasar keputusannya.",
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "approve": false,
+          "catatan": "   "
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sertakan alasan penolakan, supaya pelapor mengerti dasar keputusannya.",
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "approve": false,
+          "catatan": "Getaran dari proyek konstruksi"
+        },
+        "keluaran": {
+          "ok": true,
+          "alasan": "Getaran dari proyek konstruksi"
+        }
+      },
+      {
+        "masukan": {
+          "approve": true,
+          "catatan": "  catatan  "
+        },
+        "keluaran": {
+          "ok": true,
+          "alasan": "catatan"
+        }
+      },
+      {
+        "masukan": {
+          "approve": true,
+          "catatan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": true,
+          "alasan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "masukan": {
+          "approve": true,
+          "catatan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Catatan terlalu panjang, maksimal 400 karakter.",
+          "alasan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "masukan": {
+          "approve": false,
+          "catatan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Catatan terlalu panjang, maksimal 400 karakter.",
+          "alasan": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "masukan": {
+          "approve": false,
+          "catatan": "\ufeff\ufeff"
+        },
+        "keluaran": {
+          "ok": false,
+          "pesan": "Sertakan alasan penolakan, supaya pelapor mengerti dasar keputusannya.",
+          "alasan": null
+        }
+      },
+      {
+        "masukan": {
+          "approve": false,
+          "catatan": "\u0085"
+        },
+        "keluaran": {
+          "ok": true,
+          "alasan": "\u0085"
+        }
+      }
+    ],
+    "konstanta": [
+      {
+        "masukan": {},
+        "keluaran": {
+          "BATAS_LAMPIRAN_BYTES": 10485760,
+          "JENDELA_DEDUP_MS": 120000
+        }
+      }
+    ]
+  }
+}

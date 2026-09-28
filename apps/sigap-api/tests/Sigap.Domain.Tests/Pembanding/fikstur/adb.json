@@ -1,0 +1,120 @@
+{
+  "prototipe": {
+    "repo": "atepagung/sigap-prototipe",
+    "commit": "1b1487a3e12caae3531ae4da47ede3024b6c3d34",
+    "berkas": "src/logic/adb.ts"
+  },
+  "kasus": {
+    "PERIODE_ADB": [
+      {
+        "masukan": {},
+        "keluaran": [
+          {
+            "label": "1 Jam",
+            "jam": 1
+          },
+          {
+            "label": "1 Hari",
+            "jam": 24
+          },
+          {
+            "label": "2 Hari",
+            "jam": 48
+          },
+          {
+            "label": "4 Hari",
+            "jam": 96
+          },
+          {
+            "label": "7 Hari",
+            "jam": 168
+          },
+          {
+            "label": "Lebih dari 8 Hari",
+            "jam": 192
+          }
+        ]
+      }
+    ],
+    "labelJam": [
+      {
+        "masukan": {
+          "jam": null
+        },
+        "keluaran": "Tidak tercapai"
+      },
+      {
+        "masukan": {
+          "jam": 1
+        },
+        "keluaran": "1 Jam"
+      },
+      {
+        "masukan": {
+          "jam": 24
+        },
+        "keluaran": "1 Hari"
+      },
+      {
+        "masukan": {
+          "jam": 48
+        },
+        "keluaran": "2 Hari"
+      },
+      {
+        "masukan": {
+          "jam": 96
+        },
+        "keluaran": "4 Hari"
+      },
+      {
+        "masukan": {
+          "jam": 168
+        },
+        "keluaran": "7 Hari"
+      },
+      {
+        "masukan": {
+          "jam": 192
+        },
+        "keluaran": "Lebih dari 8 Hari"
+      },
+      {
+        "masukan": {
+          "jam": 5
+        },
+        "keluaran": "5 jam"
+      },
+      {
+        "masukan": {
+          "jam": 23
+        },
+        "keluaran": "23 jam"
+      },
+      {
+        "masukan": {
+          "jam": 25
+        },
+        "keluaran": "1 hari"
+      },
+      {
+        "masukan": {
+          "jam": 36
+        },
+        "keluaran": "2 hari"
+      },
+      {
+        "masukan": {
+          "jam": 60
+        },
+        "keluaran": "3 hari"
+      },
+      {
+        "masukan": {
+          "jam": 100
+        },
+        "keluaran": "4 hari"
+      }
+    ]
+  }
+}

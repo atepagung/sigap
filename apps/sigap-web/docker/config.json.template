@@ -1,0 +1,6 @@
+{
+  "apiBaseUrl": "${API_BASE_URL}",
+  "ssoIssuerUrl": "${SSO_ISSUER_URL}",
+  "ssoClientId": "${SSO_CLIENT_ID}",
+  "vapidPublicKey": "${VAPID_PUBLIC_KEY}"
+}

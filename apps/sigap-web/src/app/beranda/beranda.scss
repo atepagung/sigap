@@ -1,0 +1,14 @@
+@use 'index' as *;
+
+.beranda__isi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  padding: $space-md;
+}
+
+// Kartu yang semua tombolnya disembunyikan *hasPermission tinggal berisi node komentar, sehingga
+// wadahnya :empty. Kartu berjudul tanpa tombol hanya membingungkan.
+.beranda__kartu:has(> .beranda__isi:empty) {
+  display: none;
+}

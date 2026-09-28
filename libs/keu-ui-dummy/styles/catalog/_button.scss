@@ -1,0 +1,74 @@
+// .button — [ASUMSI] SELURUHNYA. Nama class dan nama varian tebakan kita.
+// Platform bisa saja memakai .btn, .kmk-button, atau directive Angular.
+@use '../index' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xs;
+  padding: $space-sm $space-md;
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  background: $color-navy;
+  color: $color-text-inverse;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: 1.2;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $color-navy-dark;
+  }
+
+  &:focus-visible {
+    @include focus-ring($color-gold);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--secondary {
+    background: $color-surface;
+    border-color: $color-border-strong;
+    color: $color-navy;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-muted;
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $color-blue;
+
+    &:hover:not(:disabled) {
+      background: $color-blue-light;
+    }
+  }
+
+  // [ASUMSI] SIGAP butuh aksi bernada bahaya (tolak laporan, akhiri broadcast)
+  // dan bernada setuju (approve asesmen).
+  &--danger {
+    background: $color-danger;
+
+    &:hover:not(:disabled) {
+      background: $color-danger-dark;
+    }
+  }
+
+  &--success {
+    background: $color-success;
+
+    &:hover:not(:disabled) {
+      background: $color-success-dark;
+    }
+  }
+
+  &--block {
+    width: 100%;
+  }
+}

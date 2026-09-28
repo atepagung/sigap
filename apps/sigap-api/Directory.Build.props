@@ -1,0 +1,30 @@
+<Project>
+
+  <!--
+    Konvensi build bersama seluruh proyek sigap-api. Ditaruh di sini, bukan di akar repo,
+    supaya libs/ (yang menyetel propertinya sendiri per csproj) tidak ikut terpengaruh.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+
+    <!-- Peringatan diperlakukan sebagai galat, sama seperti libs/iam-dummy dan libs/notifikasi. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Analyzer .NET + penegakan gaya kode saat build, aturannya di .editorconfig. -->
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Lintas platform: dikembangkan di Windows, dijalankan di Linux. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <!-- Dokumentasi XML dipakai OpenAPI untuk mengisi keterangan endpoint. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- CS1591: tidak setiap anggota publik wajib berkomentar XML. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>

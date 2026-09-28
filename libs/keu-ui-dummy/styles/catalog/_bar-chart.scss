@@ -1,0 +1,59 @@
+// .bar-chart — [ASUMSI] SELURUHNYA. Nama class dan strukturnya tebakan kita.
+// Dibutuhkan SIGAP untuk histogram lima aspek di dashboard Monitor (#33).
+@use '../index' as *;
+
+.bar-chart {
+  margin: 0;
+  padding: $space-md;
+
+  &__judul {
+    margin-bottom: $space-sm;
+    color: $color-navy;
+    font-weight: $font-weight-medium;
+  }
+
+  &__daftar {
+    display: grid;
+    gap: $space-xs;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__baris {
+    display: grid;
+    grid-template-columns: minmax(8rem, 14rem) 1fr 3rem;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__label {
+    overflow-wrap: anywhere;
+    font-size: $font-size-sm;
+  }
+
+  &__jalur {
+    display: block;
+    height: $space-md;
+    border-radius: $radius-sm;
+    background: $color-surface-muted;
+  }
+
+  &__batang {
+    display: block;
+    height: 100%;
+    border-radius: $radius-sm;
+    background: $color-blue;
+  }
+
+  &__nilai {
+    font-size: $font-size-sm;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  &__kosong {
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+}

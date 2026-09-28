@@ -1,0 +1,72 @@
+// .form-field — [ASUMSI] SELURUHNYA. Nama class tidak disebut di slide; kita
+// menebak dengan gaya penamaan yang sama seperti .page-header/.table-card.
+// Dibutuhkan SIGAP untuk form asesmen 5 aspek, form trigger, dan form laporan.
+@use '../index' as *;
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  margin-bottom: $space-md;
+
+  &__label {
+    color: $color-text;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+
+  &__required {
+    color: $color-danger;
+    margin-left: 2px;
+  }
+
+  &__hint {
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__error {
+    color: $color-danger;
+    font-size: $font-size-sm;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='date'],
+  input[type='datetime-local'],
+  input[type='search'],
+  select,
+  textarea {
+    width: 100%;
+    padding: $space-sm;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-sm;
+    background: $color-surface;
+    color: $color-text;
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &:disabled {
+      background: $color-surface-muted;
+      color: $color-text-muted;
+    }
+  }
+
+  textarea {
+    min-height: 96px;
+    resize: vertical;
+  }
+
+  &--invalid {
+    input,
+    select,
+    textarea {
+      border-color: $color-danger;
+    }
+  }
+}

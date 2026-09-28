@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    DUMMY pengganti iam.plugin (platform ICS Keuangan). Lihat DUMMY_REGISTRY.md.
+    Namespace publik "Kemenkeu.Iam" adalah TEBAKAN; nama assembly sengaja memuat "Dummy"
+    supaya tidak pernah tertukar dengan paket asli.
+    Kunci penukaran: satu ProjectReference ke berkas ini di sigap-api diganti PackageReference
+    iam.plugin asli.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Kemenkeu.Iam</RootNamespace>
+    <AssemblyName>Kemenkeu.Iam.Dummy</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Kemenkeu.Iam.Dummy.Tests" />
+  </ItemGroup>
+
+</Project>
