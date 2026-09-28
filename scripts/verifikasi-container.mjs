@@ -7,7 +7,8 @@
 // database, remote web disajikan lengkap dengan manifest federasi (PLAYBOOK P4.8).
 //
 // Konteks build = snapshot git (berkas yang dilacak, akhir baris LF), bukan folder kerja Windows, jadi
-// hasilnya sama dengan checkout di CI Linux. Image bersifat SEMENTARA (bukan Dockerfile production).
+// hasilnya sama dengan checkout di CI Linux. sigap-api dibangun dengan target `dev` (image sigap-dev); target
+// `production` harus GAGAL dengan SIGAP001 selama iam-dummy ter-resolve (aturan dummy #4).
 //
 // Bila build gagal, skrip menjalankan pemeriksa lintas platform dan mencocokkan log dengan tiga penyebab
 // khas (kapitalisasi nama berkas/impor, CRLF di skrip, path ber-backslash) dan melaporkan temuannya.
@@ -17,7 +18,7 @@ import { AKAR, buatSnapshot, docker, dockerBerjalan, git, mulaiPostgres } from '
 
 const ID = process.pid;
 const TARGET = {
-  api: { dockerfile: 'apps/sigap-api/Dockerfile', image: 'sigap-api:verif' },
+  api: { dockerfile: 'apps/sigap-api/Dockerfile', image: 'sigap-api:verif', target: 'dev' },
   web: { dockerfile: 'apps/sigap-web/Dockerfile', image: 'sigap-web:verif' },
 };
 
@@ -81,7 +82,7 @@ function laporkanGagalBuild(nama, log) {
 // ── Build ────────────────────────────────────────────────────────────────────────────────
 
 /** Membangun image dari arsip snapshot lewat stdin; -f menunjuk Dockerfile DI DALAM arsip. */
-function bangun(tree, { dockerfile, image }) {
+function bangun(tree, { dockerfile, image, target }) {
   return new Promise((selesai) => {
     const arsip = spawn('git', ['archive', tree], {
       cwd: AKAR,
@@ -89,7 +90,16 @@ function bangun(tree, { dockerfile, image }) {
     });
     const build = spawn(
       'docker',
-      ['build', '--progress=plain', '-f', dockerfile, '-t', image, '-'],
+      [
+        'build',
+        '--progress=plain',
+        '-f',
+        dockerfile,
+        ...(target ? ['--target', target] : []),
+        '-t',
+        image,
+        '-',
+      ],
       { stdio: ['pipe', 'pipe', 'pipe'] },
     );
     let log = '';
@@ -201,7 +211,16 @@ async function periksaApi(hasil, jaringan, pg) {
 }
 
 async function periksaWeb(hasil) {
+  // Tanpa API_BASE_URL container wajib menolak mulai, bukan menyajikan aplikasi yang memanggil localhost.
+  const tanpaAlamat = docker(['run', '--rm', TARGET.web.image]);
+  hasil.push([
+    'web: tanpa API_BASE_URL container menolak mulai',
+    tanpaAlamat.status !== 0 && /API_BASE_URL wajib/.test(tanpaAlamat.stderr + tanpaAlamat.stdout),
+    `exit ${tanpaAlamat.status}`,
+  ]);
+
   const nama = `sigap-verif-web-${ID}`;
+  const alamatApi = 'https://api.sigap.invalid';
   const mulai = docker([
     'run',
     '-d',
@@ -210,6 +229,8 @@ async function periksaWeb(hasil) {
     nama,
     '-p',
     '127.0.0.1::8080',
+    '-e',
+    `API_BASE_URL=${alamatApi}`,
     TARGET.web.image,
   ]);
   if (mulai.status !== 0) {
@@ -218,6 +239,27 @@ async function periksaWeb(hasil) {
   }
 
   const dasar = `http://127.0.0.1:${portHost(nama)}`;
+  const sehat = await tunggu(async () => {
+    const r = await ambil(`${dasar}/healthz`);
+    return r.status === 200 ? null : `status ${r.status}`;
+  }, 20);
+  hasil.push(['web: /healthz 200', sehat === null, sehat ?? '']);
+
+  const konfigurasi = await ambil(`${dasar}/config.json`);
+  hasil.push([
+    'web: config.json dari environment',
+    konfigurasi.status === 200 && JSON.parse(konfigurasi.teks).apiBaseUrl === alamatApi,
+    `status ${konfigurasi.status}`,
+  ]);
+
+  const rute = await ambil(`${dasar}/sigap-bencana/masuk`);
+  const chunkHilang = await ambil(`${dasar}/chunk-tidak-ada.js`);
+  hasil.push([
+    'web: rute mode mandiri jatuh ke index.html, chunk yang hilang tetap 404',
+    rute.status === 200 && /text\/html/.test(rute.tipe) && chunkHilang.status === 404,
+    `rute ${rute.status}, chunk ${chunkHilang.status}`,
+  ]);
+
   let manifest = null;
   const galat = await tunggu(async () => {
     const r = await ambil(`${dasar}/remoteEntry.json`);
@@ -288,6 +330,20 @@ try {
       gagalBuild = true;
       laporkanGagalBuild(TARGET[t].image, log);
     }
+  }
+
+  // Target production sigap-api HARUS gagal karena SIGAP001 selama iam-dummy ter-resolve.
+  if (DAFTAR[pilihan].includes('api')) {
+    const { kode, log } = await bangun(tree, {
+      ...TARGET.api,
+      target: 'production',
+      image: 'sigap-api:verif-prod',
+    });
+    hasil.push([
+      'api: target production gagal karena SIGAP001 (aturan dummy #4)',
+      kode !== 0 && log.includes('SIGAP001'),
+      kode === 0 ? 'publish berhasil padahal dummy masih ter-resolve' : '',
+    ]);
   }
 
   if (!gagalBuild) {

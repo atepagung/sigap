@@ -1,27 +1,44 @@
-# SEMENTARA — versi kerja untuk verifikasi lintas platform (PLAYBOOK P4.8), BUKAN Dockerfile production.
-# Nanti dibandingkan/diganti Dockerfile standar dari starter.mfe.
+# syntax=docker/dockerfile:1
 #
-# Konteks build = AKAR repo (bukan folder app): sigap-api merujuk libs/iam-dummy dan libs/notifikasi lewat
-# ProjectReference. Setelah dummy diganti paket platform asli, konteksnya dapat dipersempit ke folder app.
+# Image sigap-api (.NET 10, port 8080, health check GET /health/live dan /health/ready — UR, tabel container).
+# [ASUMSI] Ditulis sendiri karena starter.mfe/standar platform belum tersedia; diganti bila template membawa
+# Dockerfile resmi (LEMBAR_PEMBANDING_DUMMY bagian 8).
 #
-#   docker build -f apps/sigap-api/Dockerfile -t sigap-api:verif .
-#   node scripts/verifikasi-container.mjs        # membangun, menjalankan, dan memeriksa keduanya
+# Dua target:
+#   production  (bawaan)  dotnet publish. SENGAJA GAGAL (SIGAP001) selama libs/iam-dummy ter-resolve — aturan
+#                         dummy #4: tidak ada image production berisi dummy.
+#   dev                   dotnet build. Hanya untuk namespace sigap-dev (keputusan pemilik 28 Sep 2026); keamanan
+#                         tiga lapisnya masih iam-dummy.
 #
-# Memakai `dotnet build`, BUKAN `dotnet publish`: publish sengaja digagalkan (SIGAP001, aturan dummy #4)
-# selama libs/iam-dummy masih ter-resolve. Image ini tidak boleh naik ke production.
+#   docker build -f apps/sigap-api/Dockerfile --target dev -t sigap-api:dev .
+#
+# Konteks = akar repo, bukan folder app (selisih dengan syarat UR, DUMMY_REGISTRY bagian 9 butir 25): proyek
+# merujuk libs/iam-dummy dan libs/notifikasi lewat ProjectReference. Hanya jalur di bawah ini yang masuk image.
+# Tidak ada nilai konfigurasi di image; semuanya dari environment (apps/sigap-api/.env.example).
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS sumber
 WORKDIR /src
 ENV DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1
-COPY . .
-RUN dotnet build apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -c Release -o /out
+COPY apps/sigap-api apps/sigap-api
+COPY libs/iam-dummy libs/iam-dummy
+COPY libs/notifikasi libs/notifikasi
+RUN dotnet restore apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -p:Configuration=Release
+
+FROM sumber AS build-dev
+RUN dotnet build apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -c Release --no-restore -o /out
+
+FROM sumber AS build-production
+RUN dotnet publish apps/sigap-api/src/Sigap.Api/Sigap.Api.csproj -c Release --no-restore -o /out
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
-COPY --from=build /out .
-# ConnectionStrings__Sigap, Iam__Authority, dan Lampiran__Folder wajib diberikan saat `docker run`
-# (proses menolak mulai bila kosong); tidak ada nilai rahasia di image.
 ENV ASPNETCORE_URLS=http://+:8080 DOTNET_NOLOGO=1
 EXPOSE 8080
 USER $APP_UID
 ENTRYPOINT ["dotnet", "Sigap.Api.dll"]
+
+FROM runtime AS dev
+COPY --from=build-dev /out .
+
+FROM runtime AS production
+COPY --from=build-production /out .

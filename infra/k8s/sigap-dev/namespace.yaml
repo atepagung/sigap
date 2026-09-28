@@ -1,0 +1,5 @@
+# [ASUMSI] Namespace mungkin dibuat platform; bila begitu, hapus berkas ini dari kustomization.yaml.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sigap-dev
