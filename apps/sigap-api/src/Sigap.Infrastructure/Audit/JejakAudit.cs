@@ -34,7 +34,7 @@ internal sealed class JejakAudit(SigapDbContext db, ICurrentUserContext pengguna
             EntitasId = entitasId,
             Aksi = aksi,
             Alasan = alasan,
-            Ringkasan = RingkasanJejak.Susun(sebelum, sesudah, pengguna.Roles, pengguna.UnitId),
+            Ringkasan = RingkasanJejak.Susun(entitas, sebelum, sesudah, pengguna.Roles, pengguna.UnitId),
             OlehId = oleh,
             CreatedAt = waktu.GetUtcNow().UtcDateTime
         });

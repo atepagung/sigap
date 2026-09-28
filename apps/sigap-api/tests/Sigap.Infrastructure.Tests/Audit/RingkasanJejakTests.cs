@@ -6,8 +6,8 @@ namespace Sigap.Infrastructure.Tests.Audit;
 public class RingkasanJejakTests
 {
     private static JsonElement Susun(
-        Dictionary<string, object?>? sebelum, Dictionary<string, object?>? sesudah, string[]? peran = null, string? unit = "u1") =>
-        JsonDocument.Parse(RingkasanJejak.Susun(sebelum, sesudah, peran ?? ["SATGAS"], unit)).RootElement;
+        Dictionary<string, object?>? sebelum, Dictionary<string, object?>? sesudah, string[]? peran = null, string? unit = "u1", string entitas = "Uji") =>
+        JsonDocument.Parse(RingkasanJejak.Susun(entitas, sebelum, sesudah, peran ?? ["SATGAS"], unit)).RootElement;
 
     [Fact]
     public void Nama_properti_menjadi_camelCase_dan_hanya_bagian_yang_diberikan_yang_muncul()
@@ -48,6 +48,36 @@ public class RingkasanJejakTests
         Assert.DoesNotContain("RAHASIA", isi.ToString(), StringComparison.Ordinal);
         Assert.Equal("[DISAMARKAN]", isi.GetProperty("sebelum").EnumerateObject().Single().Value.GetString());
         Assert.Equal("[DISAMARKAN]", isi.GetProperty("sesudah").EnumerateObject().Single().Value.GetString());
+    }
+
+    [Theory]
+    [InlineData("Lat")]
+    [InlineData("Lng")]
+    [InlineData("Keterangan")]
+    public void Koordinat_dan_keterangan_safety_check_disamarkan(string kolom)
+    {
+        var isi = Susun(new() { [kolom] = "NILAI-LAMA-RAHASIA" }, new() { [kolom] = "NILAI-BARU-RAHASIA" }, entitas: "SafetyCheckResponse");
+
+        Assert.DoesNotContain("RAHASIA", isi.ToString(), StringComparison.Ordinal);
+        Assert.Equal("[DISAMARKAN]", isi.GetProperty("sesudah").EnumerateObject().Single().Value.GetString());
+    }
+
+    [Fact]
+    public void Koordinat_asli_bertipe_double_tidak_lolos_ke_jejak()
+    {
+        var isi = Susun(null, new() { ["Lat"] = -0.507068, ["Lng"] = 101.447777, ["Status"] = "Aman" }, entitas: "SafetyCheckResponse");
+
+        Assert.DoesNotContain("0.507068", isi.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain("101.447777", isi.ToString(), StringComparison.Ordinal);
+        Assert.Equal("Aman", isi.GetProperty("sesudah").GetProperty("status").GetString());
+    }
+
+    [Fact]
+    public void Keterangan_entitas_lain_tetap_tercatat()
+    {
+        var isi = Susun(null, new() { ["Keterangan"] = "Server email pulih" }, entitas: "GangguanLayanan");
+
+        Assert.Equal("Server email pulih", isi.GetProperty("sesudah").GetProperty("keterangan").GetString());
     }
 
     [Fact]
@@ -96,7 +126,7 @@ public class RingkasanJejakTests
     [Fact]
     public void Karakter_bukan_ASCII_tidak_di_escape_supaya_jejak_terbaca()
     {
-        string json = RingkasanJejak.Susun(null, new Dictionary<string, object?> { ["Lokasi"] = "Kota Bandung — Jl. Braga ①" }, [], null);
+        string json = RingkasanJejak.Susun("Uji", null, new Dictionary<string, object?> { ["Lokasi"] = "Kota Bandung — Jl. Braga ①" }, [], null);
 
         Assert.Contains("Kota Bandung — Jl. Braga ①", json, StringComparison.Ordinal);
     }

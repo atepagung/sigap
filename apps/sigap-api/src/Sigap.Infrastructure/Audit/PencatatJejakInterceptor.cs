@@ -121,14 +121,15 @@ internal sealed class PencatatJejakInterceptor(ICurrentUserContext pengguna, Kon
                 continue; // hanya kolom otomatis yang berubah
             }
 
+            string entitas = e.Metadata.ClrType.Name;
             db.Set<JejakPerubahan>().Add(new JejakPerubahan
             {
                 Id = PembuatCuid.Buat(),
-                Entitas = e.Metadata.ClrType.Name,
+                Entitas = entitas,
                 EntitasId = (string)e.Property("Id").CurrentValue!,
                 Aksi = konteks.Aksi ?? aksi,
                 Alasan = konteks.Alasan,
-                Ringkasan = RingkasanJejak.Susun(sebelum, sesudah, pengguna.Roles, pengguna.UnitId),
+                Ringkasan = RingkasanJejak.Susun(entitas, sebelum, sesudah, pengguna.Roles, pengguna.UnitId),
                 OlehId = oleh,
                 CreatedAt = sekarang
             });

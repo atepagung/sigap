@@ -29,6 +29,18 @@ internal static class RingkasanJejak
         "PasswordHash", "Email", "Endpoint", "P256dh", "Auth", "CatatanPegawai", "SdmCatatan"
     };
 
+    /// <summary>
+    /// Rahasia yang namanya terlalu umum untuk disamarkan di semua tabel, jadi dikunci per entitas. Koordinat dan
+    /// keterangan jawaban safety check adalah data keberadaan pegawai — di API di-Sieve
+    /// (<c>safety-check.rekap.lokasiTerakhir</c>, <c>.keterangan</c>) — sedangkan <c>"GangguanLayanan"."keterangan"</c>
+    /// bukan data pribadi dan tetap tercatat.
+    /// </summary>
+    public static IReadOnlyDictionary<string, IReadOnlySet<string>> RahasiaPerEntitas { get; } =
+        new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
+        {
+            ["SafetyCheckResponse"] = new HashSet<string>(StringComparer.Ordinal) { "Lat", "Lng", "Keterangan" }
+        };
+
     private static readonly JsonSerializerOptions Opsi = new()
     {
         WriteIndented = false,
@@ -36,20 +48,22 @@ internal static class RingkasanJejak
     };
 
     public static string Susun(
+        string entitas,
         IReadOnlyDictionary<string, object?>? sebelum,
         IReadOnlyDictionary<string, object?>? sesudah,
         IReadOnlyCollection<string> peran,
         string? unitId)
     {
+        var rahasiaEntitas = RahasiaPerEntitas.GetValueOrDefault(entitas);
         var isi = new Dictionary<string, object?>(StringComparer.Ordinal);
         if (sebelum is not null)
         {
-            isi["sebelum"] = Normalkan(sebelum);
+            isi["sebelum"] = Normalkan(sebelum, rahasiaEntitas);
         }
 
         if (sesudah is not null)
         {
-            isi["sesudah"] = Normalkan(sesudah);
+            isi["sesudah"] = Normalkan(sesudah, rahasiaEntitas);
         }
 
         isi["oleh"] = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -61,12 +75,13 @@ internal static class RingkasanJejak
         return JsonSerializer.Serialize(isi, Opsi);
     }
 
-    private static Dictionary<string, object?> Normalkan(IReadOnlyDictionary<string, object?> nilai)
+    private static Dictionary<string, object?> Normalkan(IReadOnlyDictionary<string, object?> nilai, IReadOnlySet<string>? rahasiaEntitas)
     {
         var hasil = new Dictionary<string, object?>(StringComparer.Ordinal);
         foreach (var (nama, isi) in nilai)
         {
-            hasil[JsonNamingPolicy.CamelCase.ConvertName(nama)] = Rahasia.Contains(nama) ? Disamarkan : Ubah(isi);
+            bool rahasia = Rahasia.Contains(nama) || (rahasiaEntitas?.Contains(nama) ?? false);
+            hasil[JsonNamingPolicy.CamelCase.ConvertName(nama)] = rahasia ? Disamarkan : Ubah(isi);
         }
 
         return hasil;

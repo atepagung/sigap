@@ -154,4 +154,27 @@ public sealed class JawabSafetyCheckTests(AplikasiUjiDb app) : TesSafetyCheck(ap
             """SELECT "aksi","olehId" FROM "JejakPerubahan" WHERE "entitas" = 'SafetyCheckResponse' AND "olehId" = @u""", ("u", l.Pegawai1.Id));
         Assert.Contains(jejak, j => (string)j["aksi"]! == "DIBUAT");
     }
+
+    [FaktaDb]
+    public async Task Koordinat_jawaban_tidak_pernah_masuk_jejak_audit()
+    {
+        var l = await LingkunganAsync();
+
+        await JawabAsync(l.Pegawai1, l.BroadcastId, new { status = "AMAN", lat = -0.5071, lng = 101.4478 });
+        await JawabAsync(l.Pegawai1, l.BroadcastId, new { status = "BUTUH_BANTUAN", lat = -0.6123, lng = 101.5234 });
+
+        var jejak = await App.Database.DaftarAsync(
+            """SELECT "aksi","ringkasan" FROM "JejakPerubahan" WHERE "entitas" = 'SafetyCheckResponse' AND "olehId" = @u ORDER BY "createdAt" """,
+            ("u", l.Pegawai1.Id));
+        Assert.Equal(["DIBUAT", "DIUBAH"], jejak.Select(j => (string)j["aksi"]!));
+        foreach (string ringkasan in jejak.Select(j => (string)j["ringkasan"]!))
+        {
+            foreach (string angka in new[] { "0.5071", "101.4478", "0.6123", "101.5234" })
+            {
+                Assert.DoesNotContain(angka, ringkasan, StringComparison.Ordinal);
+            }
+
+            Assert.Contains("\"lat\":\"[DISAMARKAN]\"", ringkasan, StringComparison.Ordinal);
+        }
+    }
 }

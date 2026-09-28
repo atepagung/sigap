@@ -114,4 +114,23 @@ public sealed class CatatSafetyCheckTests(AplikasiUjiDb app) : TesSafetyCheck(ap
             ("u", l.Satgas.Id));
         Assert.Equal(["DICATATKAN", "DICATATKAN_ULANG"], jejak.Select(j => (string)j["aksi"]!));
     }
+
+    [FaktaDb]
+    public async Task Keterangan_Satgas_tidak_pernah_masuk_jejak_audit()
+    {
+        var l = await LingkunganAsync();
+
+        await CatatAsync(l.Satgas, l.BroadcastId, l.Pegawai1.Id, new { status = "BUTUH_BANTUAN", alasan = "Terjebak di lantai tiga" });
+        await CatatAsync(l.Satgas, l.BroadcastId, l.Pegawai1.Id, new { status = "BUTUH_BANTUAN", alasan = "Luka di kaki, menunggu evakuasi" });
+
+        var ringkasan = await App.Database.DaftarAsync(
+            """SELECT "ringkasan" FROM "JejakPerubahan" WHERE "entitas" = 'SafetyCheckResponse' AND "olehId" = @u""", ("u", l.Satgas.Id));
+        Assert.Equal(2, ringkasan.Count);
+        Assert.All(ringkasan.Select(r => (string)r["ringkasan"]!), r =>
+        {
+            Assert.DoesNotContain("lantai tiga", r, StringComparison.Ordinal);
+            Assert.DoesNotContain("Luka di kaki", r, StringComparison.Ordinal);
+            Assert.Contains("\"keterangan\":\"[DISAMARKAN]\"", r, StringComparison.Ordinal);
+        });
+    }
 }
