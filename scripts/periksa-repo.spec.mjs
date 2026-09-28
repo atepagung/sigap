@@ -10,6 +10,7 @@ import {
   imporKapitalisasiSalah,
   indeksBukanLf,
   masalahPathCsharp,
+  masalahPathKonfigurasi,
   masalahSkripNpm,
   tabrakanKapitalisasi,
 } from './periksa-repo.mjs';
@@ -96,6 +97,40 @@ test('path C#: Path.Combine, regex, escape biasa, dan komentar tidak ikut ditang
 
 test('path C#: pengecualian eksplisit dihormati', () => {
   assert.deepEqual(cs('var p = a + "/" + b; // periksa-repo: izinkan URL, bukan path berkas'), []);
+});
+
+// ── path Windows literal di berkas konfigurasi ───────────────────────────────────────────────
+
+test('path konfigurasi (json): backslash ganda (escape JSON) ditangkap, garis miring lolos', () => {
+  assert.equal(
+    masalahPathKonfigurasi('{ "paths": { "x": ["./libs\\\\x\\\\index.ts"] } }', 'json').length,
+    1,
+  );
+  assert.deepEqual(
+    masalahPathKonfigurasi('{ "paths": { "x": ["./libs/x/index.ts"] } }', 'json'),
+    [],
+  );
+});
+
+test('path konfigurasi (json): escape tanda kutip biasa tidak ikut ditangkap', () => {
+  assert.deepEqual(masalahPathKonfigurasi('"//": ["Entri \\"@danarakca/keu-ui\\""]', 'json'), []);
+});
+
+test('path konfigurasi (xml): backslash tunggal di atribut Include ditangkap', () => {
+  assert.equal(
+    masalahPathKonfigurasi('<ProjectReference Include="..\\..\\libs\\x\\x.csproj" />', 'xml')
+      .length,
+    1,
+  );
+  assert.deepEqual(
+    masalahPathKonfigurasi('<ProjectReference Include="../../libs/x/x.csproj" />', 'xml'),
+    [],
+  );
+});
+
+test('path konfigurasi: baris komentar dikecualikan', () => {
+  assert.deepEqual(masalahPathKonfigurasi('// "x": "a\\\\b"', 'json'), []);
+  assert.deepEqual(masalahPathKonfigurasi('<!-- Include="a\\b\\c" -->', 'xml'), []);
 });
 
 // ── impor relatif yang kapitalisasinya tidak cocok dengan berkas ────────────────────────────

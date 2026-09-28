@@ -19,7 +19,9 @@
     "periksa:repo": "node scripts/periksa-repo.mjs",
     "test:skrip": "node --test \"scripts/**/*.spec.mjs\"",
     "verifikasi:linux": "node scripts/verifikasi-linux.mjs",
-    "verifikasi:container": "node scripts/verifikasi-container.mjs"
+    "verifikasi:container": "node scripts/verifikasi-container.mjs",
+    "verifikasi:siap-produksi": "node scripts/verifikasi-siap-produksi.mjs",
+    "status:dummy": "node scripts/status-dummy.mjs"
   },
   "dependencies": {
     "pg": "^8.23.0"

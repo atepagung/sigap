@@ -179,6 +179,30 @@ export function masalahPathCsharp(teks) {
   return hasil;
 }
 
+/**
+ * Path Windows literal di berkas konfigurasi (tsconfig*.json, angular.json, .csproj, .slnx).
+ * `masalahPathCsharp` hanya menyisir kode C#; ini menyisir konfigurasi, tempat yang sama
+ * seringnya luput karena "hanya JSON/XML" — tapi Include path .csproj dan `paths` tsconfig
+ * sama-sama jadi path berkas nyata saat `dotnet restore`/`tsc` jalan di Linux.
+ *
+ * @param {string} teks
+ * @param {'json' | 'xml'} tipe  JSON meng-escape `\` sebagai `\\`; XML/atribut menulisnya apa adanya.
+ * @returns {{ baris: number, teks: string }[]}
+ */
+export function masalahPathKonfigurasi(teks, tipe) {
+  const pola =
+    tipe === 'json'
+      ? /"[^"\n]*[A-Za-z0-9_.][\\]{2}[A-Za-z0-9_.][^"\n]*"/
+      : /"[^"\n]*[A-Za-z0-9_.][\\][A-Za-z0-9_.][^"\n]*"/;
+  const hasil = [];
+  teks.split('\n').forEach((teksBaris, i) => {
+    const baris = teksBaris.trim();
+    if (baris.startsWith('//') || baris.startsWith('<!--')) return;
+    if (pola.test(baris)) hasil.push({ baris: i + 1, teks: baris.slice(0, 120) });
+  });
+  return hasil;
+}
+
 // ── Pengumpul berkas ───────────────────────────────────────────────────────────────────────
 
 function git(...argumen) {
@@ -244,6 +268,20 @@ function main() {
     if (teks === null) continue;
     for (const m of masalahPathCsharp(teks)) {
       masalah.push(`[path C#] ${p}:${m.baris}: ${m.teks}\n      ${m.saran}`);
+    }
+  }
+
+  // 5. Path di berkas konfigurasi (tsconfig*.json, angular.json, .csproj, .slnx)
+  const KONFIG_JSON = /(^|\/)(tsconfig[^/]*\.json|angular\.json)$/;
+  const KONFIG_XML = /\.(csproj|slnx)$/;
+  for (const p of berkas.filter((x) => KONFIG_JSON.test(x) || KONFIG_XML.test(x))) {
+    const teks = bacaTeks(p);
+    if (teks === null) continue;
+    const tipe = KONFIG_JSON.test(p) ? 'json' : 'xml';
+    for (const m of masalahPathKonfigurasi(teks, tipe)) {
+      masalah.push(
+        `[path konfigurasi] ${p}:${m.baris}: ${m.teks}\n      pakai garis miring \`/\`; backslash hanya jalan di Windows`,
+      );
     }
   }
 

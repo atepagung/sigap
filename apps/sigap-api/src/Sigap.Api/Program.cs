@@ -101,6 +101,9 @@ if (app.Environment.IsDevelopment())
     // permukaan API tidak perlu diumumkan.
     app.MapOpenApi();
     app.MapScalarApiReference();
+
+    // Supaya tidak ada yang lupa: keamanan tiga lapis di lingkungan ini masih iam-dummy.
+    BannerDummy.Tulis();
 }
 
 await app.RunAsync();
