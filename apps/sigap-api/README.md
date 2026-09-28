@@ -355,7 +355,12 @@ Aturan yang perlu diingat saat menulis kode baru:
   (`ArsitekturAuditTests`) — menambah pemakaian baru adalah keputusan yang harus disadari.
 - **Tabel baru di model wajib diputuskan**: diaudit (`PencatatJejakInterceptor.EntitasDiaudit`) atau
   dikecualikan dengan alasan (`ArsitekturAuditTests.TidakDiaudit`). Kalau tidak, tes gagal.
-- **Kolom rahasia disamarkan** (`[DISAMARKAN]`), bukan dibuang: `PasswordHash`, `Email`, dan kunci perangkat push.
+- **Header keamanan respons** (`Umum/HeaderKeamanan.cs`): `/api/*` dan `/health/*` selalu `Cache-Control: no-store`,
+  `nosniff`, CSP `default-src 'none'; frame-ancestors 'none'`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`,
+  tanpa menimpa nilai yang disetel endpoint. HSTS diserahkan ke gateway (DUMMY_REGISTRY bagian 9 butir 23).
+- **Kolom rahasia disamarkan** (`[DISAMARKAN]`), bukan dibuang: `PasswordHash`, `Email`, kunci perangkat push, dua catatan
+  SDM asesmen, dan — khusus `SafetyCheckResponse` (`RingkasanJejak.RahasiaPerEntitas`) — `lat`, `lng`, `keterangan`:
+  data keberadaan pegawai yang di API di-Sieve. Per entitas karena `"GangguanLayanan"."keterangan"` bukan data pribadi.
   Teks lebih dari 2.000 karakter dipotong.
 - Jejak tidak mengaudit dirinya dan tidak ada endpoint yang membacanya (KANDIDAT_SCOPE_SIEVE S7: bila kelak ada,
   lingkupnya `IKUT_INDUK` lewat `("entitas", "entitasId")`).

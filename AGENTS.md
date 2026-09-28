@@ -107,6 +107,10 @@ Aturan yang sering dilanggar:
   Daftar kandidat Sieve lainnya: [KANDIDAT_SCOPE_SIEVE.md](KANDIDAT_SCOPE_SIEVE.md).
 - **Menambah permission** = ubah `iam-policy.sigap.json` **dan** `Izin.cs` **dan** PERMISSION_MAP.
   Tes `IzinTests` menggagalkan build bila salah satunya tertinggal.
+- **Menambah endpoint** = baris baru di tabel API_CONTRACT bagian 2 (kolom Permission) **dan**
+  `[KemenkeuAuthorize]` yang sama persis. `ProteksiEndpointTests` membaca seluruh routing host yang
+  berjalan dan gagal bila ada aksi tanpa atribut, permission berbeda dari kontrak, `[AllowAnonymous]`,
+  atau endpoint yang tidak menolak 401 tanpa token / 403 dengan token tanpa permission.
 
 ## 6. Lintas platform — WAJIB
 
