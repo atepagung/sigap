@@ -35,6 +35,7 @@ Seluruh identitas diturunkan dari **satu** `remoteName` (Golden Rule platform). 
 ```
 src/app/          ← KODE FITUR. Di sinilah Anda bekerja.
 src/federation/   ← plumbing shell↔remote. DIKARANTINA: jangan diubah untuk fitur.
+docker/           ← nginx + config.json dari environment untuk image (DUMMY_REGISTRY bagian 9 butir 24, 26)
 scripts/          ← skrip build (Node .mjs, lintas platform)
 ```
 
@@ -173,6 +174,7 @@ npm run lint:styles      # Stylelint
 npm run format:web       # Prettier --write
 npm run test:web         # Vitest
 npm run build:prod --workspace apps/sigap-web
+docker build -f apps/sigap-web/Dockerfile -t sigap-web:dev .   # dari akar repo; butuh -e API_BASE_URL saat run
 ```
 
 Pre-commit (Husky + lint-staged) menjalankan versi cepat atas berkas yang di-stage. CI
