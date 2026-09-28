@@ -23,8 +23,8 @@ public sealed class BacaRekapSafetyCheck(ICurrentUserContext pengguna, ISafetyCh
             throw new ValidasiGagalException("status", "Status hanya BUTUH_BANTUAN, BELUM, atau AMAN.");
         }
 
+        var filter = new FilterRekap(status, Pencarian.Rapikan(cari));
         var (id, unitId) = await ResolveBroadcastAsync(broadcastId, ct);
-        var filter = new FilterRekap(status, string.IsNullOrWhiteSpace(cari) ? null : cari.Trim());
         return await store.RekapAsync(id, unitId, pengguna.GetScope(Izin.SafetyCheckRekapRead), filter, paginasi, ct)
             ?? throw new TidakDitemukanException("Broadcast tidak ditemukan.");
     }

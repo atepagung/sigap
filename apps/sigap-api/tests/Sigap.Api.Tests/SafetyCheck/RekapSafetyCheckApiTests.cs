@@ -155,6 +155,32 @@ public sealed class RekapSafetyCheckApiTests(AplikasiUjiDb app) : TesSafetyCheck
     }
 
     [FaktaDb]
+    public async Task Pencarian_membaca_persen_dan_garis_bawah_apa_adanya_bukan_pola()
+    {
+        // Nama pegawai uji "pegawai1-…"/"pegawai2-…": sebagai pola, "%" dan "pegawai_-" cocok dengan keduanya.
+        var l = await LingkunganAsync();
+
+        var (_, persen) = await RekapAsync(l.Satgas, $"?cari={Uri.EscapeDataString("%")}");
+        var (_, garis) = await RekapAsync(l.Satgas, $"?cari={Uri.EscapeDataString("pegawai_-")}");
+
+        Assert.Equal(0, persen.GetProperty("total").GetInt32());
+        Assert.Equal(0, garis.GetProperty("total").GetInt32());
+    }
+
+    [FaktaDb]
+    public async Task Pencarian_lebih_dari_100_karakter_ditolak_400()
+    {
+        var l = await LingkunganAsync();
+
+        var (batas, _) = await RekapAsync(l.Satgas, $"?cari={new string('a', 100)}");
+        var (lebih, isi) = await RekapAsync(l.Satgas, $"?cari={new string('a', 101)}");
+
+        Assert.Equal(HttpStatusCode.OK, batas.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, lebih.StatusCode);
+        Assert.NotEmpty(Errors(isi, "cari"));
+    }
+
+    [FaktaDb]
     public async Task Status_tidak_dikenal_ditolak_400()
     {
         var l = await LingkunganAsync();

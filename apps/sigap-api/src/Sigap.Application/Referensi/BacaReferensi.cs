@@ -3,7 +3,6 @@ using Sigap.Application.Keamanan;
 using Sigap.Application.Umum;
 using Sigap.Domain.Asesmen;
 using Sigap.Domain.Referensi;
-using Sigap.Domain.Umum;
 
 namespace Sigap.Application.Referensi;
 
@@ -16,7 +15,6 @@ namespace Sigap.Application.Referensi;
 /// </summary>
 public sealed class BacaReferensi(ICurrentUserContext pengguna, IReferensiStore store)
 {
-    public const int CariMaksimal = 100;
 
     public DaftarDto<KelompokBencana> JenisBencana() => new(TaksonomiBencana.Daftar);
 
@@ -36,11 +34,7 @@ public sealed class BacaReferensi(ICurrentUserContext pengguna, IReferensiStore 
         ArgumentNullException.ThrowIfNull(filter);
         ArgumentNullException.ThrowIfNull(halaman);
 
-        string? cari = Kosongkan(filter.Cari?.Trim());
-        if (cari is { Length: > CariMaksimal })
-        {
-            throw new ValidasiGagalException("cari", $"Kata pencarian maksimal {CariMaksimal} karakter.");
-        }
+        string? cari = Pencarian.Rapikan(filter.Cari);
 
         return await store.UnitAsync(
             Lingkup(),

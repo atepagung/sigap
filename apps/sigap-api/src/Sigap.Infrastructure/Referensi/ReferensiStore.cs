@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Sigap.Application.Referensi;
 using Sigap.Application.Umum;
 using Sigap.Infrastructure.Persistensi;
+using Sigap.Infrastructure.Persistensi.Konvensi;
 using Sigap.Infrastructure.Persistensi.Organisasi;
 
 namespace Sigap.Infrastructure.Referensi;
@@ -82,11 +83,7 @@ internal sealed class ReferensiStore(SigapDbContext db) : IReferensiStore
 
         if (filter.Cari is { } cari)
         {
-            // ILIKE dengan karakter khusus di-escape: "%" dan "_" yang diketik pengguna dibaca apa adanya,
-            // bukan sebagai pola.
-            string pola = "%" + cari.Replace("\\", "\\\\", StringComparison.Ordinal)
-                .Replace("%", "\\%", StringComparison.Ordinal)
-                .Replace("_", "\\_", StringComparison.Ordinal) + "%";
+            string pola = PolaCari.Mengandung(cari);
             q = q.Where(u => EF.Functions.ILike(u.Nama, pola));
         }
 

@@ -253,7 +253,8 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
 
         if (filter.Cari is { } cari)
         {
-            q = q.Where(x => EF.Functions.ILike(x.Pegawai.Nama, $"%{cari}%"));
+            string pola = PolaCari.Mengandung(cari);
+            q = q.Where(x => EF.Functions.ILike(x.Pegawai.Nama, pola));
         }
 
         q = filter.Status switch
