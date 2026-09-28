@@ -12,12 +12,13 @@ mockup HTML, referensi visual saja).
 ## 0. Status berjalan dan arti "lanjutkan" (baca ini dulu)
 
 Sesi baru cukup dibuka dengan prompt **P0 (Onboarding)** dari `docs/PLAYBOOK.md`, lalu pesan **"lanjutkan"**.
-P4.5 dan P4.6 sudah selesai, jadi "lanjutkan" **bukan lagi** berarti putaran P4.5. Pada 25 Sep 2026 pekerjaan terakhir adalah
-**P5.1 (pemicu Safety Check otomatis dari BMKG)**; "lanjutkan" berarti membaca daftar **keputusan yang menunggu pemilik** di
+P4.5 dan P4.6 sudah selesai, jadi "lanjutkan" **bukan lagi** berarti putaran P4.5. Pada 28 Sep 2026 pekerjaan terakhir adalah
+**P7.3 (container dan manifest sigap-dev)**; "lanjutkan" berarti membaca daftar **keputusan yang menunggu pemilik** di
 bawah, **menanyakan yang mana dulu** (jangan memilih sendiri), lalu mengerjakannya tanpa bertanya ulang hal yang sudah
 diputuskan (lihat `AGENTS.md`, `ACCESS_RULES.md`, `DUMMY_REGISTRY.md` bagian 9).
 
-**Keputusan yang menunggu pemilik (per 25 Sep 2026):**
+**Keputusan yang menunggu pemilik (diperbarui 28 Sep 2026; butir bertanda SELESAI/DISIAPKAN disimpan sebagai riwayat,
+yang masih terbuka disebut di dalam butirnya):**
 1. **[SELESAI 25 Sep 2026, dengan dummy]** Tautan kantor ke unit. Keputusan pemilik: data asli platform akan memuat organisasi sampai lokasi kantor lewat API, jadi sementara dipakai dummy. `node infra/organisasi-seed/kantor-vertikal-dummy.mjs --yes-development` membuat 849 unit vertikal `isDemo` (satu per `kodeSatker`, induk = Eselon I OTK, `kabkota` dari gedung) dan mengisi `"KantorBmn"."unitId"` 1.424 dari 1.431 gedung; bawaannya dry-run, aman diulang, tanpa perubahan skema maupun kode aplikasi (DUMMY_REGISTRY bagian 9 butir 19). Sisa: 44 satker tersebar di beberapa kabupaten/kota (unit hanya memakai yang terbanyak) dan nama gempa berbentuk kecamatan/ibu kota ("Luwuk") tetap tidak cocok; pencocokan akhiran nama sengaja tidak dibangun.
 2. **[SELESAI 25 Sep 2026]** Peragaan peringatan `GEMPA_KUAT_TANPA_KANTOR` di peramban dengan BMKG asli. Pemilik login sebagai Koordinator (`...0006`, lingkup NASIONAL); halaman Notifikasi menampilkan 8 peringatan gempa (MMI III-V; Pidie Jaya, Kab. Bima, Lembata, Sumur, Nagekeo, Padang Pariaman, Luwuk/Pohuwato, Pangalengan/Kertasari dan wilayah NTT) di samping 2 peringatan RTO skenario. Diperagakan setelah unit vertikal dummy terpasang (keputusan 1): 7 kejadian memicu broadcast otomatis ke unit berkabupaten/kota, sisanya wilayah tanpa unit yang muncul sebagai peringatan. Data peragaan (7 `"ActiveBroadcast"` otomatis, 26 sasaran, 33 jejak audit `user-layanan-bmkg`) sudah dihapus dan DB kembali ke baseline; API dev dinyalakan ulang tanpa `Bmkg__Aktif`. Catatan: `get_page_text` dibaca sebelum data selesai dimuat sehingga sempat tampak kosong; tampilan penuh terbukti lewat respons `GET /notifikasi` dan tangkapan layar. Halaman login ada di remote sigap-web (`npm run start:web`, port 4299), bukan di shell dummy, yang hanya memuatnya bila remote hidup.
 3. **[DISELIDIKI 25 Sep 2026, TIDAK TERREPRODUKSI]** Dua tes lama yang flaky (`PersetujuanTests`: persetujuan serentak dan tanggap darurat pulih). Diulang tanpa satu pun kegagalan: 8x kelas itu sendiri, 5x seluruh `Sigap.Api.Tests` (903 tes), 2x solusi penuh sambil kelas itu diulang 6x, dan 15 proses `PersetujuanTests` bersamaan di tiga gelombang (total sekitar 35 run). Pembacaan kode: persetujuan berjalan di bawah `pg_advisory_xact_lock` per unit (`UnitKerjaPostgres`) dan `SelesaikanAsync` memakai kunci yang sama, jadi urutannya terjamin; balapan logika tidak ditemukan. Dugaan (belum terbukti): kehabisan waktu tunggu permintaan atau perintah DB saat mesin sangat terbebani, karena kedua tes menembakkan 5-6 permintaan paralel ke satu unit. Tidak ada kode yang diubah. Bila muncul lagi, simpan pesan galat lengkap (kode status yang diterima, bukan hanya hitungan) sebelum mengulang.
@@ -78,8 +79,9 @@ Dashboard yang dulu menampilkan nol kini punya lingkup nyata. Skenario UAT gempa
 Pekanbaru) menyusul lewat `node infra/skenario-seed/seed.mjs --yes-development` dan **sudah diverifikasi
 hidup di dashboard Perwakilan** (bagian 5.2, baris "Seeder skenario").
 
-Pekerjaan sigap-api yang masih terbuka (bukan endpoint baru) ada di bagian 5.3: pengiriman push sungguhan (`IGudangLanggananPush`/`ICatatanKiriman`
-masih dummy), dan butir ⚖ di ACCESS_RULES (V1, V4, A9; A11 sudah diterapkan sebagai `[ASUMSI]`, lihat P5.1 di bawah).
+Pekerjaan sigap-api yang masih terbuka (bukan endpoint baru) ada di bagian 5.3: menyalakan Web Push (menunggu Lampiran E #13 +
+kunci VAPID; `IGudangLanggananPush`/`ICatatanKiriman` dan pengirimnya sudah sungguhan sejak P5.3, butir 7 di atas), dan butir ⚖
+di ACCESS_RULES (V1, V4, A9; A11 sudah diterapkan sebagai `[ASUMSI]`, lihat P5.1 di bawah).
 
 **Cara kerja tiap putaran (pola sudah baku, ikuti):** Domain (aturan murni, tes pembanding fikstur bila ada) ->
 Application (use case + port) -> Infrastructure (store ber-Scope di WHERE) -> Api (controller tipis,
@@ -90,12 +92,13 @@ DUMMY_REGISTRY bagian 9, ACCESS_RULES, dan berkas ini. Docker Desktop dinyalakan
 tes DB dilewati, jadi minta pemilik menyalakannya sebelum verifikasi.
 
 **Sebelum menulis kode, tanyakan/umumkan ke pemilik:**
-- P4.6 putaran 1 (23-24 Sep 2026) membangun seluruh halaman tapi belum ada `.spec.ts` per komponen dan
-  belum diberitahu ke BaTII soal dua kebutuhan katalog baru (paginasi, grafik — DUMMY_REGISTRY 2.8).
+- P4.6 membangun seluruh halaman dan `.spec.ts` per komponennya sudah dilengkapi (24 Sep 2026), tetapi BaTII
+  belum diberitahu soal dua kebutuhan katalog baru (paginasi, grafik — DUMMY_REGISTRY 2.8).
   Baca DUMMY_REGISTRY butir 51/58 sebelum menyentuh `core/auth` (seam login dev + CORS pengembangan).
 - Notifikasi (#43-#45) selesai 23 Sep 2026 dengan tujuh tebakan ber-`[ASUMSI]` — lihat DUMMY_REGISTRY
   butir 17 sebelum menyentuh domain ini lagi (daftar peringatan yang dipersempit dari prototipe, makna
-  `PICU_BELUM` yang di-Scope, `IGudangLanggananPush`/`ICatatanKiriman` yang masih dummy).
+  `PICU_BELUM` yang di-Scope). `IGudangLanggananPush`/`ICatatanKiriman` tidak lagi dummy sejak P5.3
+  (implementasi Postgres, DUMMY_REGISTRY butir 22).
 - Monitor (#30-#35) selesai 23 Sep 2026 dengan enam tebakan ber-`[ASUMSI]` — lihat DUMMY_REGISTRY butir 16
   sebelum menyentuh domain ini lagi (definisi "unit" pada dashboard, makna `sejak`, sumber angka `layanan`,
   urutan fallback `asesmenTerkini` #35).
@@ -275,10 +278,12 @@ detail tekstual di bawah ini sudah divalidasi lewat PLAYBOOK Lampiran A).
    menyesuaikan diri dengan keterbatasan dummy.
 3. Jangan membangun ulang apa yang sudah disediakan platform.
 4. Jangan pernah tempel secret asli ke prompt — lewat environment variable/vault.
-5. Struktur 32 tabel database tidak berubah. **Satu pengecualian disetujui pemilik proyek
+5. Struktur 32 tabel database tidak berubah. **Dua pengecualian disetujui pemilik proyek
    (18 Sep 2026):** tabel ke-33 `"BroadcastSasaranUnit"` untuk kepemilikan unit per trigger
-   safety check. Spesifikasinya di [API_CONTRACT.md](API_CONTRACT.md) bagian 5. Perubahan tabel
-   lain tetap harus dibawa ke diskusi lebih dulu.
+   safety check (spesifikasinya di [API_CONTRACT.md](API_CONTRACT.md) bagian 5), dan kolom
+   `"KantorBmn"."isKoordinatDummy"` penanda koordinat gedung hasil generate (P3.5, bagian 5.2).
+   DDL keduanya di `infra/skema/10-*.sql` dan `11-*.sql`. Perubahan tabel lain tetap harus
+   dibawa ke diskusi lebih dulu.
 
 **Lima aturan dummy** (Fase 3, PLAYBOOK bagian III): karantina di `libs/*-dummy/` /
 `apps/shell-dummy/`; kontrak identik dengan dokumentasi platform; isi sesederhana mungkin;
@@ -294,8 +299,8 @@ lengkap di PLAYBOOK Bagian I.
 
 ## 4. Dokumen belum ada / masih perlu dibuat
 
-- `AGENTS.md` — belum ada di repo. Dibuat di P4.3 (Fase 4), isi mengikuti spesifikasi di
-  PLAYBOOK P4.3.
+- ~~`AGENTS.md`~~ — **sudah dibuat 21 Sep 2026** di P4.3, di root dan `apps/sigap-web`
+  (bagian 5.2, baris "P4.3").
 - ~~`DUMMY_REGISTRY.md`~~ — **sudah dibuat 18 Sep 2026** bersama dummy pertama
   (`libs/keu-ui-dummy`, P3.1). Perbarui tiap ada dummy atau asumsi baru.
 - Pertanyaan ke BaTII (Lampiran E PLAYBOOK) belum dikonfirmasi terkirim — cek F0.3 di checklist
