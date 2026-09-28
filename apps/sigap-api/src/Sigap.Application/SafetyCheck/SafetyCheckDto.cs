@@ -1,4 +1,5 @@
 using Kemenkeu.Iam;
+using Sigap.Application.Audit;
 using Sigap.Application.Broadcast;
 using Sigap.Application.Umum;
 
@@ -62,7 +63,11 @@ public sealed record RekapDto(
     IReadOnlyList<RekapBarisDto> Data,
     int Halaman,
     int Ukuran,
-    int Total);
+    int Total) : IAksesTercatat
+{
+    RujukanAkses IAksesTercatat.RujukanAkses() =>
+        new("ActiveBroadcast", Broadcast.Id, $"rekap keadaan per pegawai unit {Unit.Id}");
+}
 
 /// <summary><c>GET /safety-check/rekap/ringkasan</c> (#5).</summary>
 public sealed record RingkasanRekapDto(

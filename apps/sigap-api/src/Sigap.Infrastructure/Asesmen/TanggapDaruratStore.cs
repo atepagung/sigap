@@ -1,6 +1,7 @@
 using Kemenkeu.Iam;
 using Microsoft.EntityFrameworkCore;
 using Sigap.Application.Asesmen;
+using Sigap.Application.Audit;
 using Sigap.Infrastructure.Persistensi;
 using Sigap.Infrastructure.Persistensi.Konvensi;
 using Sigap.Infrastructure.Persistensi.TanggapDarurat;
@@ -8,7 +9,7 @@ using Sigap.Infrastructure.Persistensi.TanggapDarurat;
 namespace Sigap.Infrastructure.Asesmen;
 
 /// <summary>Kueri dan tulis <c>"DisasterDeclaration"</c>. Scope <c>{unit} = "unitId"</c> di klausa WHERE.</summary>
-internal sealed class TanggapDaruratStore(SigapDbContext db) : ITanggapDaruratStore
+internal sealed class TanggapDaruratStore(SigapDbContext db, IJejakAudit jejak) : ITanggapDaruratStore
 {
     public static string Kode(DeklarasiStatus status) => status switch
     {
@@ -22,7 +23,7 @@ internal sealed class TanggapDaruratStore(SigapDbContext db) : ITanggapDaruratSt
         db.DisasterDeclaration.AnyAsync(d => d.UnitId == unitId && d.Status == DeklarasiStatus.Darurat && !d.Dibatalkan, ct);
 
     public async Task<TanggapDaruratDto> BuatAsync(
-        string unitId, string pimpinanId, string jenisBencana, string? kategori, string lokasi, DateTime pada, CancellationToken ct)
+        string asesmenId, string unitId, string pimpinanId, string jenisBencana, string? kategori, string lokasi, DateTime pada, CancellationToken ct)
     {
         var entitas = new DisasterDeclaration
         {
@@ -36,6 +37,7 @@ internal sealed class TanggapDaruratStore(SigapDbContext db) : ITanggapDaruratSt
             DeclaredAt = pada
         };
         db.DisasterDeclaration.Add(entitas);
+        jejak.Tandai(AksiJejak.Disetujui, asesmenId);
         await db.SaveChangesAsync(ct);
 
         return new TanggapDaruratDto(entitas.Id, Kode(entitas.Status), entitas.JenisBencana, entitas.DeclaredAt, null);

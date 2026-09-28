@@ -131,7 +131,7 @@ public sealed class RevisiAsesmen(
                 asal.Pilihan ?? new Dictionary<string, string>(), asal.Catatan, asal.Layanan);
             var isi = PembangunIsi.Bangun(permintaan, isiAsal, await layanan.KritisUnitAsync(asal.Unit.Id, token), sekarang);
 
-            string versi = await asesmen.TambahAsync(new NaskahAsesmen(asal.Unit.Id, userId, sekarang, isi), token);
+            string versi = await asesmen.TambahAsync(new NaskahAsesmen(asal.Unit.Id, userId, sekarang, isi, RevisiDariId: asal.Id), token);
             await asesmen.MulaiGangguanAsync(PenilaianLayanan.Terdampak(isi.Layanan), isi.JenisBencana, userId, sekarang, token);
             return versi;
         }, ct);

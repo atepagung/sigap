@@ -48,7 +48,7 @@ builder.Services.AddSigapApplication();
 builder.Services.AddSigapInfrastructure(builder.Configuration);
 
 // ── HTTP ─────────────────────────────────────────────────────────────────────
-builder.Services.AddControllers()
+builder.Services.AddControllers(o => o.Filters.Add<CatatAksesFilter>())
     .ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = GalatModel.Buat);
 
 // Galat berbentuk application/problem+json (API_CONTRACT bagian 1.5).

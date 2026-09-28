@@ -2,6 +2,7 @@ using System.Text.Json;
 using Kemenkeu.Iam;
 using Microsoft.EntityFrameworkCore;
 using Sigap.Application.Asesmen;
+using Sigap.Application.Audit;
 using Sigap.Application.Lampiran;
 using Sigap.Application.Umum;
 using Sigap.Domain.Asesmen;
@@ -25,7 +26,7 @@ namespace Sigap.Infrastructure.Asesmen;
 /// dengan aspek kosong.
 /// </para>
 /// </summary>
-internal sealed class AsesmenStore(SigapDbContext db) : IAsesmenStore
+internal sealed class AsesmenStore(SigapDbContext db, IJejakAudit jejak) : IAsesmenStore
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
@@ -149,6 +150,11 @@ internal sealed class AsesmenStore(SigapDbContext db) : IAsesmenStore
         // Satu SaveChanges = satu transaksi: kedua separuh tersimpan bersama atau tidak sama sekali.
         db.DamageAssessment.Add(damage);
         db.ChecklistKondisiLapangan.Add(checklist);
+        if (naskah.RevisiDariId is { } asal)
+        {
+            jejak.Tandai(AksiJejak.Direvisi, asal);
+        }
+
         await db.SaveChangesAsync(ct);
         return damage.Id;
     }

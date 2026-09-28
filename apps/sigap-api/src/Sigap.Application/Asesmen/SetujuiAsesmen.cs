@@ -66,7 +66,7 @@ public sealed class SetujuiAsesmen(
             }
 
             // Lokasi = nama unit (API_CONTRACT #28). Jenis dan kategori dari asesmen, bukan dari pemanggil.
-            return await tanggapDarurat.BuatAsync(a.Unit.Id, userId, a.JenisBencana, a.KategoriBencana, a.Unit.Nama, sekarang, token);
+            return await tanggapDarurat.BuatAsync(a.Id, a.Unit.Id, userId, a.JenisBencana, a.KategoriBencana, a.Unit.Nama, sekarang, token);
         }, ct);
 
         var tersimpan = await asesmen.BacaAsync(id, lingkup, ct) ?? throw new TidakDitemukanException("Asesmen tidak ditemukan.");

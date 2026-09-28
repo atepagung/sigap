@@ -30,6 +30,20 @@ public static class AksiJejak
 
     /// <summary>Catatan Satgas atas pegawai yang sama diperbarui (#6).</summary>
     public const string DicatatkanUlang = "DICATATKAN_ULANG";
+
+    /// <summary>
+    /// Versi asesmen baru hasil revisi (#22), pada kedua separuhnya. <c>Alasan</c> <b>[ASUMSI — bentuk pencatatan]</b> =
+    /// id versi asal: revisi menulis baris baru (versi lama tidak diubah), jadi tanpa rujukan ini nilai "sebelum" tidak
+    /// dapat ditelusuri dari jejaknya.
+    /// </summary>
+    public const string Direvisi = "DIREVISI";
+
+    /// <summary>
+    /// Pimpinan menyetujui asesmen (#28) — baris <c>"DisasterDeclaration"</c> yang lahir karenanya. <c>Alasan</c>
+    /// <b>[ASUMSI — bentuk pencatatan]</b> = id asesmen yang disetujui: tabel deklarasi tidak punya kolom rujukan ke
+    /// asesmen dan skemanya tidak boleh diubah. "Pending" bukan tindakan (API_CONTRACT #28), jadi tidak dicatat.
+    /// </summary>
+    public const string Disetujui = "DISETUJUI";
 }
 
 /// <summary>

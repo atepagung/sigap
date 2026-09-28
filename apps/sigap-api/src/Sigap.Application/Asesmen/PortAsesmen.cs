@@ -20,8 +20,11 @@ public sealed record IsiAsesmen(
     IReadOnlyDictionary<string, string?> Catatan,
     IReadOnlyList<LayananDinilai> Layanan);
 
-/// <summary>Versi yang akan disimpan. <c>DibuatPada</c> sama untuk kedua separuh (aturan pasangan, KANDIDAT_SCOPE_SIEVE S5).</summary>
-public sealed record NaskahAsesmen(string UnitId, string PengirimId, DateTime DibuatPada, IsiAsesmen Isi);
+/// <summary>
+/// Versi yang akan disimpan. <c>DibuatPada</c> sama untuk kedua separuh (aturan pasangan, KANDIDAT_SCOPE_SIEVE S5).
+/// <c>RevisiDariId</c> = id versi asal bila revisi (#22), dicatat di jejak audit sebagai <c>DIREVISI</c>.
+/// </summary>
+public sealed record NaskahAsesmen(string UnitId, string PengirimId, DateTime DibuatPada, IsiAsesmen Isi, string? RevisiDariId = null);
 
 /// <summary>
 /// Versi yang dibaca dari database. <see cref="Pilihan"/> <c>null</c> = separuh checklist tidak berpasangan
@@ -121,7 +124,9 @@ public interface ITanggapDaruratStore
 {
     Task<bool> UnitSedangDaruratAsync(string unitId, CancellationToken ct);
 
-    Task<TanggapDaruratDto> BuatAsync(string unitId, string pimpinanId, string jenisBencana, string? kategori, string lokasi, DateTime pada, CancellationToken ct);
+    /// <summary>Deklarasi lahir dari persetujuan asesmen <paramref name="asesmenId"/>; jejaknya <c>DISETUJUI</c>.</summary>
+    Task<TanggapDaruratDto> BuatAsync(
+        string asesmenId, string unitId, string pimpinanId, string jenisBencana, string? kategori, string lokasi, DateTime pada, CancellationToken ct);
 
     /// <summary>Deklarasi di dalam lingkup. <c>null</c> bila tidak ada, di luar lingkup, atau dibatalkan.</summary>
     Task<TanggapDaruratDto?> BacaAsync(string id, DataScope lingkup, CancellationToken ct);
