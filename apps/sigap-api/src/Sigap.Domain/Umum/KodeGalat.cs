@@ -47,4 +47,7 @@ public static class KodeGalat
     public const string LayananSudahAda = "LAYANAN_SUDAH_ADA";
     public const string JenisBencanaTidakDapatDiubah = "JENIS_BENCANA_TIDAK_DAPAT_DIUBAH";
     public const string TanggapDaruratSudahSelesai = "TANGGAP_DARURAT_SUDAH_SELESAI";
+
+    // ── Notifikasi (#44) ─────────────────────────────────────────────────────
+    public const string LanggananMilikPerangkatLain = "LANGGANAN_MILIK_PERANGKAT_LAIN";
 }

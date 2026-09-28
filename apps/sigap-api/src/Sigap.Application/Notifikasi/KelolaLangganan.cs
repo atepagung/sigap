@@ -10,7 +10,11 @@ namespace Sigap.Application.Notifikasi;
 /// </summary>
 public sealed class KelolaLangganan(ICurrentUserContext pengguna, INotifikasiStore store, TimeProvider waktu)
 {
-    /// <summary>#44. Perangkat yang sama (endpoint sama) mendaftar ulang memperbarui kunci, bukan ditolak duplikat.</summary>
+    /// <summary>
+    /// #44. Perangkat yang sama (endpoint sama) mendaftar ulang memperbarui kunci, bukan ditolak duplikat. Endpoint milik
+    /// pengguna lain hanya berpindah pemilik bila kuncinya sama: siapa pun yang sekadar tahu URL endpoint perangkat orang
+    /// lain tidak boleh membuat perangkat itu berhenti menerima peringatan (409).
+    /// </summary>
     public async Task TambahAsync(LanggananPermintaan permintaan, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(permintaan);
@@ -30,7 +34,13 @@ public sealed class KelolaLangganan(ICurrentUserContext pengguna, INotifikasiSto
         Maks(p256dh, "keys.p256dh");
         Maks(auth, "keys.auth");
 
-        await store.TambahLanggananAsync(UserId(), endpoint, p256dh, auth, Kosong(permintaan.Peramban), waktu.GetUtcNow().UtcDateTime, ct);
+        if (!await store.TambahLanggananAsync(UserId(), endpoint, p256dh, auth, Kosong(permintaan.Peramban), waktu.GetUtcNow().UtcDateTime, ct))
+        {
+            throw new BenturanKeadaanException(
+                KodeGalat.LanggananMilikPerangkatLain,
+                "Langganan milik perangkat lain",
+                "Endpoint ini sudah terdaftar untuk perangkat pengguna lain. Minta langganan baru dari peramban Anda.");
+        }
     }
 
     /// <summary>#45. Selalu 204 — endpoint yang tidak ada atau milik pengguna lain diperlakukan sama (tidak membocorkan keberadaannya).</summary>

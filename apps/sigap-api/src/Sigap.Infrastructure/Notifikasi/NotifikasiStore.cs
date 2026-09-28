@@ -44,7 +44,7 @@ internal sealed class NotifikasiStore(SigapDbContext db) : INotifikasiStore
         db.BroadcastSasaranUnit.AsNoTracking().ApplyScope(lingkup, unit: s => s.UnitId)
             .AnyAsync(s => s.Status == StatusSasaran.Disasar && s.Aktif && s.Broadcast.SelesaiPada == null, ct);
 
-    public async Task TambahLanggananAsync(
+    public async Task<bool> TambahLanggananAsync(
         string userId, string endpoint, string p256dh, string auth, string? peramban, DateTime pada, CancellationToken ct)
     {
         var ada = await db.LanggananPush.SingleOrDefaultAsync(l => l.Endpoint == endpoint, ct);
@@ -63,7 +63,13 @@ internal sealed class NotifikasiStore(SigapDbContext db) : INotifikasiStore
         }
         else
         {
-            // Perangkat yang sama login ulang lewat pengguna lain: berpindah pemilik dan kunci diperbarui.
+            if (ada.UserId != userId && (ada.P256dh != p256dh || ada.Auth != auth))
+            {
+                return false;
+            }
+
+            // Perangkat yang sama (kunci sama) login ulang lewat pengguna lain berpindah pemilik; pemilik sendiri boleh
+            // memperbarui kuncinya.
             ada.UserId = userId;
             ada.P256dh = p256dh;
             ada.Auth = auth;
@@ -71,6 +77,7 @@ internal sealed class NotifikasiStore(SigapDbContext db) : INotifikasiStore
         }
 
         await db.SaveChangesAsync(ct);
+        return true;
     }
 
     public async Task<bool> HapusLanggananAsync(string userId, string endpoint, CancellationToken ct)

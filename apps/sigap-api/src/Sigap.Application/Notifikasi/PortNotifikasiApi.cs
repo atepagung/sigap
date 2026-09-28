@@ -21,9 +21,11 @@ public interface INotifikasiStore
 
     /// <summary>
     /// Mendaftarkan atau memperbarui langganan perangkat berdasarkan <c>endpoint</c> (unik). Perangkat yang
-    /// sama login ulang lewat pengguna lain akan berpindah pemilik, sesuai definisi "perangkat" Web Push.
+    /// sama login ulang lewat pengguna lain berpindah pemilik, sesuai definisi "perangkat" Web Push — tetapi hanya
+    /// bila kuncinya sama (<c>p256dh</c>/<c>auth</c> hanya diketahui peramban pemilik langganan). <c>false</c>, tanpa
+    /// perubahan apa pun, bila endpoint milik pengguna lain dengan kunci berbeda.
     /// </summary>
-    Task TambahLanggananAsync(string userId, string endpoint, string p256dh, string auth, string? peramban, DateTime pada, CancellationToken ct);
+    Task<bool> TambahLanggananAsync(string userId, string endpoint, string p256dh, string auth, string? peramban, DateTime pada, CancellationToken ct);
 
     /// <summary><c>false</c> bila tidak ada atau bukan milik <paramref name="userId"/> — tidak membocorkan keberadaannya.</summary>
     Task<bool> HapusLanggananAsync(string userId, string endpoint, CancellationToken ct);

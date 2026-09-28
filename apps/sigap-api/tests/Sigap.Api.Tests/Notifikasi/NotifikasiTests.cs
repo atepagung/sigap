@@ -232,6 +232,38 @@ public sealed class NotifikasiTests(AplikasiUjiDb app) : TesNotifikasi(app)
     }
 
     [FaktaDb]
+    public async Task Perangkat_sama_berganti_akun_kunci_sama_berpindah_pemilik()
+    {
+        var l = await LingkunganBaruAsync();
+        string endpoint = "https://push.uji/" + Guid.NewGuid().ToString("N");
+        await LangganAsync(l.Pegawai1, endpoint);
+
+        var (respons, _) = await LangganAsync(l.Pegawai2, endpoint);
+        var baris = await App.Database.BarisAsync("""SELECT "userId" FROM "LanggananPush" WHERE "endpoint" = @e""", ("e", endpoint));
+
+        Assert.Equal(HttpStatusCode.Created, respons.StatusCode);
+        Assert.Equal(l.Pegawai2.Id, baris!["userId"]);
+    }
+
+    [FaktaDb]
+    public async Task Endpoint_milik_pengguna_lain_dengan_kunci_berbeda_ditolak_409_tanpa_perubahan()
+    {
+        // Yang sekadar tahu URL endpoint perangkat orang lain tidak boleh membuat perangkat itu berhenti menerima peringatan.
+        var l = await LingkunganBaruAsync();
+        string endpoint = "https://push.uji/" + Guid.NewGuid().ToString("N");
+        await LangganAsync(l.Pegawai1, endpoint, p256dh: "kunci-korban", auth: "auth-korban");
+
+        var (respons, isi) = await LangganAsync(l.Pegawai2, endpoint, p256dh: "kunci-penyerang", auth: "auth-penyerang");
+        var baris = await App.Database.BarisAsync(
+            """SELECT "userId","p256dh","auth" FROM "LanggananPush" WHERE "endpoint" = @e""", ("e", endpoint));
+
+        AssertGalat(respons, isi, HttpStatusCode.Conflict, "LANGGANAN_MILIK_PERANGKAT_LAIN");
+        Assert.Equal(l.Pegawai1.Id, baris!["userId"]);
+        Assert.Equal("kunci-korban", baris["p256dh"]);
+        Assert.Equal("auth-korban", baris["auth"]);
+    }
+
+    [FaktaDb]
     public async Task Hapus_langganan_milik_pengguna_lain_diam_diam_diabaikan()
     {
         var l = await LingkunganBaruAsync();

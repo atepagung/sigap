@@ -28,6 +28,7 @@ public sealed class NotifikasiController : ControllerBase
     [ProduksGalat(StatusCodes.Status400BadRequest)]
     [ProduksGalat(StatusCodes.Status401Unauthorized)]
     [ProduksGalat(StatusCodes.Status403Forbidden)]
+    [ProduksGalat(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Langganan(
         LanggananPermintaan permintaan, [FromServices] KelolaLangganan kelola, CancellationToken ct)
     {
