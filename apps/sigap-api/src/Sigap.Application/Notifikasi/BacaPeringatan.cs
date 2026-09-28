@@ -56,12 +56,13 @@ public sealed class BacaPeringatan(
     /// <summary>Broadcast aktif menyasar unit pemanggil yang belum dijawabnya sendiri.</summary>
     private async Task TambahSafetyCheckSayaAsync(List<PeringatanDto> hasil, CancellationToken ct)
     {
-        if (!pengguna.HasPermission(Izin.SafetyCheckRespond) || pengguna.UserId is not { } userId || pengguna.UnitId is not { } unitId)
+        if (!pengguna.HasPermission(Izin.SafetyCheckRespond) || pengguna.UserId is not { } userId)
         {
             return;
         }
 
-        var aktif = await safetyCheck.AktifAsync(unitId, userId, ct);
+        var unitSasaran = LingkupSafetyCheck.UnitSasaranSaya(pengguna.GetScope(Izin.SafetyCheckRespond));
+        var aktif = await safetyCheck.AktifAsync(unitSasaran, userId, ct);
         foreach (var a in aktif.Where(a => a.ResponsSaya is null))
         {
             hasil.Add(new PeringatanDto(

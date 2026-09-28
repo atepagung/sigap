@@ -108,7 +108,7 @@ public sealed class BacaMonitor(
         var unit = await store.UnitTerlihatAsync(unitId, lingkup, ct) ?? throw new TidakDitemukanException("Unit tidak ditemukan.");
 
         var tanggapDarurat = await store.TanggapDaruratUnitAsync(unitId, ct);
-        var safetyCheck = await store.SafetyCheckUnitAsync(unitId, ct);
+        var safetyCheck = await store.SafetyCheckUnitAsync(unitId, lingkup, ct);
         var layananTerganggu = await store.LayananGangguanUnitAsync(unitId, ct);
 
         var jenisTerkini = tanggapDarurat?.JenisBencana

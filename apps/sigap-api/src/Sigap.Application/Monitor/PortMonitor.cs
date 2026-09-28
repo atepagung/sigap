@@ -47,7 +47,7 @@ public interface IMonitorStore
     Task<string?> JenisAsesmenTerkiniAsync(string unitId, CancellationToken ct);
 
     /// <summary>#35 <c>safetyCheck</c>: rekap tiap broadcast aktif yang memegang unit ini.</summary>
-    Task<IReadOnlyList<RingkasanRekapDto>> SafetyCheckUnitAsync(string unitId, CancellationToken ct);
+    Task<IReadOnlyList<RingkasanRekapDto>> SafetyCheckUnitAsync(string unitId, DataScope lingkup, CancellationToken ct);
 
     /// <summary>#35 <c>layananTerganggu</c>: gangguan berjalan milik unit ini.</summary>
     Task<IReadOnlyList<LayananGangguanDto>> LayananGangguanUnitAsync(string unitId, CancellationToken ct);

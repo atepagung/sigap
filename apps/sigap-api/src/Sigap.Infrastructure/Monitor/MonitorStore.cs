@@ -286,7 +286,7 @@ internal sealed class MonitorStore(SigapDbContext db, ISafetyCheckStore safetyCh
             .Select(a => (string?)a.JenisBencana)
             .FirstOrDefaultAsync(ct);
 
-    public async Task<IReadOnlyList<RingkasanRekapDto>> SafetyCheckUnitAsync(string unitId, CancellationToken ct)
+    public async Task<IReadOnlyList<RingkasanRekapDto>> SafetyCheckUnitAsync(string unitId, DataScope lingkup, CancellationToken ct)
     {
         var broadcastIds = await db.BroadcastSasaranUnit.AsNoTracking()
             .Where(s => s.UnitId == unitId && s.Status == StatusSasaran.Disasar && s.Aktif && s.Broadcast.SelesaiPada == null)
@@ -297,7 +297,7 @@ internal sealed class MonitorStore(SigapDbContext db, ISafetyCheckStore safetyCh
         var hasil = new List<RingkasanRekapDto>(broadcastIds.Count);
         foreach (string id in broadcastIds)
         {
-            var rekap = await safetyCheck.RingkasanRekapAsync(id, unitId, ct);
+            var rekap = await safetyCheck.RingkasanRekapAsync(id, unitId, lingkup, ct);
             if (rekap is not null)
             {
                 hasil.Add(rekap);

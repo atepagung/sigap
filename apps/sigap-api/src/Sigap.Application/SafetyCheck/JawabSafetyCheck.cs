@@ -1,4 +1,5 @@
 using Kemenkeu.Iam;
+using Sigap.Application.Keamanan;
 using Sigap.Application.Notifikasi;
 using Sigap.Application.Umum;
 using Sigap.Domain.SafetyCheck;
@@ -25,7 +26,9 @@ public sealed class JawabSafetyCheck(
             throw new ValidasiGagalException("status", "Status harus AMAN atau BUTUH_BANTUAN.");
         }
 
-        var konteks = await store.KonteksJawabAsync(broadcastId, unitId, ct);
+        // Scope SASARAN_SAYA (sigap:safety-check:respond); unit yang ditulis tetap unit pemanggil dari identitas.
+        var unitSasaran = LingkupSafetyCheck.UnitSasaranSaya(pengguna.GetScope(Izin.SafetyCheckRespond));
+        var konteks = await store.KonteksJawabAsync(broadcastId, unitSasaran, ct);
         if (!konteks.BroadcastAda || !konteks.UnitDisasar)
         {
             throw new TidakDitemukanException("Broadcast tidak ditemukan.");

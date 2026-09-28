@@ -1,4 +1,5 @@
 using Kemenkeu.Iam;
+using Sigap.Application.Keamanan;
 using Sigap.Application.Umum;
 using Sigap.Domain.SafetyCheck;
 using Sigap.Domain.Umum;
@@ -8,14 +9,16 @@ namespace Sigap.Application.SafetyCheck;
 /// <summary>
 /// <c>PUT /safety-check/broadcast/{broadcastId}/respons/{pegawaiId}</c> (API_CONTRACT #6). Tim Satgas
 /// mencatatkan keadaan pegawai yang tidak dapat menjawab sendiri. Pegawai sasaran wajib berada di
-/// unit Satgas — Scope <c>UNIT</c> berlaku atas <b>unit pegawai</b>, bukan atas jawabannya sendiri.
+/// unit Satgas — Scope <c>UNIT</c> (<c>GetScope(sigap:safety-check:record)</c>) berlaku atas <b>unit pegawai</b>, di
+/// klausa WHERE pembacaan pegawai. Baris jawaban milik pegawai, jadi <c>unitId</c>-nya unit pegawai yang lolos Scope
+/// (dibaca dari database, bukan dari permintaan); di bawah Scope UNIT itu selalu unit Satgas.
 /// </summary>
 public sealed class CatatSafetyCheck(ICurrentUserContext pengguna, ISafetyCheckStore store, TimeProvider waktu)
 {
     public async Task<CatatDto> JalankanAsync(string broadcastId, string pegawaiId, CatatPermintaan permintaan, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(permintaan);
-        var (satgasId, unitId) = IdentitasPemanggil.Wajib(pengguna);
+        var (satgasId, _) = IdentitasPemanggil.Wajib(pengguna);
         if (permintaan.Status is not (StatusSafety.Aman or StatusSafety.ButuhBantuan))
         {
             throw new ValidasiGagalException("status", "Status harus AMAN atau BUTUH_BANTUAN.");
@@ -27,14 +30,15 @@ public sealed class CatatSafetyCheck(ICurrentUserContext pengguna, ISafetyCheckS
             throw new ValidasiGagalException("alasan", hasilAlasan.Pesan!);
         }
 
-        var pegawai = await store.PegawaiAsync(pegawaiId, ct);
-        if (pegawai is null || !pegawai.Aktif || pegawai.UnitId != unitId)
+        var pegawai = await store.PegawaiAsync(pegawaiId, pengguna.GetScope(Izin.SafetyCheckRecord), ct);
+        if (pegawai is null || !pegawai.Aktif)
         {
-            // Pegawai tidak ada, nonaktif, atau di unit lain: 404, sama-sama tanpa akses (bagian 1.5).
+            // Pegawai tidak ada, nonaktif, atau di luar lingkup: 404, sama-sama tanpa akses (bagian 1.5).
             throw new TidakDitemukanException("Pegawai tidak ditemukan.");
         }
 
-        var konteks = await store.KonteksJawabAsync(broadcastId, unitId, ct);
+        string unitId = pegawai.UnitId;
+        var konteks = await store.KonteksJawabAsync(broadcastId, [unitId], ct);
         if (!konteks.BroadcastAda || !konteks.UnitDisasar)
         {
             throw new TidakDitemukanException("Broadcast tidak ditemukan.");

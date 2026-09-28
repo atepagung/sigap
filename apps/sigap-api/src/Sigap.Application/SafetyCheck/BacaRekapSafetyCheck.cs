@@ -1,4 +1,5 @@
 using Kemenkeu.Iam;
+using Sigap.Application.Keamanan;
 using Sigap.Application.Umum;
 using Sigap.Domain.SafetyCheck;
 using Sigap.Domain.Umum;
@@ -6,9 +7,9 @@ using Sigap.Domain.Umum;
 namespace Sigap.Application.SafetyCheck;
 
 /// <summary>
-/// <c>GET /safety-check/rekap</c> (#4) dan <c>/rekap/ringkasan</c> (#5). Scope <c>UNIT</c> berarti unit
-/// pemanggil sendiri (PEGAWAI/PIMPINAN/SATGAS) — tidak ada pilihan unit lain lewat query, jadi diambil
-/// langsung dari identitas, sama seperti #1.
+/// <c>GET /safety-check/rekap</c> (#4) dan <c>/rekap/ringkasan</c> (#5): rekap <b>unit pemanggil</b> (kontrak tidak
+/// punya parameter unit). Scope <c>GetScope(sigap:safety-check-rekap:read)</c> tetap diterapkan di klausa WHERE atas unit
+/// dan pegawainya, sehingga unit di luar lingkup — mis. lingkup kosong karena data organisasi hilang — dijawab 404.
 /// </summary>
 public sealed class BacaRekapSafetyCheck(ICurrentUserContext pengguna, ISafetyCheckStore store)
 {
@@ -24,13 +25,15 @@ public sealed class BacaRekapSafetyCheck(ICurrentUserContext pengguna, ISafetyCh
 
         var (id, unitId) = await ResolveBroadcastAsync(broadcastId, ct);
         var filter = new FilterRekap(status, string.IsNullOrWhiteSpace(cari) ? null : cari.Trim());
-        return await store.RekapAsync(id, unitId, filter, paginasi, ct) ?? throw new TidakDitemukanException("Broadcast tidak ditemukan.");
+        return await store.RekapAsync(id, unitId, pengguna.GetScope(Izin.SafetyCheckRekapRead), filter, paginasi, ct)
+            ?? throw new TidakDitemukanException("Broadcast tidak ditemukan.");
     }
 
     public async Task<RingkasanRekapDto> RingkasanAsync(string? broadcastId, CancellationToken ct)
     {
         var (id, unitId) = await ResolveBroadcastAsync(broadcastId, ct);
-        return await store.RingkasanRekapAsync(id, unitId, ct) ?? throw new TidakDitemukanException("Broadcast tidak ditemukan.");
+        return await store.RingkasanRekapAsync(id, unitId, pengguna.GetScope(Izin.SafetyCheckRekapRead), ct)
+            ?? throw new TidakDitemukanException("Broadcast tidak ditemukan.");
     }
 
     /// <summary>Broadcast diminta lewat query, atau bawaannya broadcast aktif yang memegang unit paling baru dipicu.</summary>

@@ -56,6 +56,13 @@ public sealed class AplikasiUjiDb : AplikasiUji, IAsyncLifetime
     /// <summary>Bila <c>true</c>, pencatatan lampiran ke database gagal setelah berkasnya tersimpan.</summary>
     public bool CatatLampiranGagal { get; set; }
 
+    /// <summary>
+    /// Permission yang lingkupnya dipaksa kosong (grant tanpa satu pun, seperti permission yang tidak dikenal kebijakan),
+    /// sementara izin masuknya tetap ada. Untuk membuktikan use case sungguh membaca <c>GetScope</c>, bukan menurunkan
+    /// lingkup dari identitas. Tes yang mengisinya wajib mengosongkannya lagi.
+    /// </summary>
+    public IReadOnlySet<string> LingkupDikosongkan { get; set; } = new HashSet<string>();
+
     /// <summary>Identitas yang dipakai kode non-HTTP selama blok <see cref="SebagaiAsync{T}"/>.</summary>
     internal static readonly AsyncLocal<AkunUji?> AkunSementara = new();
 
@@ -130,7 +137,7 @@ public sealed class AplikasiUjiDb : AplikasiUji, IAsyncLifetime
             // Pembungkus identitas: bila AkunSementara terisi, pelaku = akun itu; selain itu yang asli (HTTP).
             var identitasAsli = services.Last(d => d.ServiceType == typeof(ICurrentUserContext));
             services.Remove(identitasAsli);
-            services.AddScoped<ICurrentUserContext>(sp => new IdentitasUji((ICurrentUserContext)identitasAsli.ImplementationFactory!(sp)));
+            services.AddScoped<ICurrentUserContext>(sp => new IdentitasUji(this, (ICurrentUserContext)identitasAsli.ImplementationFactory!(sp)));
 
             services.RemoveAll<ICadanganGempa>();
             services.AddSingleton<ICadanganGempa>(CadanganGempa);
@@ -236,8 +243,11 @@ public sealed class CadanganInfoBencanaUji : ICadanganInfoBencana
     public Task<Tersimpan<RekapBencana>?> RekapBnpbAsync(CancellationToken ct) => Task.FromResult(RekapBnpb);
 }
 
-/// <summary>Meneruskan ke identitas asli, kecuali <see cref="AplikasiUjiDb.AkunSementara"/> terisi.</summary>
-internal sealed class IdentitasUji(ICurrentUserContext dalam) : ICurrentUserContext
+/// <summary>
+/// Meneruskan ke identitas asli, kecuali <see cref="AplikasiUjiDb.AkunSementara"/> terisi, atau lingkupnya dikosongkan
+/// lewat <see cref="AplikasiUjiDb.LingkupDikosongkan"/>.
+/// </summary>
+internal sealed class IdentitasUji(AplikasiUjiDb app, ICurrentUserContext dalam) : ICurrentUserContext
 {
     private static AkunUji? Akun => AplikasiUjiDb.AkunSementara.Value;
 
@@ -259,7 +269,8 @@ internal sealed class IdentitasUji(ICurrentUserContext dalam) : ICurrentUserCont
 
     public bool HasPermission(string permission) => dalam.HasPermission(permission);
 
-    public DataScope GetScope(string permission) => dalam.GetScope(permission);
+    public DataScope GetScope(string permission) =>
+        dalam.GetScope(app.LingkupDikosongkan.Contains(permission) ? "uji:permission-tanpa-kebijakan" : permission);
 }
 
 /// <summary>Pengirim notifikasi yang hanya mencatat, supaya tes dapat memeriksa siapa diberi tahu apa.</summary>

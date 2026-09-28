@@ -1,3 +1,4 @@
+using Kemenkeu.Iam;
 using Microsoft.EntityFrameworkCore;
 using Sigap.Application.Audit;
 using Sigap.Application.Broadcast;
@@ -20,12 +21,14 @@ namespace Sigap.Infrastructure.SafetyCheck;
 /// </summary>
 internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : ISafetyCheckStore
 {
-    public async Task<IReadOnlyList<AktifDto>> AktifAsync(string unitId, string userId, CancellationToken ct)
+    public async Task<IReadOnlyList<AktifDto>> AktifAsync(IReadOnlyCollection<string> unitSasaran, string userId, CancellationToken ct)
     {
+        var unitIds = unitSasaran.ToArray();
         var baris = await db.BroadcastSasaranUnit.AsNoTracking()
-            .Where(s => s.UnitId == unitId && s.Status == StatusSasaran.Disasar && s.Aktif && s.Broadcast.SelesaiPada == null)
+            .Where(s => unitIds.Contains(s.UnitId) && s.Status == StatusSasaran.Disasar && s.Aktif && s.Broadcast.SelesaiPada == null)
             .OrderBy(s => s.Broadcast.CreatedAt)
             .Select(s => s.BroadcastId)
+            .Distinct()
             .ToListAsync(ct);
         if (baris.Count == 0)
         {
@@ -49,8 +52,9 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         return hasil;
     }
 
-    public async Task<KonteksJawab> KonteksJawabAsync(string broadcastId, string unitId, CancellationToken ct)
+    public async Task<KonteksJawab> KonteksJawabAsync(string broadcastId, IReadOnlyCollection<string> unitSasaran, CancellationToken ct)
     {
+        var unitIds = unitSasaran.ToArray();
         var broadcast = await db.ActiveBroadcast.AsNoTracking().Where(b => b.Id == broadcastId)
             .Select(b => new { Selesai = b.SelesaiPada != null }).SingleOrDefaultAsync(ct);
         if (broadcast is null)
@@ -59,7 +63,7 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         }
 
         bool disasar = await db.BroadcastSasaranUnit.AsNoTracking()
-            .AnyAsync(s => s.BroadcastId == broadcastId && s.UnitId == unitId && s.Status == StatusSasaran.Disasar, ct);
+            .AnyAsync(s => s.BroadcastId == broadcastId && unitIds.Contains(s.UnitId) && s.Status == StatusSasaran.Disasar, ct);
         return new KonteksJawab(true, disasar, broadcast.Selesai);
     }
 
@@ -95,9 +99,10 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         return perubahan;
     }
 
-    public async Task<Halaman<RiwayatSayaDto>> RiwayatSayaAsync(string userId, PermintaanHalaman halaman, CancellationToken ct)
+    public async Task<Halaman<RiwayatSayaDto>> RiwayatSayaAsync(DataScope lingkup, PermintaanHalaman halaman, CancellationToken ct)
     {
-        var q = db.SafetyCheckResponse.AsNoTracking().Where(r => r.UserId == userId && r.BroadcastId != null);
+        // SELF: pemilik baris = pengguna. SASARAN_SAYA pada permission yang sama adalah profil domain dan dilewati ApplyScope.
+        var q = db.SafetyCheckResponse.AsNoTracking().ApplyScope(lingkup, owner: r => r.UserId).Where(r => r.BroadcastId != null);
         int total = await q.CountAsync(ct);
         var baris = await q.OrderByDescending(r => r.CreatedAt).ThenBy(r => r.Id)
             .Skip(halaman.Lewati).Take(halaman.Ukuran)
@@ -114,8 +119,8 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         return new Halaman<RiwayatSayaDto>(data, halaman.Halaman, halaman.Ukuran, total);
     }
 
-    public Task<PegawaiSasaran?> PegawaiAsync(string pegawaiId, CancellationToken ct) =>
-        db.User.AsNoTracking().Where(u => u.Id == pegawaiId)
+    public Task<PegawaiSasaran?> PegawaiAsync(string pegawaiId, DataScope lingkup, CancellationToken ct) =>
+        db.User.AsNoTracking().ApplyScope(lingkup, unit: u => u.UnitId).Where(u => u.Id == pegawaiId)
             .Select(u => new PegawaiSasaran(new RingkasPengguna(u.Id, u.Nama, u.Nip, u.Jabatan), u.UnitId, u.Aktif))
             .SingleOrDefaultAsync(ct)!;
 
@@ -178,19 +183,20 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         db.BroadcastSasaranUnit.AsNoTracking().AnyAsync(
             s => s.BroadcastId == broadcastId && s.UnitId == unitId && s.Status == StatusSasaran.Disasar && s.Aktif && s.Broadcast.SelesaiPada == null, ct);
 
-    public async Task<RekapDto?> RekapAsync(string broadcastId, string unitId, FilterRekap filter, PermintaanHalaman halaman, CancellationToken ct)
+    public async Task<RekapDto?> RekapAsync(
+        string broadcastId, string unitId, DataScope lingkup, FilterRekap filter, PermintaanHalaman halaman, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(filter);
         var broadcast = await RingkasBroadcastAsync(broadcastId, ct);
-        if (broadcast is null)
+        var unit = await UnitTerlihatAsync(unitId, lingkup, ct);
+        if (broadcast is null || unit is null)
         {
             return null;
         }
 
-        var unit = await UnitAsync(unitId, ct) ?? throw new InvalidOperationException($"Unit {unitId} tidak terbaca.");
         var lainAktif = await PemegangLainAsync(unitId, broadcastId, ct);
 
-        var q = Penyebut(unitId, broadcastId, filter);
+        var q = Penyebut(unitId, lingkup, broadcastId, filter);
         int total = await q.CountAsync(ct);
         var baris = await Urut(q).Skip(halaman.Lewati).Take(halaman.Ukuran).Select(ProyeksiBaris).ToListAsync(ct);
 
@@ -212,16 +218,16 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         return new RekapDto(broadcast, lainAktif, unit, data, halaman.Halaman, halaman.Ukuran, total);
     }
 
-    public async Task<RingkasanRekapDto?> RingkasanRekapAsync(string broadcastId, string unitId, CancellationToken ct)
+    public async Task<RingkasanRekapDto?> RingkasanRekapAsync(string broadcastId, string unitId, DataScope lingkup, CancellationToken ct)
     {
         var broadcast = await RingkasBroadcastAsync(broadcastId, ct);
-        if (broadcast is null)
+        var unit = await UnitTerlihatAsync(unitId, lingkup, ct);
+        if (broadcast is null || unit is null)
         {
             return null;
         }
 
-        var unit = await UnitAsync(unitId, ct) ?? throw new InvalidOperationException($"Unit {unitId} tidak terbaca.");
-        var q = Penyebut(unitId, broadcastId, new FilterRekap(null, null));
+        var q = Penyebut(unitId, lingkup, broadcastId, new FilterRekap(null, null));
         int total = await q.CountAsync(ct);
         int aman = await q.CountAsync(x => x.Respons != null && x.Respons.Status == SafetyStatus.Aman, ct);
         int butuhBantuan = await q.CountAsync(x => x.Respons != null && x.Respons.Status == SafetyStatus.ButuhBantuan, ct);
@@ -235,10 +241,10 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
     /// broadcast ini (KANDIDAT_SCOPE_SIEVE A5/A7 — jawaban hanya dihitung dari kelompok yang sama
     /// dengan penyebutnya, dan hanya jawaban yang terikat <c>broadcastId</c> ini, bukan jawaban lama).
     /// </summary>
-    private IQueryable<Gabungan> Penyebut(string unitId, string broadcastId, FilterRekap filter)
+    private IQueryable<Gabungan> Penyebut(string unitId, DataScope lingkup, string broadcastId, FilterRekap filter)
     {
         var q =
-            from u in db.User.AsNoTracking()
+            from u in db.User.AsNoTracking().ApplyScope(lingkup, unit: x => x.UnitId)
             where u.Aktif && u.UnitId == unitId && u.Roles.Any(r => r.Role == RoleKey.Pegawai)
             join r in db.SafetyCheckResponse.AsNoTracking().Where(x => x.BroadcastId == broadcastId)
                 on u.Id equals r.UserId into rg
@@ -298,6 +304,12 @@ internal sealed class SafetyCheckStore(SigapDbContext db, IJejakAudit jejak) : I
         public double? Lat { get; set; }
         public double? Lng { get; set; }
     }
+
+    /// <summary>Unit rekap, hanya bila di dalam lingkup (klausa WHERE); <c>null</c> = 404 bagi pemanggil.</summary>
+    private Task<RingkasUnit?> UnitTerlihatAsync(string unitId, DataScope lingkup, CancellationToken ct) =>
+        db.Unit.AsNoTracking().ApplyScope(lingkup, unit: u => u.Id).Where(u => u.Id == unitId)
+            .Select(u => new RingkasUnit(u.Id, u.Nama, u.Provinsi, u.Kabkota, u.EselonIKey))
+            .SingleOrDefaultAsync(ct)!;
 
     private Task<RingkasUnit?> UnitAsync(string unitId, CancellationToken ct) =>
         db.Unit.AsNoTracking().Where(u => u.Id == unitId)

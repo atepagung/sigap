@@ -1,3 +1,4 @@
+using Kemenkeu.Iam;
 using Sigap.Application.Umum;
 using Sigap.Domain.SafetyCheck;
 
@@ -9,22 +10,27 @@ public sealed record KonteksJawab(bool BroadcastAda, bool UnitDisasar, bool Sele
 /// <summary>Pegawai sasaran pencatatan Satgas (#6).</summary>
 public sealed record PegawaiSasaran(RingkasPengguna Pengguna, string UnitId, bool Aktif);
 
-/// <summary>Kueri dan tulis <c>"SafetyCheckResponse"</c>, dan pembacaan <c>"ActiveBroadcast"</c> yang menyertainya.</summary>
+/// <summary>
+/// Kueri dan tulis <c>"SafetyCheckResponse"</c>, dan pembacaan <c>"ActiveBroadcast"</c> yang menyertainya. Lingkup
+/// selalu datang dari <c>GetScope(permission)</c> milik use case — <see cref="DataScope"/> untuk profil generik,
+/// daftar unit <see cref="LingkupSafetyCheck.UnitSasaranSaya"/> untuk profil domain — dan diterapkan di klausa WHERE.
+/// </summary>
 public interface ISafetyCheckStore
 {
-    /// <summary>#1: broadcast yang menyasar unit ini, terurut dari yang paling lama dipicu.</summary>
-    Task<IReadOnlyList<AktifDto>> AktifAsync(string unitId, string userId, CancellationToken ct);
+    /// <summary>#1: broadcast aktif yang menyasar salah satu unit ini, terurut dari yang paling lama dipicu.</summary>
+    Task<IReadOnlyList<AktifDto>> AktifAsync(IReadOnlyCollection<string> unitSasaran, string userId, CancellationToken ct);
 
-    Task<KonteksJawab> KonteksJawabAsync(string broadcastId, string unitId, CancellationToken ct);
+    /// <summary><see cref="KonteksJawab.UnitDisasar"/> benar bila salah satu unit ini DISASAR pada broadcast.</summary>
+    Task<KonteksJawab> KonteksJawabAsync(string broadcastId, IReadOnlyCollection<string> unitSasaran, CancellationToken ct);
 
     /// <summary>#2: upsert jawaban pegawai sendiri. Mengosongkan <c>dicatatOlehId</c>/<c>keterangan</c>.</summary>
     Task<string> UpsertSayaAsync(string broadcastId, string userId, string unitId, JawabanSafetyCheck jawaban, DateTime pada, CancellationToken ct);
 
     /// <summary>#3, terbaru lebih dulu.</summary>
-    Task<Halaman<RiwayatSayaDto>> RiwayatSayaAsync(string userId, PermintaanHalaman halaman, CancellationToken ct);
+    Task<Halaman<RiwayatSayaDto>> RiwayatSayaAsync(DataScope lingkup, PermintaanHalaman halaman, CancellationToken ct);
 
-    /// <summary>#6: pegawai sasaran pencatatan, untuk memastikan unitnya sama dengan Satgas pemanggil.</summary>
-    Task<PegawaiSasaran?> PegawaiAsync(string pegawaiId, CancellationToken ct);
+    /// <summary>#6: pegawai sasaran pencatatan bila unitnya di dalam lingkup; <c>null</c> bila tidak ada atau di luar.</summary>
+    Task<PegawaiSasaran?> PegawaiAsync(string pegawaiId, DataScope lingkup, CancellationToken ct);
 
     /// <summary>Profil ringkas Satgas pemanggil, untuk mengisi <c>dicatatOleh</c> pada #6.</summary>
     Task<RingkasPengguna?> PenggunaAsync(string userId, CancellationToken ct);
@@ -41,9 +47,9 @@ public interface ISafetyCheckStore
     /// <summary>Unit ini berstatus DISASAR aktif pada broadcast yang <b>belum selesai</b> (dipakai #4/#5).</summary>
     Task<bool> UnitDisasarAktifAsync(string broadcastId, string unitId, CancellationToken ct);
 
-    /// <summary>#4.</summary>
-    Task<RekapDto?> RekapAsync(string broadcastId, string unitId, FilterRekap filter, PermintaanHalaman halaman, CancellationToken ct);
+    /// <summary>#4. <c>null</c> bila broadcast tidak ada atau unit di luar lingkup.</summary>
+    Task<RekapDto?> RekapAsync(string broadcastId, string unitId, DataScope lingkup, FilterRekap filter, PermintaanHalaman halaman, CancellationToken ct);
 
-    /// <summary>#5.</summary>
-    Task<RingkasanRekapDto?> RingkasanRekapAsync(string broadcastId, string unitId, CancellationToken ct);
+    /// <summary>#5 (dan #35 dengan lingkup <c>sigap:monitor:read</c>). <c>null</c> bila broadcast tidak ada atau unit di luar lingkup.</summary>
+    Task<RingkasanRekapDto?> RingkasanRekapAsync(string broadcastId, string unitId, DataScope lingkup, CancellationToken ct);
 }
