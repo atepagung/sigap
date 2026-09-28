@@ -380,6 +380,8 @@ adalah yang asli. Akun uji ada di `Basisdata/DatabaseUji.cs` (`Data`), NIP-nya d
 | `Lampiran:Driver` | `disk` (bawaan) atau `s3` (P5.2). Sama seperti `Bmkg:Aktif`: berpindah ke object storage di production adalah keputusan penempatan (`Lampiran__Driver=s3`), bukan efek samping. Nilai tak dikenal menggagalkan proses saat mulai |
 | `Lampiran:Folder` | Wajib bila `Driver=disk`. Folder penyimpanan lampiran; path relatif dihitung dari folder keluaran. Production: `Lampiran__Folder` ke volume yang bertahan antar restart. Padanan driver `local` di prototipe (`storage.ts`) |
 | `Lampiran:S3:*` | Wajib bila `Driver=s3`: `Endpoint`, `AccessKey`, `SecretKey` (kosong menggagalkan proses saat mulai). `Bucket` bawaan `sigap-lampiran`, `Region` bawaan `us-east-1`, `ForcePathStyle` bawaan `true` (wajib untuk MinIO). Padanan `S3_*` di `storage.ts`. Production: `Lampiran__S3__AccessKey`/`Lampiran__S3__SecretKey` dari vault. Pengembangan: MinIO lokal (docker-compose, `http://localhost:9000`, kredensial dev `minioadmin`/`miniopassword`) |
+| `Notifikasi:Kanal` | Kanal yang berjalan; wajib memuat minimal satu kanal tahan luring (`dalam-aplikasi`), kalau tidak proses menolak mulai. Production bawaan: `["dalam-aplikasi"]` |
+| `Notifikasi:WebPush:*` | `Aktif` (bawaan `false`, menunggu Lampiran E #13), `Subjek`, `TtlDetik` (3600), `HostDiizinkan` (peladen push yang boleh dikirimi; isian konfigurasi ditambahkan ke bawaan FCM/Mozilla/Apple/Windows). `KunciPublik`/`KunciPrivat` VAPID **hanya** `Notifikasi__WebPush__KunciPublik`/`__KunciPrivat` dari vault; tanpa keduanya kanal `web-push` diam |
 | `Bmkg:Aktif` | Pemicu Safety Check otomatis dari BMKG (P5.1). **Mati bawaan** (`false`): pegawai menerima pemberitahuan genting darinya, jadi menyalakannya keputusan penempatan. Production: `Bmkg__Aktif=true` |
 | `Bmkg:NipLayanan` | Wajib bila `Aktif`; proses menolak mulai bila kosong. NIP akun layanan (baris `"User"` tanpa peran), bawaan `SISTEM-BMKG`. Lihat SQL di bawah |
 | `Bmkg:AmbangMmi` | Kosong atau di luar 1–12 = MMI V (aturan prototipe `AmbangDariTeks`) |
@@ -456,6 +458,25 @@ pemeriksaan `StatusCode == NotFound` di baris yang sama — MinIO selalu mengiri
 uji sudah dibersihkan | `Infrastructure/Lampiran/{PenyimpanLampiranS3,LampiranOptions,SimpananDataPublik-serupa}`,
 `Domain/Lampiran/AturanLampiran`, `tests/Sigap.Infrastructure.Tests/Lampiran/PenyimpanLampiranS3Tests.cs`. Asumsi:
 DUMMY_REGISTRY bagian 9 butir 3 dan 4.
+
+### Logika notifikasi broadcast (P5.3)
+
+Tiga syarat PLAYBOOK P5.3, dan di mana masing-masing ditegakkan:
+
+| Syarat | Ditegakkan oleh | Diuji |
+| --- | --- | --- |
+| Penerima = lingkup yang dipicu | `PembangunSasaran` (lingkup peran pemicu) → `BroadcastStore.PicuAsync` (DISASAR/DILEWATI) → `PemberitahuBroadcast` (Pegawai Umum aktif di unit DISASAR saja, tanpa duplikat) | `PemberitahuBroadcastTests` (unit), `PicuBroadcastTests` (DB) |
+| Dedup lingkup beririsan (koreksi 12) | Indeks unik `"sasaran_satu_pemegang_aktif"` (satu pemegang per unit per jenis, di database); kunci idempotensi per broadcast di `"KirimanPush"` (`CatatanKirimanPostgres`, benturan indeks → `false`) | unit: dua peran beririsan, pemicuan ulang, serentak; DB: 10 pemanggil serentak tepat satu lolos; ujung ke ujung: `BroadcastLuringTests` |
+| Pegawai luring tetap melihatnya | Peringatan #43 `SC_BELUM_DIJAWAB` dihitung dari keadaan broadcast saat diminta, bukan dari catatan kiriman; konfigurasi tanpa kanal tahan luring ditolak saat mulai; Web Push menitipkan pesan selama TTL | unit: seluruh penerima luring tidak menggagalkan broadcast; ujung ke ujung: pegawai yang tidak membuat satu permintaan pun melihatnya saat kembali daring, sampai ia menjawab |
+
+`PemberitahuBroadcast` dipakai bersama trigger manual (#13) dan otomatis BMKG, menggantikan dua salinan kode yang sama.
+**Bug Production yang ditemukan:** ketiga port `libs/notifikasi` hanya diisi dummy pengembangan, sehingga di Production
+`IPengirimNotifikasi` tidak dapat dibuat dan setiap use case yang memberi tahu gagal 500 (health check tetap hijau). Kini
+diisi `CatatanKirimanPostgres`, `GudangLanggananPushPostgres` (tabel yang sama yang ditulis #44), dan `PengirimWebPushVapid`;
+`PerakitanProduksiTests` merakit host sebagai Production untuk menjaganya. Terbukti dengan API yang dijalankan sebagai
+Production terhadap Postgres/Keycloak lokal: trigger #13 → 201, baris `"KirimanPush"` tertulis, pegawai melihat
+`SC_BELUM_DIJAWAB`; data uji dibersihkan. **SSRF**: #44 hanya menerima URL `https`, dan pengirim hanya mengirim ke host di
+`Notifikasi:WebPush:HostDiizinkan` tanpa mengikuti pengalihan. Asumsi: DUMMY_REGISTRY bagian 9 butir 22.
 
 ## Keadaan sekarang
 

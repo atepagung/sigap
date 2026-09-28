@@ -856,6 +856,10 @@ Kemenkeu, jadi tidak ada broadcast otomatis; peringatan menyarankan memicu safet
 Langganan Web Push perangkat (`"LanggananPush"`). POST `{ "endpoint", "keys": { "p256dh", "auth" }, "peramban" }` → 201.
 DELETE `{ "endpoint" }` → 204. Dapat dinonaktifkan lewat konfigurasi selama izin Web Push di
 domain platform belum dijawab BaTII (Lampiran E #13).
+`endpoint` wajib URL `https` lengkap, paling panjang 2048 karakter; `keys.p256dh`/`keys.auth` paling
+panjang 256 karakter. Selain itu 400 `VALIDASI_GAGAL` (P5.3: server mengirim `POST` ke endpoint ini,
+jadi alamat sembarang berarti SSRF). Saat mengirim, hanya host peladen push yang terdaftar di
+`Notifikasi:WebPush:HostDiizinkan` yang dikirimi (bawaan FCM, Mozilla, Apple, Windows).
 
 #### 46–47. `GET /health/live`, `GET /health/ready`
 `live`: proses hidup. `ready`: database dapat dijangkau. 200/503, tanpa autentikasi.

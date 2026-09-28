@@ -4,7 +4,7 @@ Abstraksi kanal notifikasi SIGAP. **Bukan dummy** — lapisan ini tetap dipakai 
 komponen platform tersedia.
 
 ```bash
-dotnet test libs/notifikasi/notifikasi.slnx   # 58 tes
+dotnet test libs/notifikasi/notifikasi.slnx   # 70 tes
 ```
 
 Yang dummy hanya kanal log dan pengisi port saat pengembangan, dan itu ada di
@@ -117,14 +117,26 @@ Tidak ada perubahan skema. `"KirimanPush"` namanya berbau push karena sejarahnya
 komentar skemanya sendiri menyebut kegunaannya umum: mencegah kiriman berulang untuk keadaan
 yang sama.
 
-Selama P3, ketiganya diisi versi dalam memori dari `libs/notifikasi-dummy`.
+Selama P3–P5.2 ketiganya diisi versi dalam memori dari `libs/notifikasi-dummy`. **Sejak P5.3**
+ketiganya diisi implementasi sungguhan di `apps/sigap-api/src/Sigap.Infrastructure/Notifikasi`:
+`CatatanKirimanPostgres`, `GudangLanggananPushPostgres`, dan `PengirimWebPushVapid` (paket
+`Lib.Net.Http.WebPush`: enkripsi `aes128gcm` yang diterima Safari/iOS, VAPID RFC 8292). Kelas
+memori di `libs/notifikasi-dummy` tetap dipakai tes lapisan ini sebagai test double.
+
+### Host peladen push yang diizinkan
+
+`endpoint` langganan datang dari peramban pengguna, jadi pengirim hanya mengirim ke URL `https`
+yang host-nya ada di `Notifikasi:WebPush:HostDiizinkan` (`OpsiWebPush.EndpointDiizinkan`).
+Bawaannya peladen push Chrome/Edge (FCM), Firefox, Safari (`*.push.apple.com`), dan Windows;
+isian di konfigurasi **ditambahkan** ke bawaan itu. Tanpa daftar ini server dapat disuruh
+mengirim `POST` ke jaringan internal (SSRF).
 
 ## Yang belum dibangun
 
 - **Sisi Angular** — `NotifikasiService` yang memoll `GET /notifikasi` dan pendaftaran
   langganan Web Push. Menyusul di P4, saat endpoint dan UI-nya ada.
-- **`IPengirimWebPush` sungguhan** di atas paket `WebPush`. Menyusul di P5.3; baru berguna
-  setelah Lampiran E #13 dijawab dan kunci VAPID tersedia.
+- Kanal `web-push` masih **mati** di konfigurasi: menunggu Lampiran E #13 dan kunci VAPID dari
+  vault (`Notifikasi__WebPush__KunciPublik` / `__KunciPrivat`). Pengirimnya sudah sungguhan (P5.3).
 - **Katalog kode pemberitahuan** (`SC_BELUM_DIJAWAB` dan kawan-kawan) ditetapkan bersama
   `GET /notifikasi` di P4/P5.3. Lapisan ini hanya menjaga bentuk kodenya.
 - **Jejak audit** pemberitahuan — senada DUMMY_REGISTRY butir 74, menunggu Lampiran E #10.
